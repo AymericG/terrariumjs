@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <script type="text/javascript" src="js/libs/jquery.min.js"></script>
+        <script type="text/javascript" src="js/libs/sprite.js"></script>
+
+		<script type="text/javascript" src="js/Class.js"></script>
+        <script type="text/javascript" src="js/ClassWithEvents.js"></script>
+        <script type="text/javascript" src="js/EngineSettings.js"></script>
+        <script type="text/javascript" src="js/Enums.js"></script>
+        <script type="text/javascript" src="js/Exceptions.js"></script>
+        <script type="text/javascript" src="js/Renderer.js"></script>
+        
+        <script type="text/javascript" src="js/Actions/Action.js"></script>
+        <script type="text/javascript" src="js/Actions/MoveToAction.js"></script>
+        <script type="text/javascript" src="js/Actions/ReproduceAction.js"></script>
+        <script type="text/javascript" src="js/Actions/PendingActions.js"></script>
+        
+        <script type="text/javascript" src="js/Species.js"></script>
+        <script type="text/javascript" src="js/World.js"></script>
+        
+        <script type="text/javascript" src="js/Anatomy/MindNerve.js"></script>
+        <script type="text/javascript" src="js/Anatomy/BodyNerve.js"></script>
+        <script type="text/javascript" src="js/Anatomy/OrganismState.js"></script>
+        <script type="text/javascript" src="js/Anatomy/AnimalState.js"></script>
+        <script type="text/javascript" src="js/Anatomy/PlantState.js"></script>
+        <script type="text/javascript" src="js/Anatomy/OrganismMind.js"></script>
+        <script type="text/javascript" src="js/Anatomy/AnimalMind.js"></script>
+        
+        <script type="text/javascript" src="js/Organism.js"></script>
+        
+        <script type="text/javascript" src="js/GridIndex.js"></script>
+        <script type="text/javascript" src="js/MovementSegment.js"></script>
+        <script type="text/javascript" src="js/SegmentWrapper.js"></script>
+
+        <script type="text/javascript" src="js/Geometry/MathUtils.js"></script>
+		<script type="text/javascript" src="js/Geometry/Point.js"></script>
+        <script type="text/javascript" src="js/Geometry/MovementVector.js"></script>
+        
+        <script type="text/javascript" src="js/Game.js"></script>
+        <script type="text/javascript" src="js/robotjs.js"></script>
+
+        <style>
+        	.game-window
+        	{
+				float: left; 
+				border: 1px solid black;
+				width: 40%;
+				height: 400px;
+				overflow:auto;
+        	}
+
+        	.game-controls
+        	{
+				float:left; 
+				width: 50%;
+        	}
+
+        	#canvas{
+        		background: #ddd url('img/background.jpg') no-repeat;
+        	}
+        </style>
+    </head>
+    <body>
+
+    	<div class="game-window">
+        	<div width="800" height="400" id="canvas"></div>
+    	</div>
+
+        <aside class="game-controls">
+        	<textarea id="code" rows="20" cols="60">
+organism.run = function() { 
+	var robot = this; robot.shoot(); 
+	robot.turn_left(5, function() { robot._run();	}); 
+};
+        	</textarea>
+        	<br/>
+        	<input id="load-code" type="button" value="Load code" />
+        	<input id="load-scan-bot" type="button" value="Load simple animal" />
+        	<input id="load-plant" type="button" value="Load plant" />
+        	<input id="run" type="button" value="Start game" />
+        </aside>
+    </body>
+</html>
