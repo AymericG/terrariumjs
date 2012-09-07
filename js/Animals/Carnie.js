@@ -3,6 +3,7 @@ importScripts('../Dependencies.js');
 var species = new Species();
 species.MatureRadius = 12;
 species.Name = "Carnie";
+species.IsCarnivore = true;
 var organism = new AnimalMind(species);
 
 function PickRandomProperty(obj) {
@@ -31,7 +32,7 @@ organism.OnIdle = function() {
 
 	if (!this.IsEating() && !this.IsMoving())
 	{
-		this.WriteTrace("Moving...");
+		//this.WriteTrace("Moving...");
 		this.MoveToRandomPoint();
 	}
 	if (this.State.SeenOrganisms.length == 0)
@@ -43,12 +44,12 @@ organism.OnIdle = function() {
 		if (!target.IsPlant())
 		{
 			if (target.IsAlive() && !this.IsAttacking())
-			{
 				this.BeginAttacking(target);
-			}
 			else
 			{
-				if (!this.IsEating() && this.CanEat() && this.WithinEatingRange(target))
+				this.BeginMoving(new MovementVector(target.Position, 2));
+				//this.WriteTrace("Eating: " + this.IsEating() + " CanEat: " + this.CanEat() + " IsAlive: " + target.IsAlive() + " withinEatingRange: " + this.WithinEatingRange(target));
+				if (!this.IsEating() && this.CanEat() && !target.IsAlive() && this.WithinEatingRange(target))
 				{
 					this.WriteTrace("Eating...");
 					this.StopMoving();
@@ -67,6 +68,16 @@ organism.OnMoveCompleted = function (){
 
 };
 
+organism.OnAttacked = function (attackedId){
+
+	this.WriteTrace("I am being attacked! I see " + this.State.SeenOrganisms.length + " potential enemies.");	
+	var target = this.LookFor(attackedId);
+	if (target != null)
+	{
+		this.WriteTrace("Defending...");
+		this.BeginDefending(target);
+	}
+};
 
 
 

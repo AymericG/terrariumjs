@@ -3,6 +3,7 @@ var AnimalState = OrganismState.extend({
 		this._super(speciesData);
 		this.Damage = 0;
 		this.RotTicks = 0;
+		this.FoodChunks = this.CurrentMaxFoodChunks();
 	},
 	Serializable: function(withSeenOrganisms){
 		var stateObject = this._super(withSeenOrganisms);
@@ -21,8 +22,13 @@ var AnimalState = OrganismState.extend({
         this._super(newRadius);
         this.FoodChunks += additionalRadius * EngineSettings.FoodChunksPerUnitOfRadius;
     },
+	CurrentMaxFoodChunks: function(){
+    	return this.Radius * EngineSettings.FoodChunksPerUnitOfRadius;
+    },
+
     CauseDamage: function(incrementalDamage)
     {
+    	console.log("Caused damage: " + incrementalDamage);
         if (incrementalDamage < 0)
             throw new GameEngineException("Damage must be positive.");
 

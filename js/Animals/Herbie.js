@@ -29,10 +29,9 @@ organism.OnIdle = function() {
 	if (this.CanReproduce())
 		this.BeginReproduction(null);
 
-	this.WriteTrace(this.State.EnergyState());
 	if (!this.IsEating() && !this.IsMoving() && this.State.EnergyState() != EnergyState.Full)
 	{
-		this.WriteTrace("Moving...");
+		//this.WriteTrace("Moving...");
 		this.MoveToRandomPoint();
 	}
 	if (this.State.SeenOrganisms.length == 0)
@@ -44,7 +43,7 @@ organism.OnIdle = function() {
 		if (target.IsPlant()){
 			if (!this.IsEating() && this.CanEat() && this.WithinEatingRange(target))
 			{
-				this.WriteTrace("Eating...");
+				//this.WriteTrace("Eating...");
 				this.StopMoving();
 				this.BeginEating(target);
 			}
@@ -58,6 +57,17 @@ organism.OnEatCompleted = function (){
 
 organism.OnMoveCompleted = function (){
 
+};
+
+organism.OnAttacked = function (attackedId){
+
+	this.WriteTrace("I am being attacked! I see " + this.State.SeenOrganisms.length + " potential enemies.");	
+	var target = this.LookFor(attackedId);
+	if (target != null)
+	{
+		this.WriteTrace("Defending...");
+		this.BeginDefending(target);
+	}
 };
 
 

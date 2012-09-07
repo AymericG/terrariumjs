@@ -3,7 +3,7 @@ var EngineSettings = {
     ///   into the MatureSize attribute.  No creature may grow to
     ///   be larger than this constant.
 	MaxMatureSize: 48,
-	MaxOrganismCount: 10,
+	MaxOrganismCount: 50,
 	RequiredEnergyPerUnitOfRadiusSpeedDistance: 0.005,
 	TickInterval: 60,
 	TicksToIncubate: 10,
@@ -12,6 +12,27 @@ var EngineSettings = {
 	AnimalIncubationEnergyMultiplier: 1.5,
 	FoodChunksPerUnitOfRadius: 25,
 	EnergyPerAnimalFoodChunk: 1,
+    ///   Attack and Defense modifier applied to Carnivores.  This
+    ///   gives Carnivores an advantage in both attacking and defending
+    ///   against Herbivores since they have to attack and expend extra
+    ///   energy to obtain food.
+    CarnivoreAttackDefendMultiplier: 2,
+
+    ///   Represents the maximum amount of damage that can be absorbed by
+    ///   a creature that places MaxAvailableCharacteristicPoints into the
+    ///   DefendDamagePointsAttribute.
+    ///   The amount of damage absorption taken from this constant is multiplied by the current
+    ///   radius of the creature.  This means both MatureSize and the DefendDamagePointsAttribute
+    ///   can increase the amount of damage your creature can take.
+    MaximumDefendedDamagePerUnitOfRadius: 25,
+
+    ///   Represents the base amount of damage that can be absorbed by
+    ///   a creature that places 0 points into the DefendDamagePointsAttribute.
+    ///   The amount of damage absorption taken from this constant is multiplied by the current
+    ///   radius of the creature.  This means both MatureSize and the DefendDamagePointsAttribute
+    ///   can increase the amount of damage your creature can take.
+    BaseDefendedDamagePerUnitOfRadius: 50,
+
     ///   The amount of damage required to before a creature
     ///   is killed.  This is multiplied by the Radius of the
     ///   creature and so larger creatures can take many more

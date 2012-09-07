@@ -29,6 +29,9 @@ var MindNerve = function(organismMind){ // should be called Neuron?
 			if (messageObject.InProgressActions.AttackAction)
         		inProgressActions.AttackAction = new AttackAction(messageObject.InProgressActions.AttackAction.TargetOrganismId);
 
+			if (messageObject.InProgressActions.DefendAction)
+        		inProgressActions.DefendAction = new DefendAction(messageObject.InProgressActions.DefendAction.TargetOrganismId);
+
 		}
 		this.OrganismMind.InProgressActions = inProgressActions;
 		this.OrganismMind.ProcessSignal(messageObject);

@@ -5,14 +5,24 @@ var Species = Class.extend({
 		this.PercentOfMaximumEnergyPerUnitRadius = 0.2;
 		this.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0.2;
 		this.PercentOfMaximumAttackDamagePerUnitRadius = 0.2;
+		this.PercentOfMaximumDefendDamagePerUnitRadius = 0.2;
 		this.Name = "No name";
 		this.IsCarnivore = false;
 		this.IsPlant = false;
 		this.MaximumSpeed = 4;
-		this.Skin = null;
+		this.Skin = AnimalSkin.ant;
 		this.InvisibleOdds = 5;
 		this.EyesightRadius = 5;
 
+	},
+	MaximumDefendDamagePerUnitRadius: function()
+	{
+		var max = (EngineSettings.BaseDefendedDamagePerUnitOfRadius + this.PercentOfMaximumDefendDamagePerUnitRadius * EngineSettings.MaximumDefendedDamagePerUnitOfRadius) + 0.001;
+
+		if (this.IsCarnivore)
+	        return max * EngineSettings.CarnivoreAttackDefendMultiplier;
+	    else
+	        return max;
 	},
 	MaximumAttackDamagePerUnitRadius: function(){
 		return Math.round((EngineSettings.BaseInflictedDamagePerUnitOfRadius + this.PercentOfMaximumAttackDamagePerUnitRadius * EngineSettings.MaximumInflictedDamagePerUnitOfRadius) + 0.001);

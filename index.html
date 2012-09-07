@@ -1,5 +1,10 @@
 <html>
     <head>
+        <!-- Javascript editor -->
+        <link rel="stylesheet" href="codemirror/codemirror.css">
+        <script type="text/javascript" src="codemirror/codemirror.js"></script>
+        <script type="text/javascript" src="codemirror/javascript.js"></script>
+
         <script type="text/javascript" src="js/libs/jquery.min.js"></script>
         <script type="text/javascript" src="js/libs/sprite.js"></script>
 
@@ -12,6 +17,7 @@
                 
         <script type="text/javascript" src="js/Actions/Action.js"></script>
         <script type="text/javascript" src="js/Actions/AttackAction.js"></script>
+        <script type="text/javascript" src="js/Actions/DefendAction.js"></script>
         <script type="text/javascript" src="js/Actions/EatAction.js"></script>
         <script type="text/javascript" src="js/Actions/MoveToAction.js"></script>
         <script type="text/javascript" src="js/Actions/ReproduceAction.js"></script>
@@ -42,46 +48,109 @@
         <script type="text/javascript" src="js/terrarium.js"></script>
 
         <style>
+            body{
+                background-color: #333C1A;
+                color: #B69A71;
+                padding: 0px;
+                margin: 0px;
+                font-family: Arial;
+                font-size: 16px;
+            }
+
+            .CodeMirror{
+                background-color: #fff;
+            }
+
         	.game-window
         	{
 				float: left; 
-				border: 1px solid black;
-				width: 40%;
+				border: 5px solid #35291F;
+				width: 520px;
 				height: 400px;
-				overflow:auto;
+				overflow: auto;
+                margin: 10px;
         	}
 
         	.game-controls
         	{
+                margin: 10px;
 				float:left; 
 				width: 50%;
         	}
 
         	#canvas{
         		background: #ddd url('img/background.jpg') no-repeat;
+                margin: auto;
         	}
+
+            header{
+                padding: 10px;
+                background-color: #000;
+                color: #B69A71;
+                overflow: hidden;
+            }
+
+            header h1{
+                font-weight: bold;
+                font-size: 2em;
+                float: left;
+                line-height: 30px;
+                padding: 0px;
+                margin: 0px 20px 0 0;
+            }
+
+            header span{
+                line-height: 30px;
+                float: left;
+            }
         </style>
     </head>
     <body>
+        <header>
+            <h1>Terrarium.js</h1>
+            <span>Improve your javascript skills and have fun!</span>
+        </header>
 
     	<div class="game-window">
         	<div id="canvas"></div>
     	</div>
 
         <aside class="game-controls">
-        	<textarea id="code" rows="20" cols="60">
-organism.run = function() { 
-	var robot = this; robot.shoot(); 
-	robot.turn_left(5, function() { robot._run();	}); 
+            <p>Tell your animal what it should do</p>
+            <textarea id="code" rows="27" cols="80">
+// Wandering Ghost
+organism.OnIdle = function() {
+    if (this.CanReproduce())
+        this.BeginReproduction(null);
+
+    if (!this.IsMoving())
+        this.MoveToRandomPoint();
 };
-        	</textarea>
-        	<br/>
+
+organism.MoveToRandomPoint = function(){
+    // Pick random point on the map.
+    var y = MathUtils.RandomBetween(0, this.World.WorldHeight);
+    var x = MathUtils.RandomBetween(0, this.World.WorldWidth);
+
+    this.BeginMoving(new MovementVector(new Point(x, y), 2));
+};
+            </textarea>
+        <p>
         	<input id="load-code" type="button" value="Load code" />
-        	<input id="load-ghost" type="button" value="Load ghost" />
-            <input id="load-herbie" type="button" value="Load herbie" />
-        	<input id="load-carnie" type="button" value="Load carnie" />
-            <input id="load-plant" type="button" value="Load plant" />
-        	<input id="run" type="button" value="Start game" />
+        	<input id="load-ghost" type="button" value="Drop a  ghost" />
+            <input id="load-herbie" type="button" value="Drop a herbie" />
+        	<input id="load-carnie" type="button" value="Drop a carnie" />
+            <input id="load-plant" type="button" value="Drop a plant" />
+        </p>
+<!--        	<input id="run" type="button" value="Start game" /> -->
         </aside>
+
+        <script>
+          var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            lineNumbers: true,
+            matchBrackets: true
+          });
+        </script>
+
     </body>
 </html>

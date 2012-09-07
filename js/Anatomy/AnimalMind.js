@@ -33,21 +33,27 @@ var AnimalMind = OrganismMind.extend({
 		switch (messageObject.signal)
 		{
 			case Signals.MoveCompleted:
-				this.PendingActions.MoveToAction = null;
-				this.InProgressActions.MoveToAction = null;
+//				this.PendingActions.MoveToAction = null;
+//				this.InProgressActions.MoveToAction = null;
 				this.OnMoveCompleted();
 				break;	
 			case Signals.EatCompleted:
-				this.PendingActions.EatAction = null;
-				this.InProgressActions.EatAction = null;
+//				this.PendingActions.EatAction = null;
+//				this.InProgressActions.EatAction = null;
 				this.OnEatCompleted();
 				break;
+			case Signals.Attacked:
+				this.OnAttacked(messageObject.AttackerId);
+			case Signals.AttackCompleted:
+				this.OnAttackCompleted();
 			default:
 				this._super(messageObject);
 
 		}
 	},
 
+	OnAttacked: function(attackerId){}, // Waiting to be overriden.
+	OnAttackCompleted: function(){}, // Waiting to be overriden.
 	OnMoveCompleted: function(){}, // Waiting to be overriden.
 	OnEatCompleted: function(){}, // Waiting to be overriden.
 
@@ -139,6 +145,22 @@ var AnimalMind = OrganismMind.extend({
     	this.PendingActions.AttackAction = attackAction;
 		this.InProgressActions.AttackAction = attackAction;
     },
+    StopDefending: function(){
+		this.PendingActions.DefendAction = null;
+		this.InProgressActions.DefendAction = null;
+    },
+    BeginDefending: function(targetAnimal){
+    	var defendAction = new DefendAction(targetAnimal.Id);
+    	this.PendingActions.DefendAction = defendAction;
+		this.InProgressActions.DefendAction = defendAction;
+    },
+	CurrentDefendAction: function(){
+		if (this.PendingActions.DefendAction != null)
+			return this.PendingActions.DefendAction;
+		if (this.InProgressActions.DefendAction != null)
+			return (this.InProgressActions.DefendAction);
+		return null;
+	},
 
 	CurrentAttackAction: function(){
 		if (this.PendingActions.AttackAction != null)
@@ -150,5 +172,17 @@ var AnimalMind = OrganismMind.extend({
 	IsAttacking: function(){
 		return this.CurrentAttackAction() != null;
 	},
+	LookFor: function(organismId)
+	{
+		for (var i = 0; i < this.State.SeenOrganisms.length; i++)
+		{
+			this.WriteTrace(this.State.SeenOrganisms[i].Id + " ==? " + organismId);
+			if (this.State.SeenOrganisms[i].Id == organismId)
+			{
+				return this.State.SeenOrganisms[i];
+			}
+		}
+		return null;
+	}
 });
 

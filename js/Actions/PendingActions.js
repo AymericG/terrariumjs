@@ -4,5 +4,6 @@ var PendingActions = Class.extend({
 		this.MoveToAction = null;
 		this.EatAction = null;
 		this.AttackAction = null;
+		this.DefendAction = null;
 	}
 });

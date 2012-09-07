@@ -159,7 +159,9 @@ var World = ClassWithEvents.extend({
         
         return new Point(newLocation.X << EngineSettings.GridWidthPowerOfTwo, newLocation.Y << EngineSettings.GridHeightPowerOfTwo);
     },
-	AddOrganism: function(workerUrl, mindCode){
+	AddOrganism: function(workerUrl, mindCode, generation){
+        if (!generation)
+            generation = 0;
 
 		var self = this;
 
@@ -190,8 +192,11 @@ var World = ClassWithEvents.extend({
 			self.OrganismCount++;
 			self.OrganismIndex++;
 			organism.State.Position = availableSpot;
+            organism.State.Generation = generation + 1;
             
-            this.Subscribe("Reproduce", function(){ self.AddOrganism(this.MindUrl, this.MindCode); });
+            this.Subscribe("Reproduce", function(){ 
+                var childOrganism = self.AddOrganism(this.MindUrl, this.MindCode, organism.State.Generation);
+            });
             this.Subscribe("Disappear", function(){
                 var state = self.Organisms[this.Id].State; 
                 self.FillCells(state, true);

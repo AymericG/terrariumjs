@@ -5,13 +5,13 @@ $(document).ready(function() {
 //	var canvas = $("#canvas");
 //	var ctx = canvas[0].getContext("2d");
 	var $canvas = $("#canvas");
-	var width = 160;
-	var height = 80;
+	var width = 520;
+	var height = 400;
 	$canvas.css("width", width + "px");
 	$canvas.css("height", height + "px");
 	var game = new Game($canvas[0], width, height);
-
-	//console.log = function(){};
+	game.Start();
+	game.AddOrganism("js/Animals/Plant.js");
 
 	$("#load-code").click(function(){
 		game.AddOrganismFromCode($("#code").val());

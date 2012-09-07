@@ -37,6 +37,10 @@ var BodyNerve = function(organism, mindUrl) {
 				var attackAction = messageObject.actions.AttackAction;
 				if (attackAction && self.Organism.State.IsAlive())
        				self.Organism.InProgressActions.AttackAction = new AttackAction(attackAction.TargetOrganismId);
+
+				var defendAction = messageObject.actions.DefendAction;
+				if (defendAction && self.Organism.State.IsAlive())
+       				self.Organism.InProgressActions.DefendAction = new DefendAction(defendAction.TargetOrganismId);
 				break;
 			default:
 				//messageObject.progress = 0;
@@ -48,7 +52,7 @@ var BodyNerve = function(organism, mindUrl) {
 		this.Send({ signal: Signals.Bulk, events: this.EventQueue });
 		this.EventQueue = [];
 	};
-	this.EventsToQueue = [Signals.EatCompleted, Signals.MoveCompleted, Signals.ReproduceCompleted, Signals.AttackCompleted];
+	this.EventsToQueue = [Signals.Attacked, Signals.EatCompleted, Signals.MoveCompleted, Signals.ReproduceCompleted, Signals.AttackCompleted];
 	
 	this.ShouldQueue = function(eventName){
 		for (var i = 0; i < this.EventsToQueue.length; i++)

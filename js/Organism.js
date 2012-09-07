@@ -10,6 +10,12 @@ var Organism = ClassWithEvents.extend({
 		this.MindCode = mindCode;
 		this.Direction = Direction.Left;
 		this.World = world;
+		var self = this;
+
+		this.Subscribe("Disappear", function()
+		{
+			self.Nerve.MindThread.terminate();
+		});
 	},
 	InitializeState: function(speciesData)
 	{
@@ -404,6 +410,9 @@ var Organism = ClassWithEvents.extend({
 	CurrentAttackAction: function(){
 		return this.InProgressActions.AttackAction;
 	},
+	CurrentDefendAction: function(){
+		return this.InProgressActions.DefendAction;
+	},
 	Bite: function(){
 		if (!this.State.IsAlive() || this.InProgressActions.EatAction == null)
 			return;
@@ -454,6 +463,7 @@ var Organism = ClassWithEvents.extend({
 	        newEnergy = EngineSettings.EnergyPerPlantFoodChunk * foodChunkCount;
 	    else
 	        newEnergy = EngineSettings.EnergyPerAnimalFoodChunk * foodChunkCount;
+	    console.log("Recovering " + newEnergy + " energy");
 	    attackerState.StoredEnergy(attackerState.StoredEnergy() + newEnergy);
 	},
 	GetEnergyFromLight: function(){
@@ -494,17 +504,11 @@ var Organism = ClassWithEvents.extend({
 		            damageCaused = MathUtils.RandomBetween(0, attackerState.Species.MaximumAttackDamagePerUnitRadius() * attackerState.Radius);
 
 		            //// Defense doesn't scale based on distance
-		            //DefendAction defendAction =
-		             //   (DefendAction) CurrentVector.Actions.DefendActions[defenderState.ID];
+		            var defendAction = defender.CurrentDefendAction();
 		            var defendDiscount = 0;
-		            /*if (defendAction != null && defendAction.TargetAnimal.ID == attackerState.ID)
-		            {
-		                defendDiscount = _random.Next(0,
-		                                             defenderState.AnimalSpecies.
-		                                                 MaximumDefendDamagePerUnitRadius*
-		                                             defenderState.Radius);
-		            }*/
-
+		            if (defendAction != null && defendAction.TargetOrganismId == attackerState.Id)
+		                defendDiscount = MathUtils.RandomBetween(0, defenderState.Species.MaximumDefendDamagePerUnitRadius * defenderState.Radius);
+		         
 		            if (damageCaused > defendDiscount)
 		            {
 		                damageCaused = damageCaused - defendDiscount;
@@ -514,7 +518,7 @@ var Organism = ClassWithEvents.extend({
 		                damageCaused = 0;
 
 		            killed = !defenderState.IsAlive();
-//		            defenderState.OrganismEvents.AttackedEvents.Add(new AttackedEventArgs(attackerState));
+		            defender.Send({ signal: Signals.Attacked, AttackerId: this.Id });
 		        }
 		    }
 		}

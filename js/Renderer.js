@@ -113,7 +113,7 @@ var Renderer = Class.extend({
 		*/
 		// Draw name
 		ctx.strokeStyle = "Black";
-		ctx.strokeText(organism.State.Species.Name + " #" + organism.Id + " " + organism.State.Radius, positionX, positionY + organismSprite.h + 15);
+		ctx.strokeText(organism.State.Species.Name + " #" + organism.Id + " " + organism.State.Generation, positionX, positionY + organismSprite.h + 15);
 	
 		// Draw energy left
 		var energy = organism.State.StoredEnergy() * organismSprite.w / organism.State.MaxEnergy();

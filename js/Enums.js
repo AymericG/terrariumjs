@@ -3,6 +3,7 @@ var Signals = {
 	ReproduceCompleted: "ReproduceCompleted",
 	AttackCompleted: "AttackCompleted",
 	EatCompleted: "EatCompleted",
+	Attacked: "Attacked",
 	Init: "Init",
 	Initialized: "Initialized",
 	Born: "Born",

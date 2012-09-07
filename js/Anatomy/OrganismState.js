@@ -13,6 +13,7 @@ var OrganismState = Class.extend({
 		this.FoodChunks = 0;
 		this._storedEnergy = this.MaxEnergy();
 		this.SeenOrganisms = [];
+		this.Generation = 0;
 	},
 	Serializable: function(withSeenOrganisms){
 		var state = {};
@@ -21,6 +22,7 @@ var OrganismState = Class.extend({
 		state.DeathReason = this.DeathReason;
 		state.TickAge = this.TickAge;
 		state.IncubationTicks = this.IncubationTicks;
+		state.Generation = this.Generation;
 		state.Position = this.Position;
 		state.ReproductionWait = this.ReproductionWait;
 		state.GrowthWait = this.GrowthWait;
@@ -108,8 +110,10 @@ var OrganismState = Class.extend({
 	},
 
 	EnergyState: function(){
-		var energyBuckets = (this.Species.MaximumEnergyPerUnitRadius() * this.Radius) / 5;
-		if (this._storedEnergy > energyBuckets * 4)
+		var maxEnergy = this.Species.MaximumEnergyPerUnitRadius() * this.Radius;
+		var energyBuckets = maxEnergy / 5;
+		if (this._storedEnergy == maxEnergy)
+		//if (this._storedEnergy > energyBuckets * 4)
 		    return EnergyState.Full;
 
 		if (this._storedEnergy > energyBuckets * 2)
