@@ -1,6 +1,10 @@
 var Signals = {
 	MoveCompleted: "MoveCompleted",
 	ReproduceCompleted: "ReproduceCompleted",
+	AttackCompleted: "AttackCompleted",
+	EatCompleted: "EatCompleted",
+	Init: "Init",
+	Initialized: "Initialized",
 	Born: "Born",
 
 	Tick: "Tick",
@@ -70,7 +74,8 @@ var AnimationIndexes = {
 	Defend: 1,
 	Die: 2,
 	Eat: 3,
-	Move: 4
+	Move: 4,
+	Nothing: 4
 };
 
 var Direction = {

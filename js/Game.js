@@ -28,11 +28,34 @@ var Game = function (canvas, width, height) {
 		return organism;
 	};
 
-	this.ForEachAliveOrganism = function(callback)
+	this.ForEachLiveOrganism = function(callback)
 	{
 		for (var organismId in self.World.Organisms) 
 			if (self.World.Organisms[organismId].State.IsAlive())
 				callback(self.World.Organisms[organismId]);
+	};
+	this.ForEachLivePlant = function(callback)
+	{
+		for (var organismId in self.World.Organisms) 
+		{
+			var organism = self.World.Organisms[organismId];
+			if (organism.State.IsAlive() && organism.State.IsPlant())
+				callback(organism);
+		}
+	};
+	this.ForEachLiveAnimal = function(callback)
+	{
+		for (var organismId in self.World.Organisms) 
+		{
+			var organism = self.World.Organisms[organismId];
+			if (organism.State.IsAlive() && !organism.State.IsPlant())
+				callback(organism);
+		}
+	};
+	this.ForEachOrganism = function(callback)
+	{
+		for (var organismId in self.World.Organisms) 
+			callback(self.World.Organisms[organismId]);
 	};
 	
 	this.AddOrganismFromCode = function(mindCode){
@@ -45,8 +68,8 @@ var Game = function (canvas, width, height) {
 		self.Started = true;
 	};
 
-	this.MoveAll = function(){
-		this.ForEachAliveOrganism(function(o){ if (!o.State.IsPlant()) o.Move(); });
+//	this.MoveAll = function(){
+//		this.ForEachAliveOrganism(function(o){ if (!o.State.IsPlant()) o.Move(); });
 		/*
 		var index = new GridIndex(this.World);
 		
@@ -151,33 +174,39 @@ var Game = function (canvas, width, height) {
 				newOrganism.InProgressActions.MoveToAction = null;
 		    }
 		}*/
-	};
+//	};
 
 	this.Tick = function () {
 		switch (this.Phase)
 		{
 			case 0:
-				this.ForEachAliveOrganism(function(o){ o.Age(); });
-				this.ForEachAliveOrganism(function(o){ o.Send({ signal: Signals.Tick }); });
-				break;
-			case 1:
-				this.MoveAll();            
-				break;
-			case 2:
-				this.ForEachAliveOrganism(function(o){ o.Bite(); });         
-				break;
-			case 3:
-				this.ForEachAliveOrganism(function(o){ o.Grow(); });         
-				break;
-			case 4:
-				this.ForEachAliveOrganism(function(o){ o.Incubate(); });         
-				break;
-			case 5:
-				this.ForEachAliveOrganism(function(o){ o.Heal(); });         
-				break;
-			case 6:
-				this.ForEachAliveOrganism(function(o){ o.Scan(); });  
-				this.ForEachAliveOrganism(function(o){ o.Nerve.SendEventQueue(); });  
+				this.ForEachLiveOrganism(function(o){ o.Send({ signal: Signals.Tick }); });
+				this.ForEachOrganism(function(o){ o.Age(); });
+				this.ForEachLiveAnimal(function(o){ o.Attack(); });
+
+//				break;
+//			case 1:
+				this.ForEachLiveAnimal(function(o){ o.Move(); });
+
+//				break;
+//			case 2:
+				this.ForEachLiveOrganism(function(o){ o.Bite(); });         
+//				break;
+//			case 3:
+				this.ForEachLiveOrganism(function(o){ o.Grow(); });         
+//				break;
+//			case 4:
+				this.ForEachLiveOrganism(function(o){ o.Incubate(); });         
+//				break;
+//			case 5:
+				this.ForEachLiveOrganism(function(o){ o.Heal(); });         
+//				break;
+//			case 6:
+				this.ForEachLivePlant(function(o){ o.GetEnergyFromLight(); });         
+//				break;
+//			case 7:
+				this.ForEachLiveOrganism(function(o){ o.Scan(); });  
+				this.ForEachLiveOrganism(function(o){ o.Nerve.SendEventQueue(); });  
 				
 				this.Phase = -1;
 				break;

@@ -5,8 +5,8 @@ $(document).ready(function() {
 //	var canvas = $("#canvas");
 //	var ctx = canvas[0].getContext("2d");
 	var $canvas = $("#canvas");
-	var width = 320;
-	var height = 320;
+	var width = 160;
+	var height = 80;
 	$canvas.css("width", width + "px");
 	$canvas.css("height", height + "px");
 	var game = new Game($canvas[0], width, height);
@@ -22,6 +22,9 @@ $(document).ready(function() {
 	});
 	$("#load-herbie").click(function(){
 		game.AddOrganism("js/Animals/Herbie.js");
+	});
+	$("#load-carnie").click(function(){
+		game.AddOrganism("js/Animals/Carnie.js");
 	});
 
 	$("#load-plant").click(function(){

@@ -1,6 +1,8 @@
 importScripts('../Dependencies.js');
 
 var species = new Species();
+species.MatureRadius = 24;
+species.Name = "Herbie";
 var organism = new AnimalMind(species);
 
 function PickRandomProperty(obj) {
@@ -18,13 +20,17 @@ organism.MoveToRandomPoint = function(){
 	var y = MathUtils.RandomBetween(0, this.World.WorldHeight);
 	var x = MathUtils.RandomBetween(0, this.World.WorldWidth);
 
-	this.BeginMoving(new MovementVector(new Point(x, y), 4));
+	this.BeginMoving(new MovementVector(new Point(x, y), 2));
 };
 
 // Herbie
 organism.OnIdle = function() {
 
-	if (!this.IsEating() && !this.IsMoving())
+	if (this.CanReproduce())
+		this.BeginReproduction(null);
+
+	this.WriteTrace(this.State.EnergyState());
+	if (!this.IsEating() && !this.IsMoving() && this.State.EnergyState() != EnergyState.Full)
 	{
 		this.WriteTrace("Moving...");
 		this.MoveToRandomPoint();
@@ -47,11 +53,11 @@ organism.OnIdle = function() {
 };
 
 organism.OnEatCompleted = function (){ 
-// 	this.MoveToRandomPoint(); 
+
 };
 
 organism.OnMoveCompleted = function (){
-	//	this.MoveToRandomPoint();
+
 };
 
 

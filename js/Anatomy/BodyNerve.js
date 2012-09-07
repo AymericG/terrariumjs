@@ -12,9 +12,9 @@ var BodyNerve = function(organism, mindUrl) {
 			console.log("[#" + self.Organism.Id + "] " + messageObject.message);
 	
 		switch(messageObject.signal) {
-			case Signals.Ready:
+			case Signals.Initialized:
 				this.Organism.InitializeState(messageObject.Species);
-				this.Organism.Trigger(Signals.Ready, this.Organism);
+				this.Organism.Trigger(Signals.Born, this.Organism);
 				break;
 
 			case Signals.Act: 
@@ -28,13 +28,15 @@ var BodyNerve = function(organism, mindUrl) {
 				
 				var reproduceAction = messageObject.actions.ReproduceAction;
 				if (reproduceAction && self.Organism.State.IsAlive())
-				{
 					self.Organism.InProgressActions.ReproduceAction = new ReproduceAction(reproduceAction.Dna);
-				}
 
 				var eatAction = messageObject.actions.EatAction;
 				if (eatAction && self.Organism.State.IsAlive())
        				self.Organism.InProgressActions.EatAction = new EatAction(eatAction.TargetOrganismId);
+
+				var attackAction = messageObject.actions.AttackAction;
+				if (attackAction && self.Organism.State.IsAlive())
+       				self.Organism.InProgressActions.AttackAction = new AttackAction(attackAction.TargetOrganismId);
 				break;
 			default:
 				//messageObject.progress = 0;
@@ -46,7 +48,7 @@ var BodyNerve = function(organism, mindUrl) {
 		this.Send({ signal: Signals.Bulk, events: this.EventQueue });
 		this.EventQueue = [];
 	};
-	this.EventsToQueue = [Signals.EatCompleted, Signals.MoveCompleted, Signals.ReproduceCompleted];
+	this.EventsToQueue = [Signals.EatCompleted, Signals.MoveCompleted, Signals.ReproduceCompleted, Signals.AttackCompleted];
 	
 	this.ShouldQueue = function(eventName){
 		for (var i = 0; i < this.EventsToQueue.length; i++)

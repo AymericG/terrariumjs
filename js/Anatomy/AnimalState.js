@@ -21,7 +21,20 @@ var AnimalState = OrganismState.extend({
         this._super(newRadius);
         this.FoodChunks += additionalRadius * EngineSettings.FoodChunksPerUnitOfRadius;
     },
+    CauseDamage: function(incrementalDamage)
+    {
+        if (incrementalDamage < 0)
+            throw new GameEngineException("Damage must be positive.");
 
+        if (this.Damage + incrementalDamage >= EngineSettings.DamageToKillPerUnitOfRadius * this.Radius)
+        {
+            this.Kill(PopulationChangeReason.Killed);
+            this.Damage = EngineSettings.DamageToKillPerUnitOfRadius * this.Radius;
+            return;
+        }
+
+        this.Damage = this.Damage + incrementalDamage;
+    },
 	EnergyRequiredToMove: function(distance, speed){
 		return distance * this.Radius * speed * EngineSettings.RequiredEnergyPerUnitOfRadiusSpeedDistance;
 	},

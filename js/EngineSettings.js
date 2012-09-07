@@ -5,13 +5,41 @@ var EngineSettings = {
 	MaxMatureSize: 48,
 	MaxOrganismCount: 10,
 	RequiredEnergyPerUnitOfRadiusSpeedDistance: 0.005,
-	TickInterval: 10,
+	TickInterval: 60,
 	TicksToIncubate: 10,
 	AnimalReproductionWaitPerUnitRadius: 8,
 	PlantReproductionWaitPerUnitRadius: 25,
 	AnimalIncubationEnergyMultiplier: 1.5,
 	FoodChunksPerUnitOfRadius: 25,
 	EnergyPerAnimalFoodChunk: 1,
+    ///   The amount of damage required to before a creature
+    ///   is killed.  This is multiplied by the Radius of the
+    ///   creature and so larger creatures can take many more
+    ///   hits than smaller creatures.
+    DamageToKillPerUnitOfRadius: 190,
+    ///   Represents the maximum amount of damage that can be dealt by
+    ///   a creature that places MaxAvailableCharacteristicPoints into the
+    ///   AttackDamagePointsAttribute.
+    ///   The amount of damage taken from this constant is multiplied by the current
+    ///   radius of the creature.  This means both MatureSize and the AttackDamagePointsAttribute
+    ///   can increase the amount of damage your creature can dish out.
+    MaximumInflictedDamagePerUnitOfRadius: 25,
+
+    ///   Represents the base amount of damage that can be dealt by
+    ///   a creature that places 0 points into the AttackDamagePointsAttribute.
+    ///   The amount of damage taken from this constant is multiplied by the current
+    ///   radius of the creature.  This means both MatureSize and the AttackDamagePointsAttribute
+    ///   can increase the amount of damage your creature can dish out.
+    BaseInflictedDamagePerUnitOfRadius: 50,
+    ///   The maximum amount of energy a plant can gain per tick from
+    ///   the natural light of the EcoSystem.
+    MaxEnergyFromLightPerTick: 550,
+
+    ///   The amount of time in game ticks that a plant can stay alive.  This
+    ///   number is multiplied by the plant's MatureSize so smaller plants
+    ///   will not live as long as larger plants.
+    PlantLifeSpanPerUnitMaximumRadius: 150,
+
     ///   Represents the base food chunks per bite granted to
     ///   a creature that puts 0 points into the EatingSpeedPointsAttribute.
     ///   The number of food chunks taken from this constant is multiplied by the current

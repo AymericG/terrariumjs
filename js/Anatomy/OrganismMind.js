@@ -33,13 +33,13 @@ var OrganismMind = Class.extend({
 	ProcessSignal: function(messageObject)
 	{
 		switch(messageObject.signal) {
-			case Signals.Born:
+			case Signals.Init:
 				this.World = messageObject.World;
 				if (messageObject.Code)
 					eval(messageObject.Code);
 
 				// Send back Species.
-				this.Nerve.Send({ signal: Signals.Ready, Species: this.Species });
+				this.Nerve.Send({ signal: Signals.Initialized, Species: this.Species });
 
 				break;
 			case Signals.Tick:

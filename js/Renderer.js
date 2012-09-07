@@ -28,22 +28,24 @@ var Renderer = Class.extend({
     {
     	var animationContainer = {};
     	for (var direction in DirectionIndexes)
-    		animationContainer[direction] = this.InitializeFramesInOneDirection(AnimationIndexes[animation], DirectionIndexes[direction]);
+    		animationContainer[direction] = this.InitializeFramesInOneDirection(AnimationIndexes[animation], DirectionIndexes[direction], animation == AnimationIndexes.NoAction);
     	return animationContainer;
     },
-    InitializeFramesInOneDirection: function(animationIndex, directionIndex)
+    InitializeFramesInOneDirection: function(animationIndex, directionIndex, onlyOneFrame)
     {
     	var direction = {};
 
     	var size = 24;
     	var frames = [];
-    	for (var i = 0; i < 10; i++)
+		var nbFrames = nbFrames ? 1 : 10;  
+
+    	for (var i = 0; i < nbFrames; i++)
     		frames.push([i*size, animationIndex*size*8+directionIndex*size, 5]);
     	direction[size] = frames;
 
     	size = 48;
     	frames = [];
-    	for (var i = 0; i < 10; i++)
+    	for (var i = 0; i < nbFrames; i++)
     		frames.push([i*size, animationIndex*size*8+directionIndex*size, 5]);
     	direction[size] = frames;
 
@@ -88,7 +90,7 @@ var Renderer = Class.extend({
 	DrawOrganism: function(organism){
 		var ctx = this.Layer.ctx;
 		var organismSprite = this.Sprites[organism.Id];
-		if (organism.Radius == 24 && organismSprite.w != 48)
+		if (organism.State.Radius >= 17 && organismSprite.w != 48)
 		{
 			//console.log("switch");
 			organismSprite.remove();
@@ -106,12 +108,12 @@ var Renderer = Class.extend({
 		var radiusH = EngineSettings.GridCellHeight * organism.State.CellRadius();
 
 		// Draw cell boundary box
-		ctx.strokeStyle = "Blue";
+		/*ctx.strokeStyle = "Blue";
 		ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2+EngineSettings.GridCellWidth, radiusH*2+EngineSettings.GridCellHeight);
-
+		*/
 		// Draw name
 		ctx.strokeStyle = "Black";
-		ctx.strokeText("#" + organism.Id + " (radius: " + organism.State.Radius + ")", positionX, positionY + organismSprite.h + 15);
+		ctx.strokeText(organism.State.Species.Name + " #" + organism.Id + " " + organism.State.Radius, positionX, positionY + organismSprite.h + 15);
 	
 		// Draw energy left
 		var energy = organism.State.StoredEnergy() * organismSprite.w / organism.State.MaxEnergy();
@@ -122,8 +124,8 @@ var Renderer = Class.extend({
 
 		// 
 		ctx.strokeStyle = "White";
-		ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2+EngineSettings.GridCellWidth, radiusH*2+EngineSettings.GridCellHeight);
-
+		ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2/*+EngineSettings.GridCellWidth*/, radiusH*2/*+EngineSettings.GridCellHeight*/);
+		
 		ctx.fillStyle = "black";
 
 		// pick the right animation, if not plant
@@ -136,16 +138,13 @@ var Renderer = Class.extend({
 			}
 
 			var displayAction = organism.DisplayAction();
-			if (displayAction == DisplayAction.Nothing)
-			{
-				displayAction = DisplayAction.Move;
-			}
-			
 			if (organismSprite.LastDisplayAction != displayAction || organismSprite.LastDirection != organism.Direction)
 			{
 				//console.log(organismSprite.LastDisplayAction + " " + displayAction);
 				delete this.Cycles[organism.Id];
-				var loop = displayAction != DisplayAction.Die;
+				var loop = displayAction != DisplayAction.Die && displayAction != DisplayAction.Nothing;
+				if (typeof(this.Animations[displayAction]) == 'undefined')
+					console.log("undefined animation: " + displayAction);
 				this.Cycles[organism.Id] = this.Scene.Cycle(this.Animations[displayAction][organism.Direction][organismSprite.w]);
 				this.Cycles[organism.Id].repeat = loop;
 				this.Cycles[organism.Id].addSprite(organismSprite);
@@ -158,7 +157,7 @@ var Renderer = Class.extend({
 	},
 	CreateSprite: function(organism){
 		var sprite = null
-		var size = organism.State.Radius < 24 ? 24 : 48;
+		var size = organism.State.Radius < 17 ? 24 : 48;
 		var spriteUrl = 'img/' + organism.State.Species.Skin + size + '.bmp';
 		//console.log(spriteUrl);
 		sprite = this.Scene.Sprite(spriteUrl, this.Layer);

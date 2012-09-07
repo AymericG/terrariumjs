@@ -29,13 +29,54 @@ var World = ClassWithEvents.extend({
 			WorldHeight: this.WorldHeight
 		};
 	},
+    GetAvailableLight: function(plant)
+    {
+        var maxX = plant.GridX() + plant.CellRadius() + 25;
+        if (maxX > this.GridWidth - 1)
+            maxX = this.GridWidth - 1;
+        var overlappingPlantsEast = this.FindOrganismsInCells(plant.GridX() + plant.CellRadius(),
+                                                         maxX, plant.GridY() - plant.CellRadius(),
+                                                         plant.GridY() + plant.CellRadius());
+
+        var minX = plant.GridX() - plant.CellRadius() - 25;
+        if (minX < 0)
+            minX = 0;
+        var overlappingPlantsWest = this.FindOrganismsInCells(minX, plant.GridX() - plant.CellRadius(),
+                                                         plant.GridY() - plant.CellRadius(),
+                                                         plant.GridY() + plant.CellRadius());
+
+        var maxAngleEast = 0;
+        for (var i = 0; i < overlappingPlantsEast.length; i++)
+        {
+            var targetPlant = overlappingPlantsEast[i];
+            if (!targetPlant.IsPlant()) 
+                continue;
+            var currentAngle = Math.atan2(targetPlant.Height, targetPlant.Position.X - plant.Position.X);
+            if (currentAngle > maxAngleEast)
+                maxAngleEast = currentAngle;
+        }
+
+        var maxAngleWest = 0;
+        for (var i = 0; i < overlappingPlantsWest.length; i++)
+        {
+            var targetPlant = overlappingPlantsWest[i];
+            if (!targetPlant.IsPlant()) 
+                continue;
+            var currentAngle = Math.atan2(targetPlant.Height, plant.Position.X - targetPlant.Position.X);
+            if (currentAngle > maxAngleWest)
+                maxAngleWest = currentAngle;
+        }
+
+        return Math.round(((Math.PI - maxAngleEast + maxAngleWest)/Math.PI)*100);
+    },
 	FillCells: function(state, clear)
     {
+        //console.log("Filling: " + state.Id);
     	var cellX = state.GridX();
         var cellY = state.GridY();
         var cellRadius = state.CellRadius();
-        for (var x = cellX - cellRadius; x <= cellX + cellRadius; x++)
-            for (var y = cellY - cellRadius; y <= cellY + cellRadius; y++)
+        for (var x = cellX - cellRadius; x < cellX + cellRadius; x++)
+            for (var y = cellY - cellRadius; y < cellY + cellRadius; y++)
             {
                 if (clear)
                 {
@@ -131,39 +172,40 @@ var World = ClassWithEvents.extend({
 
 		var organism = new Organism(organismId, workerUrl, mindCode, self);	
 
-		organism.Subscribe(Signals.Ready, function(){
-
+		organism.Subscribe(Signals.Born, function(){
+            if (typeof(self.Organisms[this.Id]) != 'undefined')
+            {
+                // this fixes a weird bug that makes us receive several times the Born event for a specific individual.
+                // TODO: fix the issue rather than use this hack.
+                return;
+            }
 			// Add to world
 			var availableSpot = self.FindEmptySpot(this.State.CellRadius()); 
 			if (availableSpot == null)
 			{
 				console.log("Could not find any empty space.");
-				return null;
+				return;
 			}
 
 			self.OrganismCount++;
 			self.OrganismIndex++;
 			organism.State.Position = availableSpot;
-			var state = organism.State;
-			self.FillCells(state, false);
-			self.Organisms[organismId] = organism;
-            self.Trigger("OrganismAdded", organism);
+            
+            this.Subscribe("Reproduce", function(){ self.AddOrganism(this.MindUrl, this.MindCode); });
+            this.Subscribe("Disappear", function(){
+                var state = self.Organisms[this.Id].State; 
+                self.FillCells(state, true);
+                delete self.Organisms[this.Id];
+                self.OrganismCount--;
+            });
+
+            var state = this.State;
+            self.FillCells(state, false);
+            self.Organisms[organismId] = this;
+            self.Trigger("OrganismAdded", this);
 		});
 
-		organism.Send({ signal: Signals.Born, World: self.Raw(), Code: mindCode });
-
-		organism.Subscribe("Reproduce", function(){
-			self.AddOrganism(organism.MindUrl, organism.MindCode);
-		});
-
-		organism.Subscribe("Disappear", function(){
-			var state = self.Organisms[this.Id].State; 
-			self.FillCells(state, true);
-			delete self.Organisms[this.Id];
-			self.OrganismCount--;
-		});
-
-
+		organism.Send({ signal: Signals.Init, World: self.Raw(), Code: mindCode });
 		return organism;
 	},
 	FindOrganismsInView: function(state, radius){

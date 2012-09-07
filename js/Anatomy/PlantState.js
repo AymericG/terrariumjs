@@ -58,7 +58,27 @@ var PlantState = OrganismState.extend({
             foodChunkDelta = maxHealingChunks;
             this.FoodChunks += foodChunkDelta;
         }
+        //console.log("[P] Healing: " + foodChunkDelta * EngineSettings.PlantRequiredEnergyPerUnitOfHealing);
         this.BurnEnergy(foodChunkDelta * EngineSettings.PlantRequiredEnergyPerUnitOfHealing);
-	}    
+	},
+    ///  This is incomplete, this should be a characteristic that enables
+    ///  creatures to determine how much light they need to obtain maximum
+    ///  energy per tick.  This can be used to create trees that require
+    ///  lots of light or moss that requires very little.
+    OptimalLightPercentage: 100,
+
+    /// The amount of energy a plant gets decreases linearly as you get away from the optimal
+    /// <param name="availableLightPercentage">The amount of light available to give to this plant.</param>
+    GiveEnergy: function(availableLightPercentage)
+    {
+        var percentageFromOptimal = availableLightPercentage - this.OptimalLightPercentage;
+        if (percentageFromOptimal < 0)
+            percentageFromOptimal = -percentageFromOptimal;
+
+        var energyGained = Math.round((1 - percentageFromOptimal/100)*EngineSettings.MaxEnergyFromLightPerTick);
+
+        this.StoredEnergy(this.StoredEnergy() + energyGained);
+    }
+
 });
 

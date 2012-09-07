@@ -3,5 +3,6 @@ var PendingActions = Class.extend({
 		this.ReproduceAction = null;
 		this.MoveToAction = null;
 		this.EatAction = null;
+		this.AttackAction = null;
 	}
 });

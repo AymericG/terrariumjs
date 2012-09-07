@@ -26,18 +26,22 @@ var Organism = ClassWithEvents.extend({
 		if (!this.State.IsAlive())
 			return DisplayAction.Die;
 
+		if (this.IsAttacking())
+			return DisplayAction.Attack;
+
 		if (this.IsEating())
 			return DisplayAction.Eat;
 
 		if (this.IsMoving())
 			return DisplayAction.Move;
 
-		if (this.IsIncubating())
-			return DisplayAction.Reproduce;
 		return DisplayAction.Nothing;   
 	},
 	IsIncubating: function(){
 		return this.InProgressActions.ReproduceAction != null;
+	},
+	IsAttacking: function(){
+		return this.InProgressActions.AttackAction != null;
 	},
 	IsMoving: function(){
 		return this.InProgressActions.MoveToAction != null;
@@ -302,6 +306,7 @@ var Organism = ClassWithEvents.extend({
 		{
 			if (this.State.EnergyState() >= EnergyState.Normal)
 			{
+				//console.log("Consuming energy to reproduce");
 				// Only incubate if the organism isn't hungry	    	
 				this.State.BurnEnergy(this.State.Radius * EngineSettings.AnimalIncubationEnergyPerUnitOfRadius);
 			    this.State.AddIncubationTick();
@@ -327,10 +332,7 @@ var Organism = ClassWithEvents.extend({
 
                 // When plants die they disappear
                 if (this.State.EnergyState() == EnergyState.Dead)
-                {
-                	console.log("Disappear. By lack of energy");
             		this.Trigger("Disappear", this);
-            	}
             }
         }
         else
@@ -399,6 +401,9 @@ var Organism = ClassWithEvents.extend({
 	CurrentMoveToAction: function(){
 		return this.InProgressActions.MoveToAction;
 	},
+	CurrentAttackAction: function(){
+		return this.InProgressActions.AttackAction;
+	},
 	Bite: function(){
 		if (!this.State.IsAlive() || this.InProgressActions.EatAction == null)
 			return;
@@ -427,7 +432,7 @@ var Organism = ClassWithEvents.extend({
 	    // If this is more than the animal can eat in one bite, limit it to what they can eat
 	    if (foodChunkCount > attackerState.Species.EatingSpeedPerUnitRadius() * attackerState.Radius)
 	    	foodChunkCount = attackerState.Species.EatingSpeedPerUnitRadius() * attackerState.Radius;
-	    console.log("defender: " + defenderState.FoodChunks + " removing " + foodChunkCount);
+//	    console.log("defender: " + defenderState.FoodChunks + " removing " + foodChunkCount);
 		
 	    if (defenderState.FoodChunks <= foodChunkCount)
 	    {
@@ -450,5 +455,76 @@ var Organism = ClassWithEvents.extend({
 	    else
 	        newEnergy = EngineSettings.EnergyPerAnimalFoodChunk * foodChunkCount;
 	    attackerState.StoredEnergy(attackerState.StoredEnergy() + newEnergy);
+	},
+	GetEnergyFromLight: function(){
+		if (!this.State.IsPlant() || !this.State.IsAlive())
+			return;
+		var availableLight = this.World.GetAvailableLight(this.State);
+		this.State.GiveEnergy(availableLight);
+	},
+	Attack: function(){
+		var attackerState = this.State;
+		if (!attackerState.IsAlive || this.CurrentAttackAction() == null)
+			return;
+
+		var defender = this.World.Organisms[this.CurrentAttackAction().TargetOrganismId];
+		
+		var damageCaused = 0;
+		var escaped = false;
+		var killed = false;
+
+		if (defender == null)
+		{
+			this.InProgressActions.AttackAction = null;
+		    // They were killed and eaten before the attack occurred
+		    escaped = true;
+		}
+		else
+		{
+			var defenderState = defender.State;
+		    // See if they are near enough to attack
+		    // We let them attack if they are at most 1 rectangle away because
+		    // it is hard to get closer than this
+		    if (attackerState.IsWithinRect(1, defenderState))
+		    {
+		        // If the animal is dead, it's just zero damage
+		        if (defenderState.IsAlive())
+		        {
+		            // Figure out the maximum possible attack damage
+		            damageCaused = MathUtils.RandomBetween(0, attackerState.Species.MaximumAttackDamagePerUnitRadius() * attackerState.Radius);
+
+		            //// Defense doesn't scale based on distance
+		            //DefendAction defendAction =
+		             //   (DefendAction) CurrentVector.Actions.DefendActions[defenderState.ID];
+		            var defendDiscount = 0;
+		            /*if (defendAction != null && defendAction.TargetAnimal.ID == attackerState.ID)
+		            {
+		                defendDiscount = _random.Next(0,
+		                                             defenderState.AnimalSpecies.
+		                                                 MaximumDefendDamagePerUnitRadius*
+		                                             defenderState.Radius);
+		            }*/
+
+		            if (damageCaused > defendDiscount)
+		            {
+		                damageCaused = damageCaused - defendDiscount;
+		                defenderState.CauseDamage(damageCaused);
+		            }
+		            else
+		                damageCaused = 0;
+
+		            killed = !defenderState.IsAlive();
+//		            defenderState.OrganismEvents.AttackedEvents.Add(new AttackedEventArgs(attackerState));
+		        }
+		    }
+		}
+
+		// Tell the attacker what happened
+		this.Send({
+			signal: "AttackCompleted",
+			Killed: killed,
+			Escaped: escaped,
+			DamageCaused: damageCaused
+		});
 	}
 });

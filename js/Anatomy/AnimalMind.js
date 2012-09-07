@@ -76,8 +76,28 @@ var AnimalMind = OrganismMind.extend({
 		return this.State.EnergyState() <= EnergyState.Normal;
 	},
 	WithinEatingRange: function(targetOrganism){
-		return this.State.IsAdjacentOrOverlapping(targetOrganism);
+		var result = this.State.IsAdjacentOrOverlapping(targetOrganism);
+		//this.WriteTrace("WithinEatingRange:");
+		//this.WriteTrace(this.State.GridX() + " " + this.State.GridY() + this.State.CellRadius());
+		//this.WriteTrace(targetOrganism.GridX() + " " + targetOrganism.GridY() + targetOrganism.CellRadius());
+		//this.WriteTrace("result -> " + result);
+		return result;
     },
+    ///   Used to determine if your creature is within range to attack another
+    ///   target creature.
+    ///   This method does not attempt to validate the position of the
+    ///   organismState with respect to the current world state.  If you
+    ///   pass a stale object in then you may get stale results.  Make sure
+    ///   you use the LookFor method to get the most up-to-date results.
+    WithinAttackingRange: function(targetOrganism)
+    {
+        if (targetOrganism == null)
+            throw new ArgumentNullException("targetOrganism");
+
+        return this.State.IsWithinRect(1, targetOrganism);
+    },
+
+
     BeginEating: function(targetOrganism)
 	{
         if (targetOrganism == null)
@@ -107,9 +127,28 @@ var AnimalMind = OrganismMind.extend({
         var action = new EatAction(targetOrganism.Id);
         this.PendingActions.EatAction = action;
 
-        this.WriteTrace("Setting EatAction: " + targetOrganism.Id);
+        //this.WriteTrace("Setting EatAction: " + targetOrganism.Id);
         this.InProgressActions.EatAction = action;
-    }
+    },
+    StopAttacking: function(){
+		this.PendingActions.AttackAction = null;
+		this.InProgressActions.AttackAction = null;
+    },
+    BeginAttacking: function(targetAnimal){
+    	var attackAction = new AttackAction(targetAnimal.Id);
+    	this.PendingActions.AttackAction = attackAction;
+		this.InProgressActions.AttackAction = attackAction;
+    },
 
+	CurrentAttackAction: function(){
+		if (this.PendingActions.AttackAction != null)
+			return this.PendingActions.AttackAction;
+		if (this.InProgressActions.AttackAction != null)
+			return (this.InProgressActions.AttackAction);
+		return null;
+	},
+	IsAttacking: function(){
+		return this.CurrentAttackAction() != null;
+	},
 });
 

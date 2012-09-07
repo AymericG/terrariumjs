@@ -109,7 +109,6 @@ var OrganismState = Class.extend({
 
 	EnergyState: function(){
 		var energyBuckets = (this.Species.MaximumEnergyPerUnitRadius() * this.Radius) / 5;
-
 		if (this._storedEnergy > energyBuckets * 4)
 		    return EnergyState.Full;
 
@@ -128,7 +127,8 @@ var OrganismState = Class.extend({
 
 	BurnEnergy: function(energyValue)
     {
-		if (this.IsImmutable)
+    	//console.log(energyValue);
+    	if (this.IsImmutable)
 		    throw new GameEngineException("Object is immutable.");
 
 		if (!this.IsAlive())
@@ -137,9 +137,7 @@ var OrganismState = Class.extend({
 		if (this.StoredEnergy() - energyValue <= 0)
 		    this.Kill(PopulationChangeReason.Starved);
 		else
-		{
 		    this.StoredEnergy(this.StoredEnergy() - energyValue);
-		}
 	},
 
 	IsMature: function(){
@@ -185,6 +183,7 @@ var OrganismState = Class.extend({
 
     Kill: function (reason)
     {
+    	console.log("Killed. [" + reason + "]");
     	if (this.IsImmutable)
 		    throw new GameEngineException("Object is immutable.");
 
@@ -235,7 +234,8 @@ var OrganismState = Class.extend({
     },
     IsAdjacentOrOverlapping: function(state2)
     {
-		return this.IsWithinRect(0, state2);
+		var result = this.IsWithinRect(0, state2);
+		return result;
     },
     IsWithinRect: function(extraRadius, state2)
 	{
@@ -243,26 +243,20 @@ var OrganismState = Class.extend({
 			return false;
 
         var state1Radius = this.CellRadius() + extraRadius;
-        var state2Radius = this.CalculateCellRadius(state2.Radius);//TODO: Change back to state2.CellRadius();
+        var state2Radius = state2.CellRadius();
 
         var difference = (this.GridX() - state1Radius) - (state2.GridX() - state2Radius);
         if (difference < 0)
         {
             // Negative means state1 boundary < state2 boundary
             if (-difference > (state1Radius*2) + 1)
-            {
-                // X isn't overlapping or adjacent
-                return false;
-            }
+                return false; // X isn't overlapping or adjacent
         }
         else
         {
             // state2 boundary <=  state1 boundary
             if (difference > (state2Radius*2) + 1)
-            {
-                // X isn't overlapping or adjacent
-                return false;
-            }
+                return false; // X isn't overlapping or adjacent
         }
 
         difference = (this.GridY() - state1Radius) - (state2.GridY() - state2Radius);
@@ -270,19 +264,13 @@ var OrganismState = Class.extend({
         {
             // Negative means state1 boundary < state2 boundary
             if (-difference > (state1Radius*2) + 1)
-            {
-                // Y isn't overlapping or adjacent
-                return false;
-            }
+                return false; // Y isn't overlapping or adjacent
         }
         else
         {
             // state2 boundary <=  state1 boundary
             if (difference > (state2Radius*2) + 1)
-            {
-                // Y isn't overlapping or adjacent
-                return false;
-            }
+                return false; // Y isn't overlapping or adjacent
         }
         return true;
 	}

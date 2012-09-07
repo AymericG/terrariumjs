@@ -11,6 +11,7 @@ importScripts(baseUrl + 'Geometry/Point.js');
 importScripts(baseUrl + 'Geometry/MovementVector.js');
 
 importScripts(baseUrl + 'Actions/Action.js');
+importScripts(baseUrl + 'Actions/AttackAction.js');
 importScripts(baseUrl + 'Actions/EatAction.js');
 importScripts(baseUrl + 'Actions/ReproduceAction.js');
 importScripts(baseUrl + 'Actions/MoveToAction.js');
