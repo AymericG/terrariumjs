@@ -56,8 +56,9 @@ var MovementSegment = Class.extend({
     ClipSegment: function(blocker)
     {
         var segment = this;
-        segment.Previous.BlockedBy = blocker;
+		console.log("blocked");
 
+        segment.Previous.BlockedBy = blocker;
         while (segment != null)
         {
             // the starting segment should never get clipped, therefore there should always be

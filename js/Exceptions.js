@@ -12,3 +12,7 @@ var NotEnoughEnergyException = Exception.extend({});
 var NotReadyToReproduceException = Exception.extend({});
 var ArgumentNullException = Exception.extend({});
 var TooFastException = Exception.extend({});
+var AlreadyFullException = Exception.extend({});
+var NotWithinDistanceException = Exception.extend({});
+var ImproperFoodException = Exception.extend({});
+

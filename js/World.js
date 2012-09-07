@@ -1,6 +1,7 @@
-var World = Class.extend({
+var World = ClassWithEvents.extend({
 	init: function(width, height)
 	{
+        this._super();
 		this.WorldWidth = width;
 		this.WorldHeight = height;
 		this.Organisms = {};
@@ -61,6 +62,8 @@ var World = Class.extend({
     },
     FindOrganismsInCells: function(minGridX, maxGridX, minGridY, maxGridY)
     {
+        //console.log(minGridX + " " + maxGridX + " " + minGridY + " " + maxGridY);        
+        
         var lastFound = null;
 
         // Since organisms are represented at multiple places in the grid, make
@@ -101,9 +104,11 @@ var World = Class.extend({
         var	newLocation = new Point(MathUtils.RandomBetween(cellRadius, this.GridWidth - 1 - cellRadius),
                                     MathUtils.RandomBetween(cellRadius, this.GridHeight - 1 - cellRadius));
         var retry = 20;
+        //console.log("maxX:" + (this.GridWidth - 1 - cellRadius) + " maxY: " + (this.GridHeight - 1 - cellRadius));
+        //console.log(newLocation.ToString() + " cellRadius: " + cellRadius);
         while (retry > 0 && this.FindOrganismsInCells(newLocation.X - cellRadius, newLocation.X + cellRadius, newLocation.Y - cellRadius, newLocation.Y + cellRadius).length != 0)
         {
-        	console.log("Retrying to find an empty spot.");
+        	//console.log("Retrying to find an empty spot.");
             newLocation = new Point(MathUtils.RandomBetween(cellRadius, this.GridWidth - 1 - cellRadius),
                                     MathUtils.RandomBetween(cellRadius, this.GridHeight - 1 - cellRadius));
             retry--;
@@ -142,12 +147,13 @@ var World = Class.extend({
 			var state = organism.State;
 			self.FillCells(state, false);
 			self.Organisms[organismId] = organism;
+            self.Trigger("OrganismAdded", organism);
 		});
 
 		organism.Send({ signal: Signals.Born, World: self.Raw(), Code: mindCode });
 
 		organism.Subscribe("Reproduce", function(){
-			AddOrganism(organism.MindUrl, organism.MindCode);
+			self.AddOrganism(organism.MindUrl, organism.MindCode);
 		});
 
 		organism.Subscribe("Disappear", function(){
@@ -156,6 +162,7 @@ var World = Class.extend({
 			delete self.Organisms[this.Id];
 			self.OrganismCount--;
 		});
+
 
 		return organism;
 	},
@@ -373,5 +380,30 @@ var World = Class.extend({
         }
 
         return foundOrganisms;
-	}
+	},
+    WouldOnlyOverlapSelf: function(organismId, gridX, gridY, cellRadius)
+    {
+        var minGridX = gridX - cellRadius;
+        var maxGridX = gridX + cellRadius;
+        var minGridY = gridY - cellRadius;
+        var maxGridY = gridY + cellRadius;
+
+        // If it would be out of bounds, return false.
+        if (minGridX < 0 || maxGridX > this.GridWidth - 1 ||
+            minGridY < 0 || maxGridY > this.GridHeight - 1)
+            return false;
+
+        for (var x = minGridX; x <= maxGridX; x++)
+        {
+            for (var y = minGridY; y <= maxGridY; y++)
+            {
+                if (this._cellOrganisms[x][y] == null) 
+                    continue;
+                if (this._cellOrganisms[x][y].Id != organismId)
+                    return false;
+            }
+        }
+
+        return true;
+    }
 });

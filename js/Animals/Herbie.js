@@ -18,17 +18,45 @@ organism.MoveToRandomPoint = function(){
 	var y = MathUtils.RandomBetween(0, this.World.WorldHeight);
 	var x = MathUtils.RandomBetween(0, this.World.WorldWidth);
 
-	this.BeginMoving(new MovementVector(new Point(x, y), 2));
+	this.BeginMoving(new MovementVector(new Point(x, y), 4));
 };
 
-// Wandering Ghost
+// Herbie
 organism.OnIdle = function() {
-	if (!this.IsMoving())
+
+	if (!this.IsEating() && !this.IsMoving())
+	{
+		this.WriteTrace("Moving...");
 		this.MoveToRandomPoint();
-	//if (this.State.SeenOrganisms && this.State.SeenOrganisms.length != 0)
-	//	this.log("I can see " + this.State.SeenOrganisms.length);
+	}
+	if (this.State.SeenOrganisms.length == 0)
+		return;
+
+	for (var i = 0; i < this.State.SeenOrganisms.length; i++)
+	{
+		var target = this.State.SeenOrganisms[i];
+		if (target.IsPlant()){
+			if (!this.IsEating() && this.CanEat() && this.WithinEatingRange(target))
+			{
+				this.WriteTrace("Eating...");
+				this.StopMoving();
+				this.BeginEating(target);
+			}
+		}
+	}
+};
+
+organism.OnEatCompleted = function (){ 
+// 	this.MoveToRandomPoint(); 
 };
 
 organism.OnMoveCompleted = function (){
-	this.MoveToRandomPoint();
+	//	this.MoveToRandomPoint();
 };
+
+
+
+
+
+
+

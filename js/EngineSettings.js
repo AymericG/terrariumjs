@@ -5,13 +5,30 @@ var EngineSettings = {
 	MaxMatureSize: 48,
 	MaxOrganismCount: 10,
 	RequiredEnergyPerUnitOfRadiusSpeedDistance: 0.005,
-	TickInterval: 50,
+	TickInterval: 10,
 	TicksToIncubate: 10,
 	AnimalReproductionWaitPerUnitRadius: 8,
 	PlantReproductionWaitPerUnitRadius: 25,
 	AnimalIncubationEnergyMultiplier: 1.5,
 	FoodChunksPerUnitOfRadius: 25,
 	EnergyPerAnimalFoodChunk: 1,
+    ///   Represents the base food chunks per bite granted to
+    ///   a creature that puts 0 points into the EatingSpeedPointsAttribute.
+    ///   The number of food chunks taken from this constant is multiplied by the current
+    ///   radius of the creature.  This means both MatureSize and the EatingSpeedPointsAttribute
+    ///   can increase the number of food chunks taken per bite.
+    BaseEatingSpeedPerUnitOfRadius: 1,
+
+    ///   Represents the maximum number of food chunks per bite that can be taken by a
+    ///   creature that places MaxAvailableCharacteristicPoints into the EatingSpeedPointsAttribute.
+    ///   The number of food chunks taken from this constant is multiplied by the current
+    ///   radius of the creature.  This means both MatureSize and the EatingSpeedPointsAttribute
+    ///   can increase the number of food chunks taken per bite.
+    MaximumEatingSpeedPerUnitOfRadius: 100,
+
+    ///   The amount of energy given to a creature for
+    ///   one food chunk from a plant.
+    EnergyPerPlantFoodChunk: 1,
     ///   Represents the base distance a creature can see if they place
     ///   0 points into the EyesightPointsAttribute.
     ///   This distance is in Terrarium Cells, so you have to multiply
@@ -84,6 +101,33 @@ var EngineSettings = {
 	GridHeightPowerOfTwo: 3,
     GridWidthPowerOfTwo: 3
 };
+EngineSettings.MinimumSpeedToMoveAtMinimumEnergy = 5;
+EngineSettings.MinimumUnitsToMoveAtMinimumEnergy = 2000;
+
+EngineSettings.EnergyRequiredToMoveMinimumRequirements =
+            EngineSettings.MinimumUnitsToMoveAtMinimumEnergy*EngineSettings.MinimumSpeedToMoveAtMinimumEnergy*
+            EngineSettings.RequiredEnergyPerUnitOfRadiusSpeedDistance +
+            (EngineSettings.MinimumUnitsToMoveAtMinimumEnergy/EngineSettings.MinimumSpeedToMoveAtMinimumEnergy)*
+            EngineSettings.BaseAnimalEnergyPerUnitOfRadius;
+///   Represents the amount of energy storage per unit radius
+///   granted to a creature when 0 points have been placed into
+///   the MaximumEnergyPointsAttribute.
+///   Even if 0 points are placed into the MaximumEnergyPointsAttribute
+///   a creature can still achieve higher energy storage by increasing
+///   MatureSize.
+EngineSettings.MaxEnergyBasePerUnitRadius = EngineSettings.EnergyRequiredToMoveMinimumRequirements;
+
+///   Represents the highest attainable energy storage
+///   per unit radius.  In order to achieve this maximum
+///   available energy you must apply MaxAvailableCharacteristicPoints
+///   to the MaximumEnergyPointsAttribute.
+///   Please note that this value multiplied by your current radius
+///   is your actual total energy storage.  This means that putting
+///   points into the MaximumEnergyPointsAttribute or increasing the
+///   MatureSize of your creature will both increase the total
+///   energy storage.
+EngineSettings.MaxEnergyMaximumPerUnitRadius = EngineSettings.EnergyRequiredToMoveMinimumRequirements * 20;
+
 EngineSettings.AnimalMatureSizeProvidedEnergyPerUnitRadius = EngineSettings.FoodChunksPerUnitOfRadius * EngineSettings.EnergyPerAnimalFoodChunk;
 EngineSettings.AnimalIncubationEnergyPerUnitOfRadius = (EngineSettings.AnimalMatureSizeProvidedEnergyPerUnitRadius / EngineSettings.TicksToIncubate) * EngineSettings.AnimalIncubationEnergyMultiplier;
 

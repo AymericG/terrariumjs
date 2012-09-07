@@ -1,14 +1,23 @@
 var Species = Class.extend({
 
 	init: function(){
-		this.MatureRadius = 48/2;
-		this.MaximumEnergyPerUnitRadius = 100*10;
+		this.MatureRadius = 12;
+		this.PercentOfMaximumEnergyPerUnitRadius = 0.2;
+		this.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0.2;
+
 		this.IsCarnivore = false;
 		this.IsPlant = false;
 		this.MaximumSpeed = 4;
 		this.Skin = null;
 		this.InvisibleOdds = 5;
 		this.EyesightRadius = 5;
+
+	},
+	EatingSpeedPerUnitRadius: function(){
+		return EngineSettings.BaseEatingSpeedPerUnitOfRadius + this.PercentOfMaximumEatingSpeedPerUnitOfRadius * EngineSettings.MaximumEatingSpeedPerUnitOfRadius;
+	},
+	MaximumEnergyPerUnitRadius: function(){
+		return Math.floor(EngineSettings.MaxEnergyBasePerUnitRadius + this.PercentOfMaximumEnergyPerUnitRadius * EngineSettings.MaxEnergyMaximumPerUnitRadius);
 	},
 	Refresh: function(data)
 	{

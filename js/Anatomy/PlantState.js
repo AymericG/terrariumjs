@@ -3,19 +3,25 @@ var PlantState = OrganismState.extend({
 		this._super(speciesData);
         this.Height = this.Radius*this.HeightToRadiusRatio;
         this.FoodChunks = this.CurrentMaxFoodChunks();
-	},/*
-    ToJavascriptObject: function(){
-        var stateObject = this._super();
+	},
+    Serializable: function(withSeenOrganisms){
+        var stateObject = this._super(withSeenOrganisms);
         stateObject.Height = this.Height;
         stateObject.FoodChunks = this.FoodChunks;
         return stateObject;
-    },*/
+    },
     HeightToRadiusRatio: 1,
 
 	CurrentMaxFoodChunks: function(){
     	return this.Radius * EngineSettings.PlantFoodChunksPerUnitOfRadius;
     },
-
+    /*MaxEnergy: function(){
+        return this.CurrentMaxFoodChunks();
+    },
+    StoredEnergy: function(){
+        return this.FoodChunks;
+    },
+*/
     IncreaseRadiusTo: function(newRadius){
         var newHeight = newRadius * this.HeightToRadiusRatio;
         var additionalRadius = newRadius - this.Radius;
@@ -25,17 +31,9 @@ var PlantState = OrganismState.extend({
     },
 
     Grow: function(){
-		//console.log(this.Radius + " " + this.EnergyState() + " " + this.GrowthWait);
-            
-        if ((this.Radius < this.Species.MatureRadius) && 
-			(this.EnergyState() >= EnergyState.Normal) && 
-			this.GrowthWait == 0)
-		{
-            //console.log("Growing to " + this.Radius + 1);
-			this.IncreaseRadiusTo(this.Radius + 1);
-			this.BurnEnergy(EngineSettings.PlantRequiredEnergyPerUnitOfRadiusGrowth);
-			this.ResetGrowthWait();
-		}
+		this.IncreaseRadiusTo(this.Radius + 1);
+		this.BurnEnergy(EngineSettings.PlantRequiredEnergyPerUnitOfRadiusGrowth);
+		this.ResetGrowthWait();
 	},
 
     Heal: function(){
@@ -53,14 +51,13 @@ var PlantState = OrganismState.extend({
         if (this.CurrentMaxFoodChunks() - this.FoodChunks < maxHealingChunks)
         {
             foodChunkDelta = this.CurrentMaxFoodChunks() - this.FoodChunks;
-            currentFoodChunks = this.CurrentMaxFoodChunks();
+            this.FoodChunks = this.CurrentMaxFoodChunks();
         }
         else
         {
             foodChunkDelta = maxHealingChunks;
-            currentFoodChunks += foodChunkDelta;
+            this.FoodChunks += foodChunkDelta;
         }
-
         this.BurnEnergy(foodChunkDelta * EngineSettings.PlantRequiredEnergyPerUnitOfHealing);
 	}    
 });

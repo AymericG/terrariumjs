@@ -1,6 +1,7 @@
 var BodyNerve = function(organism, mindUrl) {
 	var self = this;
 	this.Organism = organism;
+	this.EventQueue = [];
 	this.MindThread = new Worker(mindUrl);
 	this.MindThread.onmessage = function(e) { self.Receive(e.data); };
 
@@ -8,7 +9,7 @@ var BodyNerve = function(organism, mindUrl) {
 		var messageObject = JSON.parse(message);
 		
 		if (messageObject.signal == Signals.Log && messageObject.message != null)
-			console.log("[LOG] " + self.Organism.Id + ": " + messageObject.message);
+			console.log("[#" + self.Organism.Id + "] " + messageObject.message);
 	
 		switch(messageObject.signal) {
 			case Signals.Ready:
@@ -24,13 +25,16 @@ var BodyNerve = function(organism, mindUrl) {
 					if (self.Organism.State.IsAlive())
 						self.Organism.InProgressActions.MoveToAction = new MoveToAction(movementVector);
 				}
-
+				
 				var reproduceAction = messageObject.actions.ReproduceAction;
-				if (reproduceAction)
+				if (reproduceAction && self.Organism.State.IsAlive())
 				{
-					if (self.Organism.State.IsAlive()) 
-						self.Organism.InProgressActions.ReproduceAction = new ReproduceAction(reproduceAction.Dna);
+					self.Organism.InProgressActions.ReproduceAction = new ReproduceAction(reproduceAction.Dna);
 				}
+
+				var eatAction = messageObject.actions.EatAction;
+				if (eatAction && self.Organism.State.IsAlive())
+       				self.Organism.InProgressActions.EatAction = new EatAction(eatAction.TargetOrganismId);
 				break;
 			default:
 				//messageObject.progress = 0;
@@ -38,13 +42,32 @@ var BodyNerve = function(organism, mindUrl) {
 				break;
 		}
 	};
-
+	this.SendEventQueue = function(){
+		this.Send({ signal: Signals.Bulk, events: this.EventQueue });
+		this.EventQueue = [];
+	};
+	this.EventsToQueue = [Signals.EatCompleted, Signals.MoveCompleted, Signals.ReproduceCompleted];
+	
+	this.ShouldQueue = function(eventName){
+		for (var i = 0; i < this.EventsToQueue.length; i++)
+			if (eventName == this.EventsToQueue[i])
+				return true;
+		return false;
+	};
 	this.Send = function(messageObject) {
-		// passing the latest version of the organism state
-		messageObject.State = this.Organism.State; 
 
+		if (this.ShouldQueue(messageObject.signal))
+		{
+			this.EventQueue.push(messageObject);
+			return;
+		}
+
+		// passing the latest version of the organism state
+		if (this.Organism.State)
+			messageObject.State = this.Organism.State.Serializable(true);
 		messageObject.InProgressActions = this.Organism.InProgressActions;
 		var message = JSON.stringify(messageObject);
+	
 		self.MindThread.postMessage(message);
 	};
 };

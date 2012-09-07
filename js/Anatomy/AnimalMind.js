@@ -7,6 +7,7 @@ var AnimalMind = OrganismMind.extend({
 	{
 		this.PendingActions.MoveToAction = null;
 		this.InProgressActions.MoveToAction = null;
+//		this.BeginMoving(new MovementVector(this.State.Position, 2));
 	},
 
 	BeginMoving: function(vector){
@@ -29,13 +30,26 @@ var AnimalMind = OrganismMind.extend({
 
 	ProcessSignal: function(messageObject)
 	{
-		if (messageObject.signal == Signals.MoveCompleted)
-			this.OnMoveCompleted();
-		else
-			this._super(messageObject);
+		switch (messageObject.signal)
+		{
+			case Signals.MoveCompleted:
+				this.PendingActions.MoveToAction = null;
+				this.InProgressActions.MoveToAction = null;
+				this.OnMoveCompleted();
+				break;	
+			case Signals.EatCompleted:
+				this.PendingActions.EatAction = null;
+				this.InProgressActions.EatAction = null;
+				this.OnEatCompleted();
+				break;
+			default:
+				this._super(messageObject);
+
+		}
 	},
 
 	OnMoveCompleted: function(){}, // Waiting to be overriden.
+	OnEatCompleted: function(){}, // Waiting to be overriden.
 
 	IsMoving: function(){
 		return this.CurrentMoveToAction() != null;
@@ -48,11 +62,54 @@ var AnimalMind = OrganismMind.extend({
 			return (this.InProgressActions.MoveToAction);
 		return null;
 	},
+	CurrentEatAction: function(){
+		if (this.PendingActions.EatAction != null)
+			return this.PendingActions.EatAction;
+		if (this.InProgressActions.EatAction != null)
+			return (this.InProgressActions.EatAction);
+		return null;
+	},
+	IsEating: function(){
+		return this.CurrentEatAction() != null;
+	},
 	CanEat: function(){
 		return this.State.EnergyState() <= EnergyState.Normal;
 	},
 	WithinEatingRange: function(targetOrganism){
 		return this.State.IsAdjacentOrOverlapping(targetOrganism);
+    },
+    BeginEating: function(targetOrganism)
+	{
+        if (targetOrganism == null)
+            throw new ArgumentNullException("targetOrganism");
+
+        if (this.State.EnergyState() > EnergyState.Normal)
+            throw new AlreadyFullException();
+
+        var currentOrganism = targetOrganism;
+        if (!this.WithinEatingRange(currentOrganism))
+            throw new NotWithinDistanceException();
+
+        // Make sure it is edible
+        if (this.State.Species.IsCarnivore)
+        {
+            if (currentOrganism.IsPlant())
+                throw new ImproperFoodException();
+
+            if (currentOrganism.IsAlive())
+                throw new NotDeadException();
+        }
+        else
+        {
+            if (!currentOrganism.IsPlant())
+                throw new ImproperFoodException();
+        }
+        var action = new EatAction(targetOrganism.Id);
+        this.PendingActions.EatAction = action;
+
+        this.WriteTrace("Setting EatAction: " + targetOrganism.Id);
+        this.InProgressActions.EatAction = action;
     }
+
 });
 

@@ -2,11 +2,13 @@ var Signals = {
 	MoveCompleted: "MoveCompleted",
 	ReproduceCompleted: "ReproduceCompleted",
 	Born: "Born",
+
 	Tick: "Tick",
 	Load: "Load",
 	Log: "Log",
 	Act: "Act",
-	Ready: "Ready"
+	Ready: "Ready",
+	Bulk: "Bulk",
 };
 
 var ReasonForStop = {

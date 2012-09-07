@@ -9,8 +9,9 @@
         <script type="text/javascript" src="js/Enums.js"></script>
         <script type="text/javascript" src="js/Exceptions.js"></script>
         <script type="text/javascript" src="js/Renderer.js"></script>
-        
+                
         <script type="text/javascript" src="js/Actions/Action.js"></script>
+        <script type="text/javascript" src="js/Actions/EatAction.js"></script>
         <script type="text/javascript" src="js/Actions/MoveToAction.js"></script>
         <script type="text/javascript" src="js/Actions/ReproduceAction.js"></script>
         <script type="text/javascript" src="js/Actions/PendingActions.js"></script>
@@ -37,7 +38,7 @@
         <script type="text/javascript" src="js/Geometry/MovementVector.js"></script>
         
         <script type="text/javascript" src="js/Game.js"></script>
-        <script type="text/javascript" src="js/robotjs.js"></script>
+        <script type="text/javascript" src="js/terrarium.js"></script>
 
         <style>
         	.game-window
@@ -63,7 +64,7 @@
     <body>
 
     	<div class="game-window">
-        	<div width="800" height="400" id="canvas"></div>
+        	<div id="canvas"></div>
     	</div>
 
         <aside class="game-controls">
@@ -75,7 +76,8 @@ organism.run = function() {
         	</textarea>
         	<br/>
         	<input id="load-code" type="button" value="Load code" />
-        	<input id="load-scan-bot" type="button" value="Load simple animal" />
+        	<input id="load-ghost" type="button" value="Load ghost" />
+            <input id="load-herbie" type="button" value="Load herbie" />
         	<input id="load-plant" type="button" value="Load plant" />
         	<input id="run" type="button" value="Start game" />
         </aside>

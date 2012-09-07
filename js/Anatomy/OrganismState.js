@@ -12,13 +12,63 @@ var OrganismState = Class.extend({
 		this.ResetGrowthWait();
 		this.FoodChunks = 0;
 		this._storedEnergy = this.MaxEnergy();
+		this.SeenOrganisms = [];
+	},
+	Serializable: function(withSeenOrganisms){
+		var state = {};
+		state.Id = this.Id;
+		state.Radius = this.State;
+		state.DeathReason = this.DeathReason;
+		state.TickAge = this.TickAge;
+		state.IncubationTicks = this.IncubationTicks;
+		state.Position = this.Position;
+		state.ReproductionWait = this.ReproductionWait;
+		state.GrowthWait = this.GrowthWait;
+		state.FoodChunks = this.FoodChunks;
+		state._storedEnergy = this._storedEnergy;
+		state.IsAPlant = this.IsPlant();
+		state.Species = this.Species;
+		state.SeenOrganisms = [];
+		if (withSeenOrganisms)
+			for (var i = 0; i < this.SeenOrganisms.length; i++)
+				state.SeenOrganisms.push(this.SeenOrganisms[i].Serializable(false));
+		return state;
 	},
 	Refresh: function(data)
 	{
+
+		var species = new Species();
+		species.Refresh(data.Species);
+		this.Species = species;
+		delete data.Species;
+
 		for (var property in data)
 			this[property] = data[property];
-	},
+		if (typeof(this.SeenOrganisms) == 'undefined')
+			this.SeenOrganisms = [];
+		else
+		{
+			for (var i = 0; i < this.SeenOrganisms.length; i++)
+			{
+				var seenOrganism = this.SeenOrganisms[i];
+					
+				var state = null;
+				if (seenOrganism.IsAPlant)
+					state = new PlantState(species);
+				else
+					state = new AnimalState(species);
+				delete seenOrganism.IsAPlant;
+				state.Refresh(seenOrganism);
+				this.SeenOrganisms[i] = state;
+			}	
+		}
 
+	},
+	CanGrow: function(){
+		return ((this.Radius < this.Species.MatureRadius) && 
+			(this.EnergyState() >= EnergyState.Normal) && 
+			this.GrowthWait == 0);
+	},
 	AddIncubationTick: function(){
 		this.IncubationTicks++;
 	},
@@ -30,7 +80,7 @@ var OrganismState = Class.extend({
 	},
 
 	MaxEnergy: function(){
-		return this.Species.MaximumEnergyPerUnitRadius * this.Radius;
+		return this.Species.MaximumEnergyPerUnitRadius() * this.Radius;
 	},
 
 	StoredEnergy: function(value){
@@ -49,15 +99,16 @@ var OrganismState = Class.extend({
 		    return;
 		}
 
-		if (value > this.Radius * this.Species.MaximumEnergyPerUnitRadius)
-		    value = this.Species.MaximumEnergyPerUnitRadius * this.Radius;
+		value = Math.floor(value);
+		if (value > this.Radius * this.Species.MaximumEnergyPerUnitRadius())
+		    value = this.Species.MaximumEnergyPerUnitRadius() * this.Radius;
 
 		this._storedEnergy = value;
 		return this._storedEnergy;
 	},
 
 	EnergyState: function(){
-		var energyBuckets = (this.Species.MaximumEnergyPerUnitRadius * this.Radius) / 5;
+		var energyBuckets = (this.Species.MaximumEnergyPerUnitRadius() * this.Radius) / 5;
 
 		if (this._storedEnergy > energyBuckets * 4)
 		    return EnergyState.Full;
@@ -84,10 +135,7 @@ var OrganismState = Class.extend({
 		    throw new GameEngineException("Dead organisms can't change stored energy.");
 
 		if (this.StoredEnergy() - energyValue <= 0)
-		{
-//			console.log("Death by starvation: " + this.StoredEnergy() + " <= " + energyValue);
 		    this.Kill(PopulationChangeReason.Starved);
-		}
 		else
 		{
 		    this.StoredEnergy(this.StoredEnergy() - energyValue);
@@ -99,10 +147,11 @@ var OrganismState = Class.extend({
 	},
 
 	PercentEnergy: function(){
-		return ((this._storedEnergy / (this.Species.MaximumEnergyPerUnitRadius * Math.max(1, this.Radius))));
+		return ((this._storedEnergy / (this.Species.MaximumEnergyPerUnitRadius() * Math.max(1, this.Radius))));
 	},
 
 	IsAlive: function(){
+
 		var isAlive = this.StoredEnergy() != 0 &&
 			this.DeathReason == PopulationChangeReason.NotDead &&
 			this.PercentEnergy() > 0;
@@ -136,7 +185,7 @@ var OrganismState = Class.extend({
 
     Kill: function (reason)
     {
-		if (this.IsImmutable)
+    	if (this.IsImmutable)
 		    throw new GameEngineException("Object is immutable.");
 
 		this._storedEnergy = 0;
@@ -152,7 +201,7 @@ var OrganismState = Class.extend({
     },
 	UpperBoundaryForEnergyState: function(energyState)
     {
-        var energyBuckets = (this.Species.MaximumEnergyPerUnitRadius * this.Radius) / 5;
+        var energyBuckets = (this.Species.MaximumEnergyPerUnitRadius() * this.Radius) / 5;
         switch (energyState)
         {
             case EnergyState.Dead:
@@ -164,15 +213,19 @@ var OrganismState = Class.extend({
             case EnergyState.Normal:
                 return energyBuckets*4;
             case EnergyState.Full:
-                return this.Species.MaximumEnergyPerUnitRadius * radius;
+                return this.Species.MaximumEnergyPerUnitRadius() * radius;
             default:
                 throw new ApplicationException("Unknown EnergyState.");
         }
     },
     CellRadius: function(){
-		if (this.Radius % EngineSettings.GridCellWidth > 0)
-		    return (this.Radius >> EngineSettings.GridWidthPowerOfTwo) + 1;
-		return this.Radius >> EngineSettings.GridWidthPowerOfTwo;
+    	return this.CalculateCellRadius(this.Radius);
+    },
+    CalculateCellRadius: function(radius){
+		if (radius % EngineSettings.GridCellWidth > 0)
+		    return (radius >> EngineSettings.GridWidthPowerOfTwo) + 1;
+		return radius >> EngineSettings.GridWidthPowerOfTwo;
+
     },
     GridX: function(){
 		return this.Position.X >> EngineSettings.GridWidthPowerOfTwo;
@@ -182,15 +235,15 @@ var OrganismState = Class.extend({
     },
     IsAdjacentOrOverlapping: function(state2)
     {
-		return IsWithinRect(0, state2);
+		return this.IsWithinRect(0, state2);
     },
     IsWithinRect: function(extraRadius, state2)
 	{
 		if (state2 == null)
 			return false;
 
-        var state1Radius = this.CellRadius() + state1ExtraRadius;
-        var state2Radius = state2.CellRadius();
+        var state1Radius = this.CellRadius() + extraRadius;
+        var state2Radius = this.CalculateCellRadius(state2.Radius);//TODO: Change back to state2.CellRadius();
 
         var difference = (this.GridX() - state1Radius) - (state2.GridX() - state2Radius);
         if (difference < 0)

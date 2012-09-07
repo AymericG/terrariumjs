@@ -2,7 +2,7 @@
 var MathUtils = {
 	RandomBetween: function(n1, n2)
 	{
-		return Math.floor(Math.random() * n2) + n1;
+		return Math.floor(Math.random() * (n2-1)) + n1;
 	},
 	degree2radian: function(a) {
 		return a * (Math.PI/180); 

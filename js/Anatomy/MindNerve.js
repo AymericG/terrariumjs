@@ -5,24 +5,29 @@ var MindNerve = function(organismMind){ // should be called Neuron?
 	this.Receive = function(message)
 	{
 		var messageObject = JSON.parse(message);
-		
+		//if (messageObject.State && messageObject.State.SeenOrganisms.length > 0)
+		//	this.OrganismMind.WriteTrace(message);
 		if (messageObject.State) // State update sent with message
-			this.OrganismMind.State.Refresh(messageObject.State);
-
+			this.OrganismMind.State.Refresh(messageObject.State);				
+		var inProgressActions = new PendingActions();		
 		if (messageObject.InProgressActions) 
 		{
-			var inProgressActions = new PendingActions();
+
 			if (messageObject.InProgressActions.MoveToAction)
 			{
 				var moveTo = messageObject.InProgressActions.MoveToAction;
 				var movementVector = new MovementVector(new Point(moveTo.MoveTo.Destination.X, moveTo.MoveTo.Destination.Y), moveTo.MoveTo.Speed);				
 				inProgressActions.MoveToAction = new MoveToAction(movementVector);
 			}
+
 			if (messageObject.InProgressActions.ReproduceAction)
 				inProgressActions.ReproduceAction = new ReproduceAction(messageObject.InProgressActions.ReproduceAction.Dna);
+			
+			if (messageObject.InProgressActions.EatAction)
+        		inProgressActions.EatAction = new EatAction(messageObject.InProgressActions.EatAction.TargetOrganismId);
 
-			this.OrganismMind.InProgressActions = inProgressActions;
 		}
+		this.OrganismMind.InProgressActions = inProgressActions;
 		this.OrganismMind.ProcessSignal(messageObject);
 
 	};

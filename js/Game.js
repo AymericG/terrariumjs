@@ -5,35 +5,38 @@ var Game = function (canvas, width, height) {
 	this.Renderer = new Renderer(canvas, width, height, this.World);
 	
 	this.Started = false;
-	
+	this.Phase = 0;
 
-	this.AddOrganism = function(workerUrl, mindCode)
-	{
-		var organism = self.World.AddOrganism(workerUrl, mindCode);
+	this.World.Subscribe("OrganismAdded", function(){
+		var organism = this;
 		if (organism)
 		{
-			organism.Subscribe(Signals.Ready, function(){
-				self.Renderer.AddOrganism(organism);
-				if (self.Started)
-					organism.Send({ signal: Signals.Tick });
-			});
+			self.Renderer.AddOrganism(organism);
+			if (self.Started)
+				organism.Send({ signal: Signals.Tick });
 
 			organism.Subscribe("Disappear", function(){
 				self.Renderer.RemoveOrganism(organism);
 			});
 		}
 
+	});
+
+	this.AddOrganism = function(workerUrl, mindCode)
+	{
+		var organism = self.World.AddOrganism(workerUrl, mindCode);
 		return organism;
 	};
 
-	this.ForEachOrganism = function(callback)
+	this.ForEachAliveOrganism = function(callback)
 	{
 		for (var organismId in self.World.Organisms) 
-			callback(self.World.Organisms[organismId]);
+			if (self.World.Organisms[organismId].State.IsAlive())
+				callback(self.World.Organisms[organismId]);
 	};
 	
 	this.AddOrganismFromCode = function(mindCode){
-		return AddOrganism("js/OrganismMindCodeLoader.js", mindCode);
+		return this.AddOrganism("js/OrganismMindCodeLoader.js", mindCode);
 	};
 
 	this.Start = function() {
@@ -43,6 +46,8 @@ var Game = function (canvas, width, height) {
 	};
 
 	this.MoveAll = function(){
+		this.ForEachAliveOrganism(function(o){ if (!o.State.IsPlant()) o.Move(); });
+		/*
 		var index = new GridIndex(this.World);
 		
 		for (var organismId in this.World.Organisms)
@@ -120,9 +125,10 @@ var Game = function (canvas, width, height) {
 		    
 		    //
 		    this.World.FillCells(newOrganism.State, true);
-			newOrganism.Direction = newOrganism.DirectionFromVector(endSegment.Organism.State.Position.Substract(endSegment.EndingPoint));
 
+			newOrganism.Direction = newOrganism.DirectionFromVector(endSegment.Organism.State.Position.Substract(endSegment.EndingPoint));
 		    newOrganism.State.Position = endSegment.EndingPoint;
+
 			this.World.FillCells(newOrganism.State, false);
 		    
 		    newOrganism.State.BurnEnergy(newOrganism.State.EnergyRequiredToMove(moveVector.Magnitude(), newOrganism.CurrentMoveToAction().MoveTo.Speed));
@@ -144,17 +150,39 @@ var Game = function (canvas, width, height) {
 		        newOrganism.Send({signal: Signals.MoveCompleted, ReasonForStop: ReasonForStop.DestinationReached });
 				newOrganism.InProgressActions.MoveToAction = null;
 		    }
-		}
+		}*/
 	};
 
 	this.Tick = function () {
-		this.ForEachOrganism(function(o){ o.Age(); });
-		this.ForEachOrganism(function(o){ o.Send({ signal: Signals.Tick }); });
-		this.MoveAll();            
-		this.ForEachOrganism(function(o){ o.Grow(); });         
-		this.ForEachOrganism(function(o){ o.Incubate(); });         
-		this.ForEachOrganism(function(o){ o.Heal(); });         
-		this.ForEachOrganism(function(o){ o.Scan(); });         
+		switch (this.Phase)
+		{
+			case 0:
+				this.ForEachAliveOrganism(function(o){ o.Age(); });
+				this.ForEachAliveOrganism(function(o){ o.Send({ signal: Signals.Tick }); });
+				break;
+			case 1:
+				this.MoveAll();            
+				break;
+			case 2:
+				this.ForEachAliveOrganism(function(o){ o.Bite(); });         
+				break;
+			case 3:
+				this.ForEachAliveOrganism(function(o){ o.Grow(); });         
+				break;
+			case 4:
+				this.ForEachAliveOrganism(function(o){ o.Incubate(); });         
+				break;
+			case 5:
+				this.ForEachAliveOrganism(function(o){ o.Heal(); });         
+				break;
+			case 6:
+				this.ForEachAliveOrganism(function(o){ o.Scan(); });  
+				this.ForEachAliveOrganism(function(o){ o.Nerve.SendEventQueue(); });  
+				
+				this.Phase = -1;
+				break;
+		}       
+		this.Phase++;
 	}
 };
 

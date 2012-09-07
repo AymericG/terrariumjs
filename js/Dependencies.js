@@ -1,5 +1,7 @@
 var baseUrl = '/terrarium/js/';
+
 importScripts(baseUrl + 'Class.js');
+importScripts(baseUrl + 'ClassWithEvents.js');
 importScripts(baseUrl + 'EngineSettings.js');
 importScripts(baseUrl + 'Enums.js');
 importScripts(baseUrl + 'Exceptions.js');

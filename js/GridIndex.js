@@ -52,7 +52,8 @@ var GridIndex = Class.extend({
 
 	    dy <<= 1;
 	    dx <<= 1;
-
+	    //if (!organism.State.IsPlant())
+	    //	console.log("START");
 	    // start the first segment at the initial point at time 0
 	    var gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
 	    var gridY = y0 >> EngineSettings.GridWidthPowerOfTwo;
@@ -82,6 +83,7 @@ var GridIndex = Class.extend({
 	            // See if we've crossed into a new grid square
 	            gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
 	            gridY = y0 >> EngineSettings.GridHeightPowerOfTwo;
+	            //console.log("X: " + gridX + " Y:" + gridY);
 	            segment.ExitTime += timeslice;
 	            if (gridX != segment.GridX || gridY != segment.GridY)
 	            {
@@ -116,6 +118,8 @@ var GridIndex = Class.extend({
 	            // See if we've crossed into a new grid square
 	            gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
 	            gridY = y0 >> EngineSettings.GridHeightPowerOfTwo;
+	            //console.log("X: " + gridX + " Y:" + gridY);
+
 	            segment.ExitTime += timeslice;
 	            if (gridX != segment.GridX || gridY != segment.GridY)
 	            {
@@ -133,6 +137,8 @@ var GridIndex = Class.extend({
 	    }
 	    // The last segment doesn't exit the grid, so its exit time is zero
 	    segment.ExitTime = 0;
+	    //if (!organism.State.IsPlant())
+	    //	console.log("END");
 	},
 	// Adds a MovementSegment to all the proper cells in the grid to account for the creature's size by wrapping it 
 	// with a SegmentWrapper and adding the wrapper to the proper cells. When we calculate a creature's movement we have
@@ -166,7 +172,7 @@ var GridIndex = Class.extend({
         }
 
         // Do the top and bottom rows
-        var list = [];
+        var list = null;
         var wrapper = null;
         for (var x = segment.GridX - cellRadius; x <= segment.GridX + cellRadius; x++)
         {
@@ -338,6 +344,7 @@ var GridIndex = Class.extend({
             }
             else
             {
+            //	console.log("Has conflicting segments in " + segment.GridX + " " + segment.GridY);
                 // This segment is in a cell that has other overlapping segments -- see if there is a conflict
                 for (var i = 0; i < list.length; i++)
                 {
@@ -347,7 +354,9 @@ var GridIndex = Class.extend({
                     // An object can never block itself
                     if (testSegment.Organism.Id == segment.Organism.Id)
                         continue;
-
+					
+					console.log("Has conflicting segments in " + segment.GridX + " " + segment.GridY);
+                
 				    if (!testSegment.Active)
                      continue;
 

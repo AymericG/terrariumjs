@@ -5,7 +5,7 @@ var Renderer = Class.extend({
 
 		this.Animations = {};
 		for (var animation in AnimationIndexes)
-    		this.Animations[animation] = this.InitializeAnimation(animation, 48);
+    		this.Animations[animation] = this.InitializeAnimation(animation);
 
 		this.Ticker = this.Scene.Ticker(function(ticker){
 
@@ -24,19 +24,30 @@ var Renderer = Class.extend({
 		this.Sprites = {};
 		this.Cycles = {};
     },
-    InitializeAnimation: function(animation, size)
+    InitializeAnimation: function(animation)
     {
     	var animationContainer = {};
     	for (var direction in DirectionIndexes)
-    		animationContainer[direction] = this.InitializeFramesInOneDirection(AnimationIndexes[animation], DirectionIndexes[direction], size);
+    		animationContainer[direction] = this.InitializeFramesInOneDirection(AnimationIndexes[animation], DirectionIndexes[direction]);
     	return animationContainer;
     },
-    InitializeFramesInOneDirection: function(animationIndex, directionIndex, size)
+    InitializeFramesInOneDirection: function(animationIndex, directionIndex)
     {
+    	var direction = {};
+
+    	var size = 24;
     	var frames = [];
     	for (var i = 0; i < 10; i++)
     		frames.push([i*size, animationIndex*size*8+directionIndex*size, 5]);
-    	return frames;
+    	direction[size] = frames;
+
+    	size = 48;
+    	frames = [];
+    	for (var i = 0; i < 10; i++)
+    		frames.push([i*size, animationIndex*size*8+directionIndex*size, 5]);
+    	direction[size] = frames;
+
+    	return direction;
     },
 	Start: function(){
 		this.Ticker.run();
@@ -56,7 +67,7 @@ var Renderer = Class.extend({
 				var organism = self.World._cellOrganisms[i][j];
 				if (organism != null)
 				{
-					ctx.fillStyle = '#000';
+					ctx.fillStyle = 'DarkGreen';
 					ctx.fillRect(i * EngineSettings.GridCellWidth, j * EngineSettings.GridCellHeight, EngineSettings.GridCellWidth, EngineSettings.GridCellHeight);
 				}
 			}
@@ -77,13 +88,13 @@ var Renderer = Class.extend({
 	DrawOrganism: function(organism){
 		var ctx = this.Layer.ctx;
 		var organismSprite = this.Sprites[organism.Id];
-		if (organism.Radius == 48 && organismSprite.w != 48)
+		if (organism.Radius == 24 && organismSprite.w != 48)
 		{
+			//console.log("switch");
 			organismSprite.remove();
 			organismSprite = this.AddOrganism(organism);
 		}
-		var radiusW = EngineSettings.GridCellWidth * organism.State.CellRadius();
-		var radiusH = EngineSettings.GridCellHeight * organism.State.CellRadius();
+
 		var positionX = organism.State.Position.X - organismSprite.w/2;
 		var positionY = organism.State.Position.Y - organismSprite.h/2;
 		
@@ -91,20 +102,27 @@ var Renderer = Class.extend({
 		organismSprite.move(1, 0);
 		organismSprite.update();
 
-		ctx.strokeStyle = "Blue";
-		ctx.strokeRect(organism.State.GridX() * EngineSettings.GridCellWidth - radiusW, organism.State.GridY() * EngineSettings.GridCellHeight - radiusH, radiusW*2+EngineSettings.GridCellWidth, radiusH*2+EngineSettings.GridCellHeight);
+		var radiusW = EngineSettings.GridCellWidth * organism.State.CellRadius();
+		var radiusH = EngineSettings.GridCellHeight * organism.State.CellRadius();
 
+		// Draw cell boundary box
+		ctx.strokeStyle = "Blue";
+		ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2+EngineSettings.GridCellWidth, radiusH*2+EngineSettings.GridCellHeight);
+
+		// Draw name
 		ctx.strokeStyle = "Black";
 		ctx.strokeText("#" + organism.Id + " (radius: " + organism.State.Radius + ")", positionX, positionY + organismSprite.h + 15);
+	
+		// Draw energy left
 		var energy = organism.State.StoredEnergy() * organismSprite.w / organism.State.MaxEnergy();
-
 		ctx.fillStyle = "green";
 		ctx.fillRect(positionX, positionY + organismSprite.h + 1, energy, 5);
 		ctx.fillStyle = "red";
 		ctx.fillRect(positionX + energy, positionY + organismSprite.h + 1, organismSprite.w - energy, 5);
 
+		// 
 		ctx.strokeStyle = "White";
-		ctx.strokeRect(organism.State.GridX() * EngineSettings.GridCellWidth - radiusW, organism.State.GridY() * EngineSettings.GridCellHeight - radiusH, radiusW*2+EngineSettings.GridCellWidth, radiusH*2+EngineSettings.GridCellHeight);
+		ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2+EngineSettings.GridCellWidth, radiusH*2+EngineSettings.GridCellHeight);
 
 		ctx.fillStyle = "black";
 
@@ -113,19 +131,22 @@ var Renderer = Class.extend({
 		{
 			if (organism.IsMoving())
 			{
+				// Draw destination line
 				this.DrawLine(ctx, "White", organism.State.Position.X, organism.State.Position.Y, organism.CurrentMoveToAction().MoveTo.Destination.X, organism.CurrentMoveToAction().MoveTo.Destination.Y); 
 			}
 
 			var displayAction = organism.DisplayAction();
 			if (displayAction == DisplayAction.Nothing)
 			{
-				displayAction = DisplayAction.Die;
+				displayAction = DisplayAction.Move;
 			}
+			
 			if (organismSprite.LastDisplayAction != displayAction || organismSprite.LastDirection != organism.Direction)
 			{
+				//console.log(organismSprite.LastDisplayAction + " " + displayAction);
 				delete this.Cycles[organism.Id];
 				var loop = displayAction != DisplayAction.Die;
-				this.Cycles[organism.Id] = this.Scene.Cycle(this.Animations[displayAction][organism.Direction]);
+				this.Cycles[organism.Id] = this.Scene.Cycle(this.Animations[displayAction][organism.Direction][organismSprite.w]);
 				this.Cycles[organism.Id].repeat = loop;
 				this.Cycles[organism.Id].addSprite(organismSprite);
 
@@ -137,17 +158,11 @@ var Renderer = Class.extend({
 	},
 	CreateSprite: function(organism){
 		var sprite = null
-		if (organism.State.IsPlant())
-		{
-			var size = organism.State.Radius < 48 ? 24 : 48;
-			sprite = this.Scene.Sprite('img/' + organism.State.Species.Skin + size + '.bmp', this.Layer);
-			sprite.size(24, 24);
-		}
-		else
-		{			
-			sprite = this.Scene.Sprite('img/ant48.bmp', this.Layer);
-			sprite.size(48, 48);
-		}
+		var size = organism.State.Radius < 24 ? 24 : 48;
+		var spriteUrl = 'img/' + organism.State.Species.Skin + size + '.bmp';
+		//console.log(spriteUrl);
+		sprite = this.Scene.Sprite(spriteUrl, this.Layer);
+		sprite.size(size, size);
 		return sprite;
 	},
 	AddOrganism: function(organism){

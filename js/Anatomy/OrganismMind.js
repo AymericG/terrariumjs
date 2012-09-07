@@ -45,19 +45,30 @@ var OrganismMind = Class.extend({
 			case Signals.Tick:
 				this.Tick();
 				break;
+			case Signals.Bulk:
+				for (var i = 0; i < messageObject.events.length; i++)
+					this.ProcessSignal(messageObject.events[i]);
+				break;
 			default:
 				// I don't understand
 				break;
 		}
 	},
-	log: function(message) {
+	WriteTrace: function(message) {
 		this.Nerve.Send({ signal: Signals.Log, message: message });
 	},
-	
+	IsFunction: function (functionToCheck) {
+	 var getType = {};
+	 return functionToCheck && getType.toString.call(functionToCheck) == '[object Function]';
+	},
 	Tick: function() {
+
+		//this.WriteTrace("max: " + this.IsFunction(this.State.Species.MaximumEnergyPerUnitRadius));
+		this.PendingActions = new PendingActions();
 		this.OnIdle();
 
 		// Main function has run, return results to game.
+		//this.WriteTrace("EatActio:" + this.PendingActions.EatAction);
 		this.Nerve.Send({ signal: Signals.Act, actions: this.PendingActions});
 	},
 

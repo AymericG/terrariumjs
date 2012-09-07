@@ -4,13 +4,13 @@ var AnimalState = OrganismState.extend({
 		this.Damage = 0;
 		this.RotTicks = 0;
 	},
-/*	ToJavascriptObject: function(){
-		var stateObject = this._super();
+	Serializable: function(withSeenOrganisms){
+		var stateObject = this._super(withSeenOrganisms);
 		stateObject.Damage = this.Damage;
 		stateObject.RotTicks = this.RotTicks;
 		return stateObject;
 	},
-*/
+
 	AddRotTick: function()
 	{
     	this.RotTicks++;
@@ -26,17 +26,9 @@ var AnimalState = OrganismState.extend({
 		return distance * this.Radius * speed * EngineSettings.RequiredEnergyPerUnitOfRadiusSpeedDistance;
 	},
     Grow: function(){
-
-		//console.log(this.Radius + " " + this.Species.MatureRadius + " " + this.GrowthWait);
-    	if (this.Radius < this.Species.MatureRadius && this.GrowthWait <= 0)
-	    {
-	        if (this.EnergyState() >= EnergyState.Normal)
-	        {
-	            this.Radius++;
-	            this.BurnEnergy(EngineSettings.AnimalRequiredEnergyPerUnitOfRadiusGrowth);
-	            this.ResetGrowthWait();
-	        }
-	    }
+        this.IncreaseRadiusTo(this.Radius + 1);
+		this.BurnEnergy(EngineSettings.AnimalRequiredEnergyPerUnitOfRadiusGrowth);
+        this.ResetGrowthWait();
     },
     Heal: function(){
 		var maxHealing = EngineSettings.AnimalMaxHealingPerTickPerRadius * this.Radius;
