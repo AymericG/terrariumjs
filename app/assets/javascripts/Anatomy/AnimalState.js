@@ -4,11 +4,15 @@ var AnimalState = OrganismState.extend({
 		this.Damage = 0;
 		this.RotTicks = 0;
 		this.FoodChunks = this.CurrentMaxFoodChunks();
+		this.LeftAntenna = AntennaPosition.Left;
+		this.RightAntenna = AntennaPosition.Left;
 	},
 	Serializable: function(withSeenOrganisms){
 		var stateObject = this._super(withSeenOrganisms);
 		stateObject.Damage = this.Damage;
 		stateObject.RotTicks = this.RotTicks;
+		stateObject.LeftAntenna = this.LeftAntenna;
+		stateObject.RightAntenna = this.RightAntenna;
 		return stateObject;
 	},
 

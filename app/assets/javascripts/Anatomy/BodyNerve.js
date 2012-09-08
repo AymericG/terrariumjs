@@ -52,6 +52,12 @@ var BodyNerve = function(organism, mindUrl, mindCode) {
 				var defendAction = messageObject.actions.DefendAction;
 				if (defendAction && self.Organism.State.IsAlive())
        				self.Organism.InProgressActions.DefendAction = new DefendAction(defendAction.TargetOrganismId);
+
+       			if (messageObject.leftAntenna && messageObject.leftAntenna > 0 && messageObject.leftAntenna <= 9)
+       				self.Organism.State.LeftAntenna = messageObject.leftAntenna;
+       			if (messageObject.rightAntenna && messageObject.rightAntenna > 0 && messageObject.rightAntenna <= 9)
+       				self.Organism.State.RightAntenna = messageObject.rightAntenna;
+       			
 				break;
 			default:
 				//messageObject.progress = 0;

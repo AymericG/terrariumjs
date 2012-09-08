@@ -75,7 +75,11 @@ var OrganismMind = Class.extend({
 
 		// Main function has run, return results to game.
 		//this.WriteTrace("EatActio:" + this.PendingActions.EatAction);
-		this.Nerve.Send({ signal: Signals.Act, actions: this.PendingActions});
+		this.Nerve.Send({
+			signal: Signals.Act, 
+			actions: this.PendingActions, 
+			leftAntenna: this.State.LeftAntenna, 
+			rightAntenna: this.State.RightAntenna });
 	},
 
 	BeginReproduction: function (dna)
