@@ -37,6 +37,7 @@ var OrganismMind = Class.extend({
 			switch(messageObject.signal) {
 				case Signals.Init:
 					this.World = messageObject.World;
+					this.OnInit(messageObject.Dna);
 					// Send back Species.
 					this.Nerve.Send({ signal: Signals.Initialized, Species: this.Species });
 
@@ -58,6 +59,7 @@ var OrganismMind = Class.extend({
 			this.Nerve.Send({ signal: "Error", error: e });
 		}
 	},
+	OnInit: function(dna){}, // Waiting to be overriden.
 	WriteTrace: function(message) {
 		this.Nerve.Send({ signal: Signals.Log, message: message });
 	},

@@ -172,7 +172,7 @@ var World = ClassWithEvents.extend({
         
         return new Point(newLocation.X << EngineSettings.GridWidthPowerOfTwo, newLocation.Y << EngineSettings.GridHeightPowerOfTwo);
     },
-	AddOrganism: function(workerUrl, mindCode, generation){
+	AddOrganism: function(workerUrl, mindCode, generation, dna){
         if (!generation)
             generation = 0;
 
@@ -208,7 +208,7 @@ var World = ClassWithEvents.extend({
             organism.State.Generation = generation + 1;
             
             this.Subscribe("Reproduce", function(){ 
-                var childOrganism = self.AddOrganism(this.MindUrl, this.MindCode, organism.State.Generation);
+                var childOrganism = self.AddOrganism(this.MindUrl, this.MindCode, organism.State.Generation, organism.InProgressActions.ReproduceAction.Dna);
             });
             this.Subscribe("Disappear", function(){
                 var state = self.Organisms[this.Id].State; 
@@ -223,7 +223,7 @@ var World = ClassWithEvents.extend({
             self.Trigger("OrganismAdded", this);
 		});
 
-		organism.Send({ signal: Signals.Init, World: self.Raw() });
+		organism.Send({ signal: Signals.Init, World: self.Raw(), Dna: dna });
 		return organism;
 	},
 	FindOrganismsInView: function(state, radius){

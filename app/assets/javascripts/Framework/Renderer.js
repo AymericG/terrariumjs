@@ -159,6 +159,9 @@ var Renderer = Class.extend({
 		{
 			ctx.strokeStyle = "Red";
 			ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2/*+EngineSettings.GridCellWidth*/, radiusH*2/*+EngineSettings.GridCellHeight*/);
+
+			ctx.strokeStyle = "White";
+			ctx.strokeRect((organism.State.GridX()-organism.State.Species.EyeSightRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.Species.EyeSightRadius()) * EngineSettings.GridCellHeight, (organism.State.Species.EyeSightRadius() * EngineSettings.GridCellWidth)*2/*+EngineSettings.GridCellWidth*/, (organism.State.Species.EyeSightRadius() * EngineSettings.GridCellHeight)*2/*+EngineSettings.GridCellHeight*/);
 		}
 
 		ctx.fillStyle = "black";
@@ -166,7 +169,7 @@ var Renderer = Class.extend({
 		// pick the right animation, if not plant
 		if (!organism.State.IsPlant())
 		{
-			if (organism.IsMoving())
+			if (this.SelectedOrganismId == organism.Id && organism.State.IsAlive() && organism.IsMoving())
 			{
 				// Draw destination line
 				this.DrawLine(ctx, "White", organism.State.Position.X, organism.State.Position.Y, organism.CurrentMoveToAction().MoveTo.Destination.X, organism.CurrentMoveToAction().MoveTo.Destination.Y); 

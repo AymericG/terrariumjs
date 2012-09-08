@@ -5,7 +5,7 @@ var EngineSettings = {
 	MaxMatureSize: 48,
 	MaxOrganismCount: 50,
 	RequiredEnergyPerUnitOfRadiusSpeedDistance: 0.005,
-	TickInterval: 60,
+	TickInterval: 150,
 	TicksToIncubate: 10,
 	AnimalReproductionWaitPerUnitRadius: 8,
 	PlantReproductionWaitPerUnitRadius: 25,

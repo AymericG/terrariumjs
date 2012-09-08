@@ -22,19 +22,19 @@ var ReasonForStop = {
 };
 
 var PopulationChangeReason = {
-	NotDead: 0,
-	Initial: 1,
-	Born: 2,
-	OldAge: 3,
-	TeleportedTo: 4,
-	Starved: 5,
-	Sick: 6,
-	TeleportedTo: 7,
-	Killed: 8,
-	Error: 9,
-	SecurityViolation: 10,
-	Timeout: 11,
-	OrganismBlacklisted: 12
+	NotDead: "NotDead",
+	Initial: "Initial",
+	Born: "Born",
+	OldAge: "OldAge",
+	TeleportedTo: "TeleportedTo",
+	Starved: "Starved",
+	Sick: "Sick",
+	TeleportedTo: "TeleportedTo",
+	Killed: "Killed",
+	Error: "Error",
+	SecurityViolation: "SecurityViolation",
+	Timeout: "Timeout",
+	OrganismBlacklisted: "OrganismBlacklisted"
 };
 
 var EnergyState = {
