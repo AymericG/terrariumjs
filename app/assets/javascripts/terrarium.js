@@ -30,8 +30,6 @@ $(document).ready(function() {
 	    onChange: saveCode
 	  });
 
-
-
 	var $canvas = $("#canvas");
 	var width = 520;
 	var height = 440;
@@ -40,11 +38,11 @@ $(document).ready(function() {
 	var game = new Game($canvas[0], width, height);
 	game.Start();
 
-	var addPlant = function(){ $.get("/assets/Animals/Plant.template.txt", function(result){ game.AddOrganismFromCode(result); }); };
+	var addPlant = function(){ $.get("/assets/Animals/Plant.template.txt", function(result){ game.AddOrganism(organismMindCodeLoaderPath, result); }); };
 	addPlant();
 	
 	$("#load-code").click(function(){
-		game.AddOrganismFromCode(editor.getValue());
+		game.AddOrganism(organismMindCodeLoaderPath, editor.getValue());
 	});
 
 	$("#load-herbie").click(function(){

@@ -54,10 +54,6 @@ var Game = function (canvas, width, height) {
 	{
 		this.ForEachOrganismWithFilter(function(o) { return true; }, callback);
 	};
-	
-	this.AddOrganismFromCode = function(mindCode){
-		return this.AddOrganism("/javascript/OrganismMindCodeLoader.js", mindCode);
-	};
 
 	this.Start = function() {
 		this.Renderer.Start();
