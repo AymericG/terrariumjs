@@ -1,29 +1,26 @@
-var baseUrl = '/assets/';
-
-importScripts(baseUrl + 'libs/Class.js');
-importScripts(baseUrl + 'Framework/ClassWithEvents.js');
-importScripts(baseUrl + 'GameEngine/EngineSettings.js');
-importScripts(baseUrl + 'Enums/Enums.js');
-importScripts(baseUrl + 'Framework/Exceptions.js');
-
-importScripts(baseUrl + 'Geometry/MathUtils.js');
-importScripts(baseUrl + 'Geometry/Point.js');
-importScripts(baseUrl + 'Geometry/MovementVector.js');
-
-importScripts(baseUrl + 'Actions/Action.js');
-importScripts(baseUrl + 'Actions/AttackAction.js');
-importScripts(baseUrl + 'Actions/DefendAction.js');
-importScripts(baseUrl + 'Actions/EatAction.js');
-importScripts(baseUrl + 'Actions/ReproduceAction.js');
-importScripts(baseUrl + 'Actions/MoveToAction.js');
-importScripts(baseUrl + 'Actions/PendingActions.js');
-
-importScripts(baseUrl + 'Anatomy/Species.js');
-importScripts(baseUrl + 'GameEngine/World.js');
-
-importScripts(baseUrl + 'Anatomy/MindNerve.js');
-importScripts(baseUrl + 'Anatomy/OrganismState.js');
-importScripts(baseUrl + 'Anatomy/AnimalState.js');
-importScripts(baseUrl + 'Anatomy/PlantState.js');
-importScripts(baseUrl + 'Anatomy/OrganismMind.js');
-importScripts(baseUrl + 'Anatomy/AnimalMind.js');
+// This is a manifest file that'll be compiled into application.js, which will include all the files
+// listed below.
+//
+// Any JavaScript/Coffee file within this directory, lib/assets/javascripts, vendor/assets/javascripts,
+// or vendor/assets/javascripts of plugins, if any, can be referenced here using a relative path.
+//
+// It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
+// the compiled file.
+//
+// WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
+// GO AFTER THE REQUIRES BELOW.
+//
+//= require libs/Class
+//= require_directory ./Actions
+//= require_directory ./Enums
+//= require_directory ./Framework
+//= require Anatomy/Species
+//= require Anatomy/MindNerve
+//= require Anatomy/OrganismState
+//= require Anatomy/AnimalState
+//= require Anatomy/PlantState
+//= require Anatomy/OrganismMind
+//= require Anatomy/AnimalMind
+//= require GameEngine/EngineSettings
+//= require GameEngine/World
+//= require_directory ./Geometry

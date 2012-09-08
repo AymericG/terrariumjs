@@ -56,7 +56,7 @@ var Game = function (canvas, width, height) {
 	};
 	
 	this.AddOrganismFromCode = function(mindCode){
-		return this.AddOrganism("/assets/OrganismMindCodeLoader.js", mindCode);
+		return this.AddOrganism("/javascript/OrganismMindCodeLoader.js", mindCode);
 	};
 
 	this.Start = function() {
