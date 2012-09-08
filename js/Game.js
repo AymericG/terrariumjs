@@ -204,6 +204,7 @@ var Game = function (canvas, width, height) {
 //				break;
 //			case 6:
 				this.ForEachLivePlant(function(o){ o.GetEnergyFromLight(); });   
+				this.World.Teleporter.AddTeleportTick();   
 				this.ForEachLiveAnimal(function(o){ o.Teleport(); });   
 				//
 

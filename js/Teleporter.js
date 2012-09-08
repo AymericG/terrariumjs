@@ -4,11 +4,22 @@ var Teleporter = Class.extend({
 		this.World = world;
 		this.Rectangle = rectangle;
         this.Vector = vector;
-
+        this.TeleportWait = 0;
+	},
+	AddTeleportTick: function(){
+		this.TeleportWait++;
+		if (this.TeleportWait > EngineSettings.TeleportWait)
+			this.TeleportWait = EngineSettings.TeleportWait;
+	},
+	ResetTeleportWait: function(){
+		this.TeleportWait = 0;
 	},
     ///  Determines if the given organism state is within teleport zone.
     Contains: function(state)
     {
+    	if (this.TeleportWait < EngineSettings.TeleportWait)
+    		return false;
+
         var difference = this.Rectangle.Location.X - (state.Position.X - state.Radius);
         if (difference < 0)
         {
@@ -70,6 +81,18 @@ var Teleporter = Class.extend({
                 currentRectangle.Location = currentRectangle.Location.Add(speedVector);
             }
         }
+
+    },
+
+    TeleportIfInside: function(organism)
+    {
+		if (this.Contains(organism.State))
+	    {
+	    	this.ResetTeleportWait();
+	    	var interGalacticMessage = JSON.stringify({ url: organism.MindUrl, code: organism.MindCode });
+	    	$(window).peertrigger("teleport", interGalacticMessage);
+	    	organism.Trigger("Disappear", organism);
+	    }
 
     }
 });

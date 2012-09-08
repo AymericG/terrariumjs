@@ -12,6 +12,7 @@ var EngineSettings = {
 	AnimalIncubationEnergyMultiplier: 1.5,
 	FoodChunksPerUnitOfRadius: 25,
 	EnergyPerAnimalFoodChunk: 1,
+    TeleportWait: 600,
     ///   Attack and Defense modifier applied to Carnivores.  This
     ///   gives Carnivores an advantage in both attacking and defending
     ///   against Herbivores since they have to attack and expend extra

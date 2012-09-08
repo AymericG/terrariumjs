@@ -535,7 +535,6 @@ var Organism = ClassWithEvents.extend({
 		if (this.State.IsPlant() || !this.State.IsAlive())
 	    	return;
 
-	    if (this.World.Teleporter.Contains(this.State))
-	    	console.log("TELEPORT");
+	    this.World.Teleporter.TeleportIfInside(this);
 	}
 });
