@@ -6,7 +6,7 @@ var World = ClassWithEvents.extend({
 		this.WorldHeight = height;
 		this.Organisms = {};
 		this.OrganismCount = 0;
-		this.OrganismIndex = 0;
+		this.OrganismIndex = 1;
 		
 		this.GridHeight = this.WorldHeight >> EngineSettings.GridHeightPowerOfTwo;
 		this.GridWidth = this.WorldWidth >> EngineSettings.GridWidthPowerOfTwo;
@@ -211,7 +211,7 @@ var World = ClassWithEvents.extend({
             self.Trigger("OrganismAdded", this);
 		});
 
-		organism.Send({ signal: Signals.Init, World: self.Raw(), Code: mindCode });
+		organism.Send({ signal: Signals.Init, World: self.Raw() });
 		return organism;
 	},
 	FindOrganismsInView: function(state, radius){

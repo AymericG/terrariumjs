@@ -5,6 +5,7 @@ var Teleporter = Class.extend({
 		this.Rectangle = rectangle;
         this.Vector = vector;
         this.TeleportWait = 0;
+        this.Speed = 2;
 	},
 	AddTeleportTick: function(){
 		this.TeleportWait++;
@@ -66,7 +67,7 @@ var Teleporter = Class.extend({
         {
             // find a new place to move to
             var destination = new Point(MathUtils.RandomBetween(0, this.World.WorldWidth), MathUtils.RandomBetween(0, this.World.WorldHeight));
-            this.Vector = new MovementVector(destination, 5);
+            this.Vector = new MovementVector(destination, this.Speed);
         }
         else
         {

@@ -1,21 +1,25 @@
-var BodyNerve = function(organism, mindUrl) {
+var BodyNerve = function(organism, mindUrl, mindCode) {
 	var self = this;
 	this.Organism = organism;
 	this.EventQueue = [];
 	this.MindThread = new Worker(mindUrl);
 	this.MindThread.onmessage = function(e) { self.Receive(e.data); };
+	this.MindThread.postMessage(mindCode);
 
 	this.Receive = function(message) {
 		var messageObject = JSON.parse(message);
 		
 		if (messageObject.signal == Signals.Log && messageObject.message != null)
-			console.log("[#" + self.Organism.Id + "] " + messageObject.message);
-	
+			$(window).trigger("log", [self.Organism.Id, messageObject.message]);
 		switch(messageObject.signal) {
 			case Signals.Initialized:
 				this.Organism.InitializeState(messageObject.Species);
 				this.Organism.Trigger(Signals.Born, this.Organism);
 				break;
+
+			case "Error":
+				this.Organism.State.Kill(PopulationChangeReason.Error);
+				break; 
 
 			case Signals.Act: 
 				var moveTo = messageObject.actions.MoveToAction;

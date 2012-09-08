@@ -15,6 +15,7 @@ var OrganismState = Class.extend({
 		this.SeenOrganisms = [];
 		this.Generation = 0;
 	},
+	Log: function(message){ $(window).trigger("log", [this.Id, message]); },
 	Serializable: function(withSeenOrganisms){
 		var state = {};
 		state.Id = this.Id;
@@ -187,7 +188,7 @@ var OrganismState = Class.extend({
 
     Kill: function (reason)
     {
-    	console.log("Killed. [" + reason + "]");
+    	this.Log("Killed. [" + reason + "]");
     	if (this.IsImmutable)
 		    throw new GameEngineException("Object is immutable.");
 

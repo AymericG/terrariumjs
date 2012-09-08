@@ -28,7 +28,7 @@ var AnimalState = OrganismState.extend({
 
     CauseDamage: function(incrementalDamage)
     {
-    	console.log("Caused damage: " + incrementalDamage);
+    	this.Log("Took damage: " + incrementalDamage);
         if (incrementalDamage < 0)
             throw new GameEngineException("Damage must be positive.");
 

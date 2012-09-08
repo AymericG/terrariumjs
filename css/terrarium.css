@@ -1,0 +1,120 @@
+body{
+    background-color: #333C1A;
+    color: #B69A71;
+    padding: 0px;
+    margin: 0px;
+    font-family: Arial;
+    font-size: 16px;
+}
+
+.CodeMirror{
+    background-color: #fff;
+}
+
+.game-window-wrap
+{
+    float: left; 
+    margin: 10px;
+}
+
+.game-window
+{
+	border: 5px solid #35291F;
+	width: 520px;
+	height: 440px;
+	overflow: auto;
+}
+
+.game-controls
+{
+    margin: 10px;
+	float:left; 
+	width: 50%;
+}
+
+#canvas{
+	background: #ddd url('../img/background.jpg') no-repeat;
+    margin: auto;
+}
+
+header{
+    padding: 10px;
+    background-color: #000;
+    color: #B69A71;
+    overflow: hidden;
+}
+
+header h1{
+    font-weight: bold;
+    font-size: 2em;
+    float: left;
+    line-height: 30px;
+    padding: 0px;
+    margin: 0px 20px 0 0;
+}
+
+header span{
+    line-height: 30px;
+    float: left;
+}
+
+#channel-name{
+    clear: both;
+    margin:10px;
+    
+}
+
+#logs{
+    margin:10px;
+    list-style-type: none;
+    padding:0px;
+}
+
+#logs li{
+    background-color: #35291F;
+    font-size: 11px;
+    padding: 5px;
+    margin-bottom: 2px;
+}
+
+.step-wrap{
+    margin-bottom: 15px;
+}
+
+.step-wrap h2{
+    margin:0px 0 5px 0;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.step{
+    float:left;
+    font-size: 36px;
+    margin-right: 10px;
+}
+
+.social{
+    float:right;
+    width:150px;
+    margin-top:8px;
+}
+
+footer{
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #000;
+    text-align:center;
+}
+
+footer a{
+    color: #EEDB74;
+}
+
+.stats
+{
+    font-size: 12px;    
+}
+
+.stats span{
+    font-weight: bold;
+}

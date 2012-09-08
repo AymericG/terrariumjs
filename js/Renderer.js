@@ -10,6 +10,9 @@ var Renderer = Class.extend({
 
 		this.Ticker = this.Scene.Ticker(function(ticker){
 
+			if (self.Input.mousedown)
+	        	self.SelectOrganism(self.Input.mouse.position.x, self.Input.mouse.position.y);
+
 			self.DrawGrid();
 
 			for (var organismId in self.World.Organisms)
@@ -27,6 +30,26 @@ var Renderer = Class.extend({
 		this.Sprites = {};
 		this.Cycles = {};
 		this.InitializeTeleporterAnimation();
+		this.Input  = this.Scene.Input();
+		this.SelectedOrganismId = null;
+    },
+    SelectOrganism: function(x, y){
+    	if (x < 0 || y < 0 || x >= this.World.WorldWidth || y >= this.World.WorldHeight)
+    		return;
+
+    	for (var organismId in this.World.Organisms)
+    	{
+    		var organism = this.World.Organisms[organismId];
+    		var rectangle = new Rectangle(organism.State.Position.X-organism.State.Radius, organism.State.Position.Y-organism.State.Radius, organism.State.Radius*2, organism.State.Radius*2);
+    		if (rectangle.Contains(new Point(x, y)))
+    		{
+    			this.SelectedOrganismId = organism.Id;
+		    	$(window).trigger("log-channel", [organism.Id]);
+    			return;
+    		}
+    	}
+    	this.SelectedOrganismId = null;
+    	$(window).trigger("log-channel", ["General"]);
     },
     InitializeAnimation: function(animation)
     {
@@ -132,9 +155,12 @@ var Renderer = Class.extend({
 		ctx.fillRect(positionX + energy, positionY + organismSprite.h + 1, organismSprite.w - energy, 5);
 
 		// 
-	//	ctx.strokeStyle = "White";
-	//	ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2/*+EngineSettings.GridCellWidth*/, radiusH*2/*+EngineSettings.GridCellHeight*/);
-		
+		if (this.SelectedOrganismId == organism.Id)
+		{
+			ctx.strokeStyle = "Red";
+			ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2/*+EngineSettings.GridCellWidth*/, radiusH*2/*+EngineSettings.GridCellHeight*/);
+		}
+
 		ctx.fillStyle = "black";
 
 		// pick the right animation, if not plant
@@ -166,13 +192,13 @@ var Renderer = Class.extend({
 	},
 	CreateSprite: function(organism){
 		var size = organism.State.Radius < 17 ? 24 : 48;
-		var spriteUrl = 'img/' + organism.State.Species.Skin + size + '.bmp';
+		var spriteUrl = 'img/' + organism.State.Species.Skin + size + '.png';
 		var sprite = this.Scene.Sprite(spriteUrl, this.Layer);
 		sprite.size(size, size);
 		return sprite;
 	},
 	InitializeTeleporterAnimation: function(){
-		var sprite = this.Scene.Sprite('img/teleporter.bmp', this.Layer);
+		var sprite = this.Scene.Sprite('img/teleporter.png', this.Layer);
 		sprite.size(48, 48);
 		this.TeleporterSprite = sprite;
 		var frames = [];

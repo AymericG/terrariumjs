@@ -175,13 +175,8 @@ var AnimalMind = OrganismMind.extend({
 	LookFor: function(organismId)
 	{
 		for (var i = 0; i < this.State.SeenOrganisms.length; i++)
-		{
-			this.WriteTrace(this.State.SeenOrganisms[i].Id + " ==? " + organismId);
 			if (this.State.SeenOrganisms[i].Id == organismId)
-			{
 				return this.State.SeenOrganisms[i];
-			}
-		}
 		return null;
 	}
 });

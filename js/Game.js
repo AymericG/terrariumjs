@@ -1,23 +1,16 @@
 var Game = function (canvas, width, height) {
 	var self = this;
-
+	this.Logger = new Logger();
 	this.World = new World(width, height);
 	this.Renderer = new Renderer(canvas, width, height, this.World);
-	
 	this.Started = false;
-	this.Phase = 0;
 
 	this.World.Subscribe("OrganismAdded", function(){
 		var organism = this;
 		if (organism)
 		{
 			self.Renderer.AddOrganism(organism);
-			if (self.Started)
-				organism.Send({ signal: Signals.Tick });
-
-			organism.Subscribe("Disappear", function(){
-				self.Renderer.RemoveOrganism(organism);
-			});
+			organism.Subscribe("Disappear", function(){ self.Renderer.RemoveOrganism(organism); });
 		}
 
 	});
@@ -28,34 +21,38 @@ var Game = function (canvas, width, height) {
 		return organism;
 	};
 
-	this.ForEachLiveOrganism = function(callback)
+	this.ForEachOrganismWithFilter = function(filter, callback)
 	{
 		for (var organismId in self.World.Organisms) 
-			if (self.World.Organisms[organismId].State.IsAlive())
-				callback(self.World.Organisms[organismId]);
+		{
+			var organism = self.World.Organisms[organismId];
+			if (filter(organism))
+			{
+				try {
+					callback(organism);
+				}
+				catch (e){
+					organism.State.Kill(PopulationChangeReason.Error);
+				}
+			}
+		}
+	},
+
+	this.ForEachLiveOrganism = function(callback)
+	{ 
+		this.ForEachOrganismWithFilter(function(o) { return o.State.IsAlive(); }, callback);
 	};
 	this.ForEachLivePlant = function(callback)
 	{
-		for (var organismId in self.World.Organisms) 
-		{
-			var organism = self.World.Organisms[organismId];
-			if (organism.State.IsAlive() && organism.State.IsPlant())
-				callback(organism);
-		}
+		this.ForEachOrganismWithFilter(function(o) { return o.State.IsAlive() && o.State.IsPlant(); }, callback);
 	};
 	this.ForEachLiveAnimal = function(callback)
 	{
-		for (var organismId in self.World.Organisms) 
-		{
-			var organism = self.World.Organisms[organismId];
-			if (organism.State.IsAlive() && !organism.State.IsPlant())
-				callback(organism);
-		}
+		this.ForEachOrganismWithFilter(function(o) { return o.State.IsAlive() && !o.State.IsPlant(); }, callback);
 	};
 	this.ForEachOrganism = function(callback)
 	{
-		for (var organismId in self.World.Organisms) 
-			callback(self.World.Organisms[organismId]);
+		this.ForEachOrganismWithFilter(function(o) { return true; }, callback);
 	};
 	
 	this.AddOrganismFromCode = function(mindCode){
@@ -67,6 +64,23 @@ var Game = function (canvas, width, height) {
 		setInterval(function() { self.Tick(); }, EngineSettings.TickInterval);
 		self.Started = true;
 	};
+	this.Tick = function () {
+		this.ForEachLiveOrganism(function(o){ o.Send({ signal: Signals.Tick }); });
+		this.ForEachOrganism(function(o){ o.Age(); });
+		this.ForEachLiveAnimal(function(o){ o.Attack(); });
+		this.World.Teleporter.Move();
+		this.ForEachLiveAnimal(function(o){ o.Move(); });
+		this.ForEachLiveOrganism(function(o){ o.Bite(); });         
+		this.ForEachLiveOrganism(function(o){ o.Grow(); });         
+		this.ForEachLiveOrganism(function(o){ o.Incubate(); });         
+		this.ForEachLiveOrganism(function(o){ o.Heal(); });         
+		this.ForEachLivePlant(function(o){ o.GetEnergyFromLight(); });   
+		this.World.Teleporter.AddTeleportTick();   
+		this.ForEachLiveAnimal(function(o){ o.Teleport(); });   
+		this.ForEachLiveOrganism(function(o){ o.Scan(); });  
+		this.ForEachLiveOrganism(function(o){ o.Nerve.SendEventQueue(); });  
+	}
+
 
 //	this.MoveAll = function(){
 //		this.ForEachAliveOrganism(function(o){ if (!o.State.IsPlant()) o.Move(); });
@@ -176,47 +190,5 @@ var Game = function (canvas, width, height) {
 		}*/
 //	};
 
-	this.Tick = function () {
-		switch (this.Phase)
-		{
-			case 0:
-				this.ForEachLiveOrganism(function(o){ o.Send({ signal: Signals.Tick }); });
-				this.ForEachOrganism(function(o){ o.Age(); });
-				this.ForEachLiveAnimal(function(o){ o.Attack(); });
-
-//				break;
-//			case 1:
-				this.World.Teleporter.Move();
-				this.ForEachLiveAnimal(function(o){ o.Move(); });
-
-//				break;
-//			case 2:
-				this.ForEachLiveOrganism(function(o){ o.Bite(); });         
-//				break;
-//			case 3:
-				this.ForEachLiveOrganism(function(o){ o.Grow(); });         
-//				break;
-//			case 4:
-				this.ForEachLiveOrganism(function(o){ o.Incubate(); });         
-//				break;
-//			case 5:
-				this.ForEachLiveOrganism(function(o){ o.Heal(); });         
-//				break;
-//			case 6:
-				this.ForEachLivePlant(function(o){ o.GetEnergyFromLight(); });   
-				this.World.Teleporter.AddTeleportTick();   
-				this.ForEachLiveAnimal(function(o){ o.Teleport(); });   
-				//
-
-//				break;
-//			case 7:
-				this.ForEachLiveOrganism(function(o){ o.Scan(); });  
-				this.ForEachLiveOrganism(function(o){ o.Nerve.SendEventQueue(); });  
-				
-				this.Phase = -1;
-				break;
-		}       
-		this.Phase++;
-	}
 };
 

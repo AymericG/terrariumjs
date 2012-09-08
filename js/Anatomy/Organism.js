@@ -5,7 +5,7 @@ var Organism = ClassWithEvents.extend({
 		this._super();
 		this.Id = id;
 		this.InProgressActions = new PendingActions();
-		this.Nerve = new BodyNerve(this, mindUrl);
+		this.Nerve = new BodyNerve(this, mindUrl, mindCode);
 		this.MindUrl = mindUrl;
 		this.MindCode = mindCode;
 		this.Direction = Direction.Left;
@@ -208,9 +208,10 @@ var Organism = ClassWithEvents.extend({
 		}
 		catch (e)
 		{
-			console.log("ERROR: Move");
+			this.Log("ERROR: Move");
 		}
 	},
+	Log: function(message){ $(window).trigger("log", [this.Id, message]); },
 	DoMove: function(destination)
 	{
 		if (destination == null)
@@ -348,7 +349,7 @@ var Organism = ClassWithEvents.extend({
                 this.State.AddRotTick();
                 if (this.State.RotTicks > EngineSettings.TimeToRot)
                 {
-                	console.log("Disappear. End of rot");
+                	this.Log("Disappear: End of rot");
             		this.Trigger("Disappear", this);
             	}
             }
@@ -447,7 +448,7 @@ var Organism = ClassWithEvents.extend({
 	    {
 	        foodChunkCount = defenderState.FoodChunks;
 	        // remove the defender from the world if we ate them all
-			console.log("Disappear. No food chunk left");
+			this.Log("Disappear: No food chunk left");
 			defender.Trigger("Disappear", defender);
 			this.InProgressActions.EatAction = null;
 	    }
@@ -463,7 +464,7 @@ var Organism = ClassWithEvents.extend({
 	        newEnergy = EngineSettings.EnergyPerPlantFoodChunk * foodChunkCount;
 	    else
 	        newEnergy = EngineSettings.EnergyPerAnimalFoodChunk * foodChunkCount;
-	    console.log("Recovering " + newEnergy + " energy");
+	    this.Log("Recovering energy (" + newEnergy + ")");
 	    attackerState.StoredEnergy(attackerState.StoredEnergy() + newEnergy);
 	},
 	GetEnergyFromLight: function(){

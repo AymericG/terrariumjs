@@ -32,26 +32,30 @@ var OrganismMind = Class.extend({
 	},
 	ProcessSignal: function(messageObject)
 	{
-		switch(messageObject.signal) {
-			case Signals.Init:
-				this.World = messageObject.World;
-				if (messageObject.Code)
-					eval(messageObject.Code);
+		try
+		{
+			switch(messageObject.signal) {
+				case Signals.Init:
+					this.World = messageObject.World;
+					// Send back Species.
+					this.Nerve.Send({ signal: Signals.Initialized, Species: this.Species });
 
-				// Send back Species.
-				this.Nerve.Send({ signal: Signals.Initialized, Species: this.Species });
-
-				break;
-			case Signals.Tick:
-				this.Tick();
-				break;
-			case Signals.Bulk:
-				for (var i = 0; i < messageObject.events.length; i++)
-					this.ProcessSignal(messageObject.events[i]);
-				break;
-			default:
-				// I don't understand
-				break;
+					break;
+				case Signals.Tick:
+					this.Tick();
+					break;
+				case Signals.Bulk:
+					for (var i = 0; i < messageObject.events.length; i++)
+						this.ProcessSignal(messageObject.events[i]);
+					break;
+				default:
+					// I don't understand
+					break;
+			}
+		}
+		catch (e)
+		{
+			this.Nerve.Send({ signal: "Error", error: e });
 		}
 	},
 	WriteTrace: function(message) {
