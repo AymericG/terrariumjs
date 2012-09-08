@@ -15,4 +15,6 @@ var TooFastException = Exception.extend({});
 var AlreadyFullException = Exception.extend({});
 var NotWithinDistanceException = Exception.extend({});
 var ImproperFoodException = Exception.extend({});
+var InvalidPointsException = Exception.extend({});
+
 

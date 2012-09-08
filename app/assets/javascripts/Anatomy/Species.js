@@ -5,31 +5,50 @@ var Species = Class.extend({
 		this.PercentOfMaximumEnergyPerUnitRadius = 0.2;
 		this.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0.2;
 		this.PercentOfMaximumAttackDamagePerUnitRadius = 0.2;
-		this.PercentOfMaximumDefendDamagePerUnitRadius = 0.2;
+		this.PercentOfMaximumDefendDamagePerUnitRadius = 0.1;
+		this.PercentOfMaximumEyeSightRadius = 0.1;
+		this.PercentOfMaximumSpeed = 0.1;
+		this.PercentOfMaximumInvisibleOdds = 0.1;
 		this.Name = "No name";
 		this.IsCarnivore = false;
 		this.IsPlant = false;
-		this.MaximumSpeed = 4;
 		this.Skin = AnimalSkin.ant;
-		this.InvisibleOdds = 5;
-		this.EyesightRadius = 5;
-
+	},
+	Validate: function(){
+		if ((this.PercentOfMaximumSpeed + 
+			this.PercentOfMaximumInvisibleOdds + 
+			this.PercentOfMaximumEyeSightRadius + 
+			this.PercentOfMaximumEnergyPerUnitRadius + 
+			this.PercentOfMaximumDefendDamagePerUnitRadius + 
+			this.PercentOfMaximumAttackDamagePerUnitRadius +
+			this.PercentOfMaximumEatingSpeedPerUnitOfRadius) != 1){
+			throw new InvalidPointsException("The sum of the points should be 1");
+		}
+	},
+	InvisibleOdds: function(){
+		return Math.round(EngineSettings.InvisibleOddsBase + this.PercentOfMaximumInvisibleOdds * EngineSettings.InvisibleOddsMaximum);
+	},
+	EyeSightRadius: function(){
+		return Math.round(EngineSettings.BaseEyesightRadius + this.PercentOfMaximumEyeSightRadius * EngineSettings.MaximumEyesightRadius);
+	},
+	MaximumSpeed: function(){
+		return Math.round(EngineSettings.SpeedBase + this.PercentOfMaximumSpeed * EngineSettings.SpeedMaximum);
 	},
 	MaximumDefendDamagePerUnitRadius: function()
 	{
 		var max = (EngineSettings.BaseDefendedDamagePerUnitOfRadius + this.PercentOfMaximumDefendDamagePerUnitRadius * EngineSettings.MaximumDefendedDamagePerUnitOfRadius) + 0.001;
 
 		if (this.IsCarnivore)
-	        return max * EngineSettings.CarnivoreAttackDefendMultiplier;
+	        return Math.round(max * EngineSettings.CarnivoreAttackDefendMultiplier);
 	    else
-	        return max;
+	        return Math.round(max);
 	},
 	MaximumAttackDamagePerUnitRadius: function(){
 		return Math.round((EngineSettings.BaseInflictedDamagePerUnitOfRadius + this.PercentOfMaximumAttackDamagePerUnitRadius * EngineSettings.MaximumInflictedDamagePerUnitOfRadius) + 0.001);
 	},
 
 	EatingSpeedPerUnitRadius: function(){
-		return EngineSettings.BaseEatingSpeedPerUnitOfRadius + this.PercentOfMaximumEatingSpeedPerUnitOfRadius * EngineSettings.MaximumEatingSpeedPerUnitOfRadius;
+		return Math.round(EngineSettings.BaseEatingSpeedPerUnitOfRadius + this.PercentOfMaximumEatingSpeedPerUnitOfRadius * EngineSettings.MaximumEatingSpeedPerUnitOfRadius);
 	},
 	MaximumEnergyPerUnitRadius: function(){
 		return Math.floor(EngineSettings.MaxEnergyBasePerUnitRadius + this.PercentOfMaximumEnergyPerUnitRadius * EngineSettings.MaxEnergyMaximumPerUnitRadius);

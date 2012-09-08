@@ -21,6 +21,7 @@ var Organism = ClassWithEvents.extend({
 	{
 		var species = new Species();
 		species.Refresh(speciesData);
+		species.Validate();
 
 		if (speciesData.IsPlant)
 			this.State = new PlantState(species);
@@ -375,7 +376,7 @@ var Organism = ClassWithEvents.extend({
 
 	},
 	Scan: function(){
-		var foundOrganisms = this.World.FindOrganismsInView(this.State, this.State.Species.EyesightRadius);
+		var foundOrganisms = this.World.FindOrganismsInView(this.State, this.State.Species.EyeSightRadius());
 
 		var seen = [];
         
@@ -394,7 +395,7 @@ var Organism = ClassWithEvents.extend({
             	continue;
             }	
             var invisible = Math.random() * 100;
-            if (invisible > state.Species.InvisibleOdds)
+            if (invisible > state.Species.InvisibleOdds())
             {
             	seen.push(state);
                 continue;

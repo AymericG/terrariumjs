@@ -13,6 +13,24 @@ var EngineSettings = {
 	FoodChunksPerUnitOfRadius: 25,
 	EnergyPerAnimalFoodChunk: 1,
     TeleportWait: 600,
+    ///   Represents the maximum distance a creature can see if they place
+    ///   MaxAvailableCharacteristicPoints into the EyesightPointsAttribute.
+    ///   This distance is in Terrarium Cells, so you have to multiply
+    ///   by 8 to get the actual distance in Terrarium Units (pixels).
+    MaximumEyesightRadius: 10,
+
+    ///   Represents the base achievable speed granted to a creature
+    ///   that places 0 points into the MaximumSpeedAttribute.
+    SpeedBase: 5,
+    ///   Represents the maximum achievable speed granted to a creature
+    ///   that places MaxAvailableCharacteristicPoints into the MaximumSpeedAttribute.
+    SpeedMaximum: 100,
+    ///   Represents the base distance a creature can see if they place
+    ///   0 points into the EyesightPointsAttribute.
+    ///   This distance is in Terrarium Cells, so you have to multiply
+    ///   by 8 to get the actual distance in Terrarium Units (pixels).
+    BaseEyesightRadius: 5,
+
     ///   Attack and Defense modifier applied to Carnivores.  This
     ///   gives Carnivores an advantage in both attacking and defending
     ///   against Herbivores since they have to attack and expend extra

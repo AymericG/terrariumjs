@@ -14,7 +14,7 @@ var AnimalMind = OrganismMind.extend({
 		if (vector == null)
 		    throw new ArgumentNullException("The argument 'vector' cannot be null");
 
-		if (vector.Speed > this.Species.MaximumSpeed)
+		if (vector.Speed > this.Species.MaximumSpeed())
 		    throw new TooFastException();
 
 		if (vector.Destination.X > this.World.WorldWidth - 1 ||

@@ -13,8 +13,15 @@ var BodyNerve = function(organism, mindUrl, mindCode) {
 			$(window).trigger("log", [self.Organism.Id, messageObject.message]);
 		switch(messageObject.signal) {
 			case Signals.Initialized:
-				this.Organism.InitializeState(messageObject.Species);
-				this.Organism.Trigger(Signals.Born, this.Organism);
+				try
+				{
+					this.Organism.InitializeState(messageObject.Species);
+					this.Organism.Trigger(Signals.Born, this.Organism);
+				}
+				catch (e)
+				{
+					console.log("EXCEPTION: " + e.Message);
+				}
 				break;
 
 			case "Error":
