@@ -90,7 +90,7 @@ var Teleporter = Class.extend({
 		if (this.Contains(organism.State))
 	    {
 	    	this.ResetTeleportWait();
-	    	var interGalacticMessage = JSON.stringify({ url: organism.MindUrl, code: organism.MindCode });
+	    	var interGalacticMessage = JSON.stringify({ url: organism.MindUrl, code: organism.MindCode, generation: organism.State.Generation });
 	    	$(window).peertrigger("teleport", interGalacticMessage);
 	    	organism.Trigger("Disappear", organism);
 	    }

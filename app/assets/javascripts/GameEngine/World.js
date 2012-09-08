@@ -17,6 +17,18 @@ var World = ClassWithEvents.extend({
         // This member is here just so we don't create the visibility matrix for every call
         // to FindOrganismsInView.
         this._invisible = this.Matrix((EngineSettings.MaximumEyesightRadius + EngineSettings.BaseEyesightRadius + EngineSettings.MaxGridRadius)*2 + 1, (EngineSettings.MaximumEyesightRadius + EngineSettings.BaseEyesightRadius + EngineSettings.MaxGridRadius)*2 + 1);
+        var self = this;
+
+        $(window).peerbind("teleport", {
+            peer:  function(e) { 
+                var interGalacticMessage = JSON.parse(e.peerData);
+                self.AddOrganism(interGalacticMessage.url, interGalacticMessage.code, interGalacticMessage.generation);
+            },
+            local: function(e) { 
+                // Nothing.
+            }
+        });
+
 	},
 	Matrix: function(width, height){
 		var matrix = new Array(width);

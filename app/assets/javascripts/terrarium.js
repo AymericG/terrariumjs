@@ -54,17 +54,6 @@ $(document).ready(function() {
 
 	$("#load-plant").click(addPlant);
 
-	$(window).peerbind("teleport", {
-    	peer:  function(e) { 
-    		var interGalacticMessage = JSON.parse(e.peerData);
-    		console.log(interGalacticMessage.url);
-    		console.log(interGalacticMessage.code);
-    		game.AddOrganism(interGalacticMessage.url, interGalacticMessage.code);
-    	},
-    	local: function(e) { 
-    		// Nothing.
-    	}
-	});
 
 	var peerCounter = 0;
 
