@@ -12,7 +12,8 @@ var World = ClassWithEvents.extend({
 		this.GridWidth = this.WorldWidth >> EngineSettings.GridWidthPowerOfTwo;
 
 		this._cellOrganisms = this.Matrix(this.GridWidth, this.GridHeight);
-
+        this.Teleporter = new Teleporter(this, new Rectangle(225, 225, 48, 48), null);
+            
         // This member is here just so we don't create the visibility matrix for every call
         // to FindOrganismsInView.
         this._invisible = this.Matrix((EngineSettings.MaximumEyesightRadius + EngineSettings.BaseEyesightRadius + EngineSettings.MaxGridRadius)*2 + 1, (EngineSettings.MaximumEyesightRadius + EngineSettings.BaseEyesightRadius + EngineSettings.MaxGridRadius)*2 + 1);

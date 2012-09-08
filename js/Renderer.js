@@ -3,6 +3,7 @@ var Renderer = Class.extend({
 		var self = this;
 		this.Scene = sjs.Scene({parent: parent, w: width, h: height});
 
+
 		this.Animations = {};
 		for (var animation in AnimationIndexes)
     		this.Animations[animation] = this.InitializeAnimation(animation);
@@ -14,6 +15,8 @@ var Renderer = Class.extend({
 			for (var organismId in self.World.Organisms)
 				self.DrawOrganism(self.World.Organisms[organismId]);
 
+			self.DrawTeleporter(self.World.Teleporter);
+
 			for (var cycle in self.Cycles)
 				self.Cycles[cycle].next(self.Ticker.lastTicksElapsed);
 		});
@@ -23,6 +26,7 @@ var Renderer = Class.extend({
 		this.Layer = this.Scene.Layer('front', {useCanvas: true});
 		this.Sprites = {};
 		this.Cycles = {};
+		this.InitializeTeleporterAnimation();
     },
     InitializeAnimation: function(animation)
     {
@@ -87,6 +91,11 @@ var Renderer = Class.extend({
 	    ctx.stroke();
 	    ctx.strokeStyle = previousStyle;
 	},
+	DrawTeleporter: function(){
+		this.TeleporterSprite.position(this.World.Teleporter.Rectangle.Location.X, this.World.Teleporter.Rectangle.Location.Y);
+		this.TeleporterSprite.move(1, 0);
+		this.TeleporterSprite.update();
+	},
 	DrawOrganism: function(organism){
 		var ctx = this.Layer.ctx;
 		var organismSprite = this.Sprites[organism.Id];
@@ -113,7 +122,7 @@ var Renderer = Class.extend({
 		*/
 		// Draw name
 		ctx.strokeStyle = "Black";
-		ctx.strokeText(organism.State.Species.Name + " #" + organism.Id + " " + organism.State.Generation, positionX, positionY + organismSprite.h + 15);
+		ctx.strokeText(organism.State.Species.Name + " #" + organism.Id, positionX, positionY + organismSprite.h + 15);
 	
 		// Draw energy left
 		var energy = organism.State.StoredEnergy() * organismSprite.w / organism.State.MaxEnergy();
@@ -123,8 +132,8 @@ var Renderer = Class.extend({
 		ctx.fillRect(positionX + energy, positionY + organismSprite.h + 1, organismSprite.w - energy, 5);
 
 		// 
-		ctx.strokeStyle = "White";
-		ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2/*+EngineSettings.GridCellWidth*/, radiusH*2/*+EngineSettings.GridCellHeight*/);
+	//	ctx.strokeStyle = "White";
+	//	ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2/*+EngineSettings.GridCellWidth*/, radiusH*2/*+EngineSettings.GridCellHeight*/);
 		
 		ctx.fillStyle = "black";
 
@@ -156,13 +165,22 @@ var Renderer = Class.extend({
 
 	},
 	CreateSprite: function(organism){
-		var sprite = null
 		var size = organism.State.Radius < 17 ? 24 : 48;
 		var spriteUrl = 'img/' + organism.State.Species.Skin + size + '.bmp';
-		//console.log(spriteUrl);
-		sprite = this.Scene.Sprite(spriteUrl, this.Layer);
+		var sprite = this.Scene.Sprite(spriteUrl, this.Layer);
 		sprite.size(size, size);
 		return sprite;
+	},
+	InitializeTeleporterAnimation: function(){
+		var sprite = this.Scene.Sprite('img/teleporter.bmp', this.Layer);
+		sprite.size(48, 48);
+		this.TeleporterSprite = sprite;
+		var frames = [];
+    	for (var i = 0; i < 16; i++)
+    		frames.push([i*48, 0, 5]);
+		var cycle = this.Scene.Cycle(frames);
+		cycle.addSprite(sprite);
+		this.Cycles['teleporter'] = cycle;
 	},
 	AddOrganism: function(organism){
 		var sprite = this.CreateSprite(organism);

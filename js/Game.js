@@ -186,6 +186,7 @@ var Game = function (canvas, width, height) {
 
 //				break;
 //			case 1:
+				this.World.Teleporter.Move();
 				this.ForEachLiveAnimal(function(o){ o.Move(); });
 
 //				break;
@@ -202,7 +203,10 @@ var Game = function (canvas, width, height) {
 				this.ForEachLiveOrganism(function(o){ o.Heal(); });         
 //				break;
 //			case 6:
-				this.ForEachLivePlant(function(o){ o.GetEnergyFromLight(); });         
+				this.ForEachLivePlant(function(o){ o.GetEnergyFromLight(); });   
+				this.ForEachLiveAnimal(function(o){ o.Teleport(); });   
+				//
+
 //				break;
 //			case 7:
 				this.ForEachLiveOrganism(function(o){ o.Scan(); });  

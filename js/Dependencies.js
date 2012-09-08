@@ -1,9 +1,9 @@
 var baseUrl = '/terrarium/js/';
 
-importScripts(baseUrl + 'Class.js');
+importScripts(baseUrl + 'libs/Class.js');
 importScripts(baseUrl + 'ClassWithEvents.js');
 importScripts(baseUrl + 'EngineSettings.js');
-importScripts(baseUrl + 'Enums.js');
+importScripts(baseUrl + 'Enums/Enums.js');
 importScripts(baseUrl + 'Exceptions.js');
 
 importScripts(baseUrl + 'Geometry/MathUtils.js');
@@ -18,7 +18,7 @@ importScripts(baseUrl + 'Actions/ReproduceAction.js');
 importScripts(baseUrl + 'Actions/MoveToAction.js');
 importScripts(baseUrl + 'Actions/PendingActions.js');
 
-importScripts(baseUrl + 'Species.js');
+importScripts(baseUrl + 'Anatomy/Species.js');
 importScripts(baseUrl + 'World.js');
 
 importScripts(baseUrl + 'Anatomy/MindNerve.js');

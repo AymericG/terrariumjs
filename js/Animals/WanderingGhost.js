@@ -13,14 +13,6 @@ function PickRandomProperty(obj) {
 }
 species.Skin = AnimalSkin[PickRandomProperty(AnimalSkin)];
 
-organism.MoveToRandomPoint = function(){
-	// Pick random point on the map.
-	var y = MathUtils.RandomBetween(0, this.World.WorldHeight);
-	var x = MathUtils.RandomBetween(0, this.World.WorldWidth);
-
-	this.BeginMoving(new MovementVector(new Point(x, y), 2));
-};
-
 // Wandering Ghost
 organism.OnIdle = function() {
 	if (this.CanReproduce())
@@ -30,6 +22,10 @@ organism.OnIdle = function() {
 		this.MoveToRandomPoint();
 };
 
-organism.OnMoveCompleted = function (){
-	this.MoveToRandomPoint();
+organism.MoveToRandomPoint = function(){
+	// Pick random point on the map.
+	var y = MathUtils.RandomBetween(0, this.World.WorldHeight);
+	var x = MathUtils.RandomBetween(0, this.World.WorldWidth);
+
+	this.BeginMoving(new MovementVector(new Point(x, y), 2));
 };

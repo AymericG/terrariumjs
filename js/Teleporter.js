@@ -1,0 +1,75 @@
+var Teleporter = Class.extend({
+	init: function(world, rectangle, vector)
+	{
+		this.World = world;
+		this.Rectangle = rectangle;
+        this.Vector = vector;
+
+	},
+    ///  Determines if the given organism state is within teleport zone.
+    Contains: function(state)
+    {
+        var difference = this.Rectangle.Location.X - (state.Position.X - state.Radius);
+        if (difference < 0)
+        {
+            // Negative means rectangle boundary < state boundary
+            if (-difference > this.Rectangle.Width + 1)
+            {
+                // X isn't overlapping or adjacent
+                return false;
+            }
+        }
+        else
+        {
+            // state boundary <=  rectangle boundary
+            if (difference > (state.Radius*2) + 1)
+            {
+                // X isn't overlapping or adjacent
+                return false;
+            }
+        }
+
+        difference = this.Rectangle.Location.Y - (state.Position.Y - state.Radius);
+        if (difference < 0)
+        {
+            // Negative means rectangle boundary < state boundary
+            if (-difference > this.Rectangle.Height + 1)
+            {
+                // Y isn't overlapping or adjacent
+                return false;
+            }
+        }
+        else
+        {
+            // state boundary <=  rectangle boundary
+            if (difference > (state.Radius*2) + 1)
+            {
+                // Y isn't overlapping or adjacent
+                return false;
+            }
+        }
+        return true;
+    },
+    Move: function(){
+		if (this.Vector == null || this.Rectangle.Contains(this.Vector.Destination))
+        {
+            // find a new place to move to
+            var destination = new Point(MathUtils.RandomBetween(0, this.World.WorldWidth), MathUtils.RandomBetween(0, this.World.WorldHeight));
+            this.Vector = new MovementVector(destination, 5);
+        }
+        else
+        {
+            var currentRectangle = this.Rectangle;
+            var vector = currentRectangle.Location.Substract(this.Vector.Destination);
+            if (vector.Magnitude() <= this.Vector.Speed)
+                this.Vector = null; // We've arrived
+            else
+            {
+                var unitVector = vector.GetUnitVector();
+                var speedVector = unitVector.Scale(this.Vector.Speed);
+                currentRectangle.Location = currentRectangle.Location.Add(speedVector);
+            }
+        }
+
+    }
+});
