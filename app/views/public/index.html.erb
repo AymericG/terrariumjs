@@ -1,0 +1,52 @@
+
+        <div class="game-window-wrap">
+        	<div class="game-window">
+            	<div id="canvas"></div>
+        	</div>
+            <div class="stats">Terrariums connected: <span id="terrarium-count"></span></div>
+        </div>
+        
+        <aside class="game-controls">
+            <div class="step-wrap">
+                <div class="step">1</div>
+                <h2>What type of animal do you want to write?<h2>
+                <input id="load-herbie" type="button" value="Load a Herbivore template" />
+                <input id="load-carnie" type="button" value="Load a Carnivore template" />
+            </div>
+            <div class="step-wrap">
+            <div class="step">2</div>
+            <h2>Write the code that tells your animal what to do</h2>
+            <textarea id="code" rows="27" cols="80">
+// Wandering Ghost
+organism.OnIdle = function() {
+    if (this.CanReproduce())
+        this.BeginReproduction(null);
+
+    if (!this.IsMoving())
+        this.MoveToRandomPoint();
+};
+
+organism.MoveToRandomPoint = function(){
+    // Pick random point on the map.
+    var y = MathUtils.RandomBetween(0, this.World.WorldHeight);
+    var x = MathUtils.RandomBetween(0, this.World.WorldWidth);
+
+    this.BeginMoving(new MovementVector(new Point(x, y), 2));
+};
+            </textarea>
+            </div>
+        <div class="step-wrap">
+            <div class="step">3</div>
+            <h2>Submit your creation!</h2>
+        	<input id="load-code" type="button" value="Create animal from code" />
+            <input id="load-plant" type="button" value="Add a plant" />
+        </div>
+<!--        	<input id="run" type="button" value="Start game" /> -->
+        </aside>
+
+        <div id="channel-name">
+            Listening to channel <strong>General</strong>:
+        </div>
+        <ul id="logs">
+            <li><i>No message yet.</i></li>
+        </ul>
