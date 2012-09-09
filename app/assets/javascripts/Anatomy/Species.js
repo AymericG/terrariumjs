@@ -67,7 +67,7 @@ var Species = Class.extend({
 			return this.MatureRadius() * EngineSettings.PlantLifeSpanPerUnitMaximumRadius;
 		if (this.IsCarnivore)
         	return this.MatureRadius() * EngineSettings.AnimalLifeSpanPerUnitMaximumRadius * EngineSettings.CarnivoreLifeSpanMultiplier;
-        return this.MatureRadius)_ * EngineSettings.AnimalLifeSpanPerUnitMaximumRadius;
+        return this.MatureRadius() * EngineSettings.AnimalLifeSpanPerUnitMaximumRadius;
 
 	},
 	ReproductionWait: function(){
