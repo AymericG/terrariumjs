@@ -1,7 +1,7 @@
 var Species = Class.extend({
 
 	init: function(){
-		this.MatureRadius = 12;
+		this.MatureSize = 24;
 		this.PercentOfMaximumEnergyPerUnitRadius = 0.2;
 		this.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0.2;
 		this.PercentOfMaximumAttackDamagePerUnitRadius = 0.2;
@@ -24,6 +24,9 @@ var Species = Class.extend({
 			this.PercentOfMaximumEatingSpeedPerUnitOfRadius) != 1){
 			throw new InvalidPointsException("The sum of the points should be 1");
 		}
+	},
+	MatureRadius: function(){
+		return Math.floor(this.MatureSize / 2);
 	},
 	InvisibleOdds: function(){
 		return Math.round(EngineSettings.InvisibleOddsBase + this.PercentOfMaximumInvisibleOdds * EngineSettings.InvisibleOddsMaximum);
@@ -61,20 +64,20 @@ var Species = Class.extend({
 	LifeSpan: function(){
 
 		if (this.IsPlant)
-			return this.MatureRadius * EngineSettings.PlantLifeSpanPerUnitMaximumRadius;
+			return this.MatureRadius() * EngineSettings.PlantLifeSpanPerUnitMaximumRadius;
 		if (this.IsCarnivore)
-        	return this.MatureRadius * EngineSettings.AnimalLifeSpanPerUnitMaximumRadius * EngineSettings.CarnivoreLifeSpanMultiplier;
-        return this.MatureRadius * EngineSettings.AnimalLifeSpanPerUnitMaximumRadius;
+        	return this.MatureRadius() * EngineSettings.AnimalLifeSpanPerUnitMaximumRadius * EngineSettings.CarnivoreLifeSpanMultiplier;
+        return this.MatureRadius)_ * EngineSettings.AnimalLifeSpanPerUnitMaximumRadius;
 
 	},
 	ReproductionWait: function(){
 		if (this.IsPlant)
-			return this.MatureRadius * EngineSettings.PlantReproductionWaitPerUnitRadius;
+			return this.MatureRadius() * EngineSettings.PlantReproductionWaitPerUnitRadius;
 
-		return this.MatureRadius * EngineSettings.AnimalReproductionWaitPerUnitRadius;
+		return this.MatureRadius() * EngineSettings.AnimalReproductionWaitPerUnitRadius;
 	},
 	GrowthWait: function(){
-		return Math.round((this.LifeSpan() / 2) / (this.MatureRadius - this.InitialRadius()));
+		return Math.round((this.LifeSpan() / 2) / (this.MatureRadius() - this.InitialRadius()));
 	},
 	InitialRadius: function(){
 		return Math.round(EngineSettings.MinMatureSize / 2) - 1;

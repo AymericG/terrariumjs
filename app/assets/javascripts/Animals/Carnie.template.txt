@@ -1,56 +1,120 @@
 var species = new Species();
-species.MatureRadius = 12;
+species.MatureSize = 30;
+species.PercentOfMaximumEnergyPerUnitRadius = 0;
+species.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0;
+species.PercentOfMaximumAttackDamagePerUnitRadius = 0.52;
+species.PercentOfMaximumDefendDamagePerUnitRadius = 0;
+species.PercentOfMaximumEyeSightRadius = 0.2;
+species.PercentOfMaximumSpeed = 0.28;
+species.PercentOfMaximumInvisibleOdds = 0;
 species.Name = "Carnie";
 species.IsCarnivore = true;
-species.Skin = AnimalSkin.ant; // ant, beetle, inchworm, scorpion or spider
+species.Skin = AnimalSkin.scorpion; // ant, beetle, inchworm, scorpion or spider
 
-var organism = new AnimalMind(species);
+var me = new AnimalMind(species);
 
-// Herbie
-organism.OnIdle = function() {
+// Sample Carnivore
+// Strategy: This animal stands still until it sees something tasty and then
+// bites it.  If any dead animals are within range it eats them.
 
+me.OnIdle = function() {
+
+	if (this.TargetAnimal != null) 
+    {
+        // See if our target animal still exists (it may have died)
+        // LookFor returns null if it isn't found
+        this.TargetAnimal = this.LookFor(this.TargetAnimal.Id);
+    }
+
+	// Our Creature will reproduce as often as possible so
+	// every turn it checks CanReproduce to know when it
+	// is capable.  If so we call BeginReproduction with
+	// a null Dna parameter to being reproduction.
 	if (this.CanReproduce())
 		this.BeginReproduction(null);
 
-	if (!this.IsEating() && !this.IsMoving())
-	{
-		this.WriteTrace("Moving...");
-		this.MoveToRandomPoint();
-	}
-	if (this.State.SeenOrganisms.length == 0)
-		return;
+	// If we are already doing something, then we don't
+	// need to do something else.  Lets leave the
+	// function.
+	if (this.IsAttacking() || this.IsMoving() || this.IsEating()) 
+	    return;
 
+	// Try to find a new target if we need one.
+	if (this.TargetAnimal == null) 
+	    this.FindNewTarget();
+
+    // If we have a target animal then lets check him out
+    if(this.TargetAnimal != null) 
+    {
+        // If the target is alive, then we need to kill it
+        // else we can immediately eat it.
+        if (this.TargetAnimal.IsAlive()) 
+        {
+            // If we are within attacking range, then
+            // lets eat the creature.  Else we'll
+            // try to move into range
+            if (this.WithinAttackingRange(this.TargetAnimal)) 
+                this.BeginAttacking(this.TargetAnimal);
+            else 
+                this.MoveToTarget();
+        }
+        else 
+        {
+            // If the creature is dead then we can try to eat it.
+            // If we are within eating range then we'll try to
+            // eat the creature, else we'll move towards it.
+            if (this.WithinEatingRange(this.TargetAnimal)) 
+            {
+                if (this.CanEat()) 
+                    this.BeginEating(targetAnimal);
+            } 
+            else 
+            {
+                this.MoveToTarget();
+            }
+        }
+    } 
+    else 
+    {
+        // If we stop moving we conserve energy.  Sometimes
+        // this works better than running around.
+        this.StopMoving();
+    }
+};
+
+// Function used to move towards our prey or meal
+me.MoveToTarget = function() 
+{
+    // Make sure we aren't moving towards a null target
+    if (this.TargetAnimal == null) 
+        return;
+
+    // Follow our target as quickly as we can
+    this.WriteTrace("Moving at maximum speed: " + this.State.Species.MaximumSpeed());
+    this.BeginMoving(new MovementVector(this.TargetAnimal.Position, this.State.Species.MaximumSpeed()));
+};
+
+me.FindNewTarget = function() 
+{
 	for (var i = 0; i < this.State.SeenOrganisms.length; i++)
 	{
 		var target = this.State.SeenOrganisms[i];
-		if (!target.IsPlant())
-		{
-			if (target.IsAlive() && !this.IsAttacking())
-				this.BeginAttacking(target);
-			else
-			{
-				this.BeginMoving(new MovementVector(target.Position, 2));
-				//this.WriteTrace("Eating: " + this.IsEating() + " CanEat: " + this.CanEat() + " IsAlive: " + target.IsAlive() + " withinEatingRange: " + this.WithinEatingRange(target));
-				if (!this.IsEating() && this.CanEat() && !target.IsAlive() && this.WithinEatingRange(target))
-				{
-					this.WriteTrace("Eating...");
-					this.StopMoving();
-					this.BeginEating(target);
-				}
-			}
-		}
+		if (!target.IsPlant() && !this.IsMySpecies(target))
+			this.TargetAnimal = target;
 	}
 };
 
-organism.OnEatCompleted = function (){ 
+me.TargetAnimal = null;
+
+me.OnEatCompleted = function (){ 
 
 };
 
-organism.OnMoveCompleted = function (){
+me.OnMoveCompleted = function (){
 
 };
 
-organism.OnAttacked = function (attackedId){
+me.OnAttacked = function (attackedId){
 
 	this.WriteTrace("I am being attacked! I see " + this.State.SeenOrganisms.length + " potential enemie(s).");	
 	var target = this.LookFor(attackedId);
@@ -60,12 +124,3 @@ organism.OnAttacked = function (attackedId){
 		this.BeginDefending(target);
 	}
 };
-
-organism.MoveToRandomPoint = function(){
-	// Pick random point on the map.
-	var y = MathUtils.RandomBetween(0, this.World.WorldHeight);
-	var x = MathUtils.RandomBetween(0, this.World.WorldWidth);
-
-	this.BeginMoving(new MovementVector(new Point(x, y), 2));
-};
-

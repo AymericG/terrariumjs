@@ -377,7 +377,6 @@ var Organism = ClassWithEvents.extend({
 	},
 	Scan: function(){
 		var foundOrganisms = this.World.FindOrganismsInView(this.State, this.State.Species.EyeSightRadius());
-
 		var seen = [];
         
         // Remove any camouflaged animals
@@ -443,9 +442,8 @@ var Organism = ClassWithEvents.extend({
 	    // If this is more than the animal can eat in one bite, limit it to what they can eat
 	    if (foodChunkCount > attackerState.Species.EatingSpeedPerUnitRadius() * attackerState.Radius)
 	    	foodChunkCount = attackerState.Species.EatingSpeedPerUnitRadius() * attackerState.Radius;
-//	    console.log("defender: " + defenderState.FoodChunks + " removing " + foodChunkCount);
 		
-	    if (defenderState.FoodChunks <= foodChunkCount)
+		if (defenderState.FoodChunks <= foodChunkCount)
 	    {
 	        foodChunkCount = defenderState.FoodChunks;
 	        // remove the defender from the world if we ate them all
@@ -455,6 +453,7 @@ var Organism = ClassWithEvents.extend({
 	    }
 	    else
 	    {
+	    	defenderState.Log("Losing " + foodChunkCount + " food chunks");
 	        // Shrink the meat or plant
 	        defenderState.FoodChunks = defenderState.FoodChunks - foodChunkCount;
 	    }

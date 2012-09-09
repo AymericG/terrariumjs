@@ -1,5 +1,3 @@
-importScripts('../Dependencies.js');
-
 var species = new Species();
 var organism = new AnimalMind(species);
 

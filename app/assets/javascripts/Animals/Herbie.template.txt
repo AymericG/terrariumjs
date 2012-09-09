@@ -1,38 +1,109 @@
 // 1. Set the species attributes
 var species = new Species();
-species.MatureRadius = 24;
+species.PercentOfMaximumEnergyPerUnitRadius = 0;
+species.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0;
+species.PercentOfMaximumAttackDamagePerUnitRadius = 0;
+species.PercentOfMaximumDefendDamagePerUnitRadius = 0;
+species.PercentOfMaximumEyeSightRadius = 0.5;
+species.PercentOfMaximumSpeed = 0;
+species.PercentOfMaximumInvisibleOdds = 0.5;
+species.MatureSize = 26;
 species.Name = "Herbie";
-species.Skin = AnimalSkin.worm; // ant, beetle, inchworm, scorpion or spider
+species.Skin = AnimalSkin.inchworm; // ant, beetle, inchworm, scorpion or spider
 
 // 2. Write the behaviour
 var me = new AnimalMind(species);
 
 me.OnIdle = function() {
 
+	if (this.TargetPlant != null) 
+    {
+        // See if our target plant still exists (it may have died)
+        // LookFor returns null if it isn't found
+        this.TargetPlant = this.LookFor(this.TargetPlant.Id);
+    }
+
+	// Our Creature will reproduce as often as possible so
+	// every turn it checks CanReproduce to know when it
+	// is capable.  If so we call BeginReproduction with
+	// a null Dna parameter to being reproduction.
 	if (this.CanReproduce())
-		this.BeginReproduction(null);
-
-	if (!this.IsEating() && !this.IsMoving() && this.State.EnergyState() != EnergyState.Full)
 	{
-		this.WriteTrace("Moving...");
-		this.MoveToRandomPoint();
+		this.WriteTrace("Reproducing...");	
+		this.BeginReproduction(null);
 	}
-	if (this.State.SeenOrganisms.length == 0)
-		return;
+	// Check to see if we are capable of eating
+	// If we are then try to eat or find food,
+	// else we'll just stop moving.
+	if (this.CanEat() && !this.IsEating())
+	{
+		// If we have a Target Plant we can try
+		// to either eat it, or move towards it.
+		// else we'll move to a random vector
+		// in search of a plant.
+		if (this.TargetPlant != null)
+		{
+			// If we are within range start eating
+			// and stop moving.  Else we'll try
+			// to move towards the plant.
+			if (this.WithinEatingRange(this.TargetPlant)) 
+            {
+            	this.WriteTrace("Eating...");	
+			
+                this.BeginEating(this.TargetPlant);
+                if (this.IsMoving()) 
+                    this.StopMoving();
+            }
+            else 
+            {
+                if (!this.IsMoving()) 
+                    this.BeginMoving(new MovementVector(this.TargetPlant.Position, 2));
+            }
+		}
+		else
+		{
+			// We'll try try to find a target plant
+			// If we don't find one we'll move to 
+			// a random vector
+			if(!this.ScanForTargetPlant()) 
+			{
+			    if(!this.IsMoving()) 
+					this.MoveToRandomPoint();
+			}
+		}
+	}
+	else
+	{
+		// Since we are Full or we are already eating
+		// We should stop moving.
+		if(this.IsMoving())
+		    this.StopMoving();
+	}
+};
 
+// Looks for target plants, and starts moving towards the first one it finds
+me.ScanForTargetPlant = function() 
+{
+	if (this.State.SeenOrganisms.length == 0)
+		this.WriteTrace("I can't see anyone, am I blind?");	
+	else
+		this.WriteTrace("I can see " + this.State.SeenOrganisms.length + " organism(s)");	
 	for (var i = 0; i < this.State.SeenOrganisms.length; i++)
 	{
 		var target = this.State.SeenOrganisms[i];
 		if (target.IsPlant()){
-			if (!this.IsEating() && this.CanEat() && this.WithinEatingRange(target))
-			{
-				this.WriteTrace("Eating...");
-				this.StopMoving();
-				this.BeginEating(target);
-			}
+			this.WriteTrace("Found a plant!");	
+			this.TargetPlant = target;
+			this.BeginMoving(new MovementVector(this.TargetPlant.Position, 2));
+			return true;
 		}
 	}
+
+    // Tell the caller we couldn't find a target
+    return false;
 };
+
+me.TargetPlant = null;
 
 me.OnEatCompleted = function (){ 
 
@@ -57,7 +128,7 @@ me.MoveToRandomPoint = function(){
 	// Pick random point on the map.
 	var y = MathUtils.RandomBetween(0, this.World.WorldHeight);
 	var x = MathUtils.RandomBetween(0, this.World.WorldWidth);
-
+	this.WriteTrace("Moving to random point...");	
 	this.BeginMoving(new MovementVector(new Point(x, y), 2));
 };
 

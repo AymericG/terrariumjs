@@ -40,7 +40,6 @@ var OrganismMind = Class.extend({
 					this.OnInit(messageObject.Dna);
 					// Send back Species.
 					this.Nerve.Send({ signal: Signals.Initialized, Species: this.Species });
-
 					break;
 				case Signals.Tick:
 					this.Tick();
@@ -56,7 +55,7 @@ var OrganismMind = Class.extend({
 		}
 		catch (e)
 		{
-			this.Nerve.Send({ signal: "Error", error: e });
+			this.Nerve.Send({ signal: "Error", error: e.message });
 		}
 	},
 	OnInit: function(dna){}, // Waiting to be overriden.
@@ -81,7 +80,9 @@ var OrganismMind = Class.extend({
 			leftAntenna: this.State.LeftAntenna, 
 			rightAntenna: this.State.RightAntenna });
 	},
-
+	IsMySpecies: function(state){
+		return state.Species.Name == this.State.Species.Name; // need a better way to detect same species
+	},
 	BeginReproduction: function (dna)
 	{
 		if (this.IsReproducing())

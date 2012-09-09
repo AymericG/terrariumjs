@@ -1,7 +1,5 @@
-importScripts('../Dependencies.js');
-
 var species = new Species();
-species.MatureRadius = 24;
+species.MatureSize = 48;
 species.Name = "Buggy bug";
 var organism = new AnimalMind(species);
 

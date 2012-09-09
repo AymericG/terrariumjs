@@ -1,7 +1,7 @@
 var species = new Species();
 species.IsPlant = true;
 species.Name = "Plant";
-species.MatureRadius = 24;
+species.MatureSize = 48;
 var RandomProperty = function(object){
 	var result;
     var count = 0;

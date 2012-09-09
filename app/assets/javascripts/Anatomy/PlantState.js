@@ -27,7 +27,9 @@ var PlantState = OrganismState.extend({
         var additionalRadius = newRadius - this.Radius;
         this._super(newRadius);
         this.Height = newHeight;
-        this.FoodChunks += additionalRadius * EngineSettings.PlantFoodChunksPerUnitOfRadius;
+        var foodChunks = additionalRadius * EngineSettings.PlantFoodChunksPerUnitOfRadius;
+        this.Log("Gaining " + foodChunks + " food chunks");
+        this.FoodChunks += foodChunks;
     },
 
     Grow: function(){
@@ -58,6 +60,8 @@ var PlantState = OrganismState.extend({
             foodChunkDelta = maxHealingChunks;
             this.FoodChunks += foodChunkDelta;
         }
+        if (foodChunkDelta != 0)
+            this.Log("Gaining " + foodChunkDelta + " food chunks");
         //console.log("[P] Healing: " + foodChunkDelta * EngineSettings.PlantRequiredEnergyPerUnitOfHealing);
         this.BurnEnergy(foodChunkDelta * EngineSettings.PlantRequiredEnergyPerUnitOfHealing);
 	},

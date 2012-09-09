@@ -13,6 +13,16 @@ var EngineSettings = {
 	FoodChunksPerUnitOfRadius: 25,
 	EnergyPerAnimalFoodChunk: 1,
     TeleportWait: 600,
+    ///   Represents the lowest attainable odds of appearing
+    ///   invisible in the Terrarium.  In order to achieve this
+    ///   minimum available camouflage you must apply 0 points
+    ///   to the CamouflagePointsAttribute.
+    InvisibleOddsBase: 0,
+    ///   Represents the highest attainable odds of appearing
+    ///   invisible in the Terrarium.  In order to achieve
+    ///   this maximum camouflage MaxAvailableCharacteristicPoints
+    ///   must be applied to the CamouflagePointsAttribute.
+    InvisibleOddsMaximum: 90,
     ///   Represents the maximum distance a creature can see if they place
     ///   MaxAvailableCharacteristicPoints into the EyesightPointsAttribute.
     ///   This distance is in Terrarium Cells, so you have to multiply

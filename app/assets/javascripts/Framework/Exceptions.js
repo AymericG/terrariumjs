@@ -1,6 +1,6 @@
 var Exception = Class.extend({
 	init: function(message){
-		this.Message = message;
+		this.message = message;
 	}
 });
 

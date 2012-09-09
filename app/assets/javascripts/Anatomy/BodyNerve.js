@@ -20,11 +20,17 @@ var BodyNerve = function(organism, mindUrl, mindCode) {
 				}
 				catch (e)
 				{
-					console.log("EXCEPTION: " + e.Message);
+					this.Organism.Log("EXCEPTION: " + e.Message);
 				}
 				break;
 
 			case "Error":
+				//var errorMessage = "";
+				//for (var property in messageObject.error)
+				//{
+				//	errorMessage += " " + property + ": " + messageObject.error[property];
+				//}
+				this.Organism.Log(messageObject.error);
 				this.Organism.State.Kill(PopulationChangeReason.Error);
 				break; 
 

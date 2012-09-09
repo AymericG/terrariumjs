@@ -24,11 +24,12 @@ $(document).ready(function() {
 		$.cookie('code', editor.getValue());
 	};
 
-	  var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-	    lineNumbers: true,
-	    matchBrackets: true,
-	    onChange: saveCode
-	  });
+	var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+		lineNumbers: true,
+		matchBrackets: true,
+		onChange: saveCode
+	});
+	$.get("/assets/Animals/Herbie.template.txt", function(result){ editor.setValue(result); });
 
 	var $canvas = $("#canvas");
 	var width = 520;
@@ -38,8 +39,19 @@ $(document).ready(function() {
 	var game = new Game($canvas[0], width, height);
 	game.Start();
 
-	var addPlant = function(){ $.get("/assets/Animals/Plant.template.txt", function(result){ game.AddOrganism(organismMindCodeLoaderPath, result); }); };
-	addPlant();
+	// Adding a few plants
+	var plantCounter = 0;
+	window.addPlant = function(){ 
+		$.get("/assets/Animals/Plant.template.txt", function(result){ 
+			game.AddOrganism(organismMindCodeLoaderPath, result);
+			plantCounter++;
+			if (plantCounter >= 10)
+				return;
+			setTimeout("window.addPlant()", 500);
+		});
+	};
+	window.addPlant(); 
+	
 	
 	$("#load-code").click(function(){
 		game.AddOrganism(organismMindCodeLoaderPath, editor.getValue());

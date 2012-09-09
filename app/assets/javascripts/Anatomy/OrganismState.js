@@ -68,7 +68,7 @@ var OrganismState = Class.extend({
 
 	},
 	CanGrow: function(){
-		return ((this.Radius < this.Species.MatureRadius) && 
+		return ((this.Radius < this.Species.MatureRadius()) && 
 			(this.EnergyState() >= EnergyState.Normal) && 
 			this.GrowthWait == 0);
 	},
@@ -146,7 +146,7 @@ var OrganismState = Class.extend({
 	},
 
 	IsMature: function(){
-		return this.Radius == this.Species.MatureRadius;
+		return this.Radius == this.Species.MatureRadius();
 	},
 
 	PercentEnergy: function(){

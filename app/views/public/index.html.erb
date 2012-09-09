@@ -16,24 +16,7 @@
             <div class="step-wrap">
             <div class="step">2</div>
             <h2>Write the code that tells your animal what to do</h2>
-            <textarea id="code" rows="27" cols="80">
-// Wandering Ghost
-organism.OnIdle = function() {
-    if (this.CanReproduce())
-        this.BeginReproduction(null);
-
-    if (!this.IsMoving())
-        this.MoveToRandomPoint();
-};
-
-organism.MoveToRandomPoint = function(){
-    // Pick random point on the map.
-    var y = MathUtils.RandomBetween(0, this.World.WorldHeight);
-    var x = MathUtils.RandomBetween(0, this.World.WorldWidth);
-
-    this.BeginMoving(new MovementVector(new Point(x, y), 2));
-};
-            </textarea>
+            <textarea id="code" rows="27" cols="80"></textarea>
             </div>
         <div class="step-wrap">
             <div class="step">3</div>
