@@ -84,8 +84,7 @@ var World = ClassWithEvents.extend({
     },
 	FillCells: function(state, clear)
     {
-        //console.log("Filling: " + state.Id);
-    	var cellX = state.GridX();
+        var cellX = state.GridX();
         var cellY = state.GridY();
         var cellRadius = state.CellRadius();
         for (var x = cellX - cellRadius; x < cellX + cellRadius; x++)
@@ -93,22 +92,16 @@ var World = ClassWithEvents.extend({
             {
                 if (clear)
                 {
-					if (typeof(this._cellOrganisms[x]) == "undefined")
-            			console.log("undefined:" + x);
-
                     // Make sure we are only clearing ourselves, the value may be null because clearindex
                     // may have been called
                     if (this._cellOrganisms[x][y] != null && this._cellOrganisms[x][y].Id != state.Id)
-                    	throw new ApplicationException("Cell contains an unexpected organism: " + this._cellOrganisms[x][y].Id + " instead of " + state.Id);
+                    	console.log("Cell contains an unexpected organism: " + this._cellOrganisms[x][y].Id + " instead of " + state.Id);
                     this._cellOrganisms[x][y] = null;
                 }
                 else
                 {
-					if (typeof(this._cellOrganisms[x]) == "undefined")
-            			console.log("undefined:" + x);
-
                     // Make sure there was no one else here
-                    if (this._cellOrganisms[x][y] != null)
+                    if (this._cellOrganisms[x][y] != null && this._cellOrganisms[x][y].Id != state.Id)
                     	console.log("(" + x + ", " + y + ") there is someone there: " + this._cellOrganisms[x][y].Id);
                     this._cellOrganisms[x][y] = state;
                 }

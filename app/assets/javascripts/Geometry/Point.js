@@ -61,6 +61,19 @@ var Point = function(x, y)
     this.ToString = function()
     {
         return "(" + this.X + ", " + this.Y + ")";
-    }
+    };
 
+    this.DistanceWith = function(point)
+    {
+      var xs = 0;
+      var ys = 0;
+     
+      xs = point.X - this.X;
+      xs = xs * xs;
+     
+      ys = point.Y - this.Y;
+      ys = ys * ys;
+     
+      return Math.sqrt(xs + ys);
+    };
 };

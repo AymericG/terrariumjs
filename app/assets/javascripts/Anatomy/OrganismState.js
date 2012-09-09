@@ -19,7 +19,7 @@ var OrganismState = Class.extend({
 	Serializable: function(withSeenOrganisms){
 		var state = {};
 		state.Id = this.Id;
-		state.Radius = this.State;
+		state.Radius = this.Radius;
 		state.DeathReason = this.DeathReason;
 		state.TickAge = this.TickAge;
 		state.IncubationTicks = this.IncubationTicks;
@@ -47,6 +47,7 @@ var OrganismState = Class.extend({
 
 		for (var property in data)
 			this[property] = data[property];
+		this.Position = new Point(this.Position.X, this.Position.Y);
 		if (typeof(this.SeenOrganisms) == 'undefined')
 			this.SeenOrganisms = [];
 		else

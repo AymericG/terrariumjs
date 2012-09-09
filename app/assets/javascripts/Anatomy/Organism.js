@@ -1,3 +1,4 @@
+// TODO: extract an Animal and Plant class from this base class 
 var Organism = ClassWithEvents.extend({
 
 	init: function(id, mindUrl, mindCode, world){
@@ -65,8 +66,13 @@ var Organism = ClassWithEvents.extend({
 		{
 			var p1 = this.State.Position;
 			var p2 = this.CurrentMoveToAction().MoveTo.Destination;
+
+		    if (p1 == p2)
+		        return;
+
 			var wentThroughLoopOnce = false;
 			var maxValidDestination = p1;
+
 		    var x0 = p1.X;
 		    var y0 = p1.Y;
 		    var x1 = p2.X;
@@ -95,16 +101,11 @@ var Organism = ClassWithEvents.extend({
 
 		    dy <<= 1;
 		    dx <<= 1;
-		    //if (!organism.State.IsPlant())
-		    //	console.log("START");
+
 		    // start the first segment at the initial point at time 0
 		    var gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
 		    var gridY = y0 >> EngineSettings.GridWidthPowerOfTwo;
-		    //var segment = new MovementSegment(null, organism, new Point(x0, y0), 0, gridX, gridY);
-		    //segment.EndingPoint = new Point(p1.X, p1.Y);
-		    //this.AddSegment(segment);
-		    if (p1 == p2)
-		        return;
+
 
 		    if (dx > dy)
 		    {
@@ -129,33 +130,19 @@ var Organism = ClassWithEvents.extend({
 
 		            gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
 		            gridY = y0 >> EngineSettings.GridHeightPowerOfTwo;
-		            //console.log("X: " + gridX + " Y:" + gridY);
-		            //segment.ExitTime += timeslice;
+
 		            if (gridX != previousGridX || gridY != previousGridY)
 		            {
 		            	wentThroughLoopOnce = true;
 		            	// Move
 		            	if (this.World.WouldOnlyOverlapSelf(this.Id, gridX, gridY, this.State.CellRadius()))
-		            	{
-		            		// Valid destination.
-		            		maxValidDestination = new Point(x0, y0);
-		            	}
+		            		maxValidDestination = new Point(x0, y0); // Valid destination.
 		            	else
 		            	{
-		            		this.DoMove(maxValidDestination);
+							this.DoMove(maxValidDestination);
 		            		return;
 		            	}
-
-		                // End the segment since we've entered a new grid square
-		                //var lastSegment = segment;
-		                //segment = new MovementSegment(lastSegment, organism, new Point(x0, y0), lastSegment.ExitTime, gridX, gridY);
-		                //segment.ExitTime = lastSegment.ExitTime;
-		                //lastSegment.Next = segment;
-		                //this.AddSegment(segment);
 		            }
-
-		            //var newEndingPoint = new Point(x0, y0);
-		            //segment.EndingPoint = newEndingPoint;
 		        }
 		    }
 		    else
@@ -180,36 +167,25 @@ var Organism = ClassWithEvents.extend({
 		            // See if we've crossed into a new grid square
 		            gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
 		            gridY = y0 >> EngineSettings.GridHeightPowerOfTwo;
-		            //console.log("X: " + gridX + " Y:" + gridY);
 
-		            //segment.ExitTime += timeslice;
 		            if (gridX != previousGridX || gridY != previousGridY)
 		            {
 		            	wentThroughLoopOnce = true;
-		            	// Move
 		            	if (this.World.WouldOnlyOverlapSelf(this.Id, gridX, gridY, this.State.CellRadius()))
-		            	{
-		            		// Valid destination.
-		            		maxValidDestination = new Point(x0, y0);
-		            	}
+		            		maxValidDestination = new Point(x0, y0); // Valid destination
 		            	else
 		            	{
 		            		this.DoMove(maxValidDestination);
 							return;
 		            	}
 		            }
-
-		      //      var newEndingPoint = new Point(x0, y0);
-		        //    segment.EndingPoint = newEndingPoint;
 		        }
 		    }
 		    this.DoMove(wentThroughLoopOnce ? maxValidDestination : p2);
-		    // The last segment doesn't exit the grid, so its exit time is zero
-		    //segment.ExitTime = 0;
 		}
 		catch (e)
 		{
-			this.Log("ERROR: Move");
+			this.Log("EXCEPTION IN MOVE(): " + e.message);
 		}
 	},
 	Log: function(message){ $(window).trigger("log", [this.Id, message]); },
@@ -238,26 +214,22 @@ var Organism = ClassWithEvents.extend({
 		var moveVector = destination.Substract(this.State.Position);
 		
 		var unitVector = vector.GetUnitVector();
-		if (unitVector.EqualsTo(vector))
-		{
-			// Rounding issue. Just go there.
-			this.State.Position = destination;
-		
-		}
-		else
-		{
+//		if (unitVector.EqualsTo(vector))
+//			this.State.Position = destination; // Rounding issue. Just go there.		
+//		else
+//		{
 			var speedVector = unitVector.Scale(this.CurrentMoveToAction().MoveTo.Speed);
+
+			if (speedVector.X*speedVector.X >= vector.X*vector.X && speedVector.Y*speedVector.Y >= vector.Y*vector.Y)
+				speedVector = vector;
+			
 			this.Direction = this.DirectionFromVector(vector);
 			var destinationWithSpeed = this.State.Position.Add(speedVector); 
 			var destinationReached = destinationWithSpeed.EqualsTo(destination);
-		    /*
-		    console.log("v:" + vector.ToString());
-		    console.log("u:" + unitVector.ToString());
-		    console.log("d:" + destinationWithSpeed.ToString());
-		    console.log("d2:" + destination.ToString());*/
+
 		    this.State.Position = destinationWithSpeed;
 			this.State.BurnEnergy(this.State.EnergyRequiredToMove(moveVector.Magnitude(), this.CurrentMoveToAction().MoveTo.Speed));
-		}
+//		}
 		this.World.FillCells(this.State, false);
 
 		if (!this.State.IsAlive())
@@ -484,7 +456,8 @@ var Organism = ClassWithEvents.extend({
 		var escaped = false;
 		var killed = false;
 
-		if (defender == null)
+		var defenderState = defender.State;
+		if (defender == null || !defenderState.IsAlive() || !attackerState.IsWithinRect(1, defenderState))
 		{
 			this.InProgressActions.AttackAction = null;
 		    // They were killed and eaten before the attack occurred
@@ -492,36 +465,25 @@ var Organism = ClassWithEvents.extend({
 		}
 		else
 		{
-			var defenderState = defender.State;
-		    // See if they are near enough to attack
-		    // We let them attack if they are at most 1 rectangle away because
-		    // it is hard to get closer than this
-		    if (attackerState.IsWithinRect(1, defenderState))
-		    {
-		        // If the animal is dead, it's just zero damage
-		        if (defenderState.IsAlive())
-		        {
-		            // Figure out the maximum possible attack damage
-		            damageCaused = MathUtils.RandomBetween(0, attackerState.Species.MaximumAttackDamagePerUnitRadius() * attackerState.Radius);
+            // Figure out the maximum possible attack damage
+            damageCaused = MathUtils.RandomBetween(0, attackerState.Species.MaximumAttackDamagePerUnitRadius() * attackerState.Radius);
 
-		            //// Defense doesn't scale based on distance
-		            var defendAction = defender.CurrentDefendAction();
-		            var defendDiscount = 0;
-		            if (defendAction != null && defendAction.TargetOrganismId == attackerState.Id)
-		                defendDiscount = MathUtils.RandomBetween(0, defenderState.Species.MaximumDefendDamagePerUnitRadius * defenderState.Radius);
-		         
-		            if (damageCaused > defendDiscount)
-		            {
-		                damageCaused = damageCaused - defendDiscount;
-		                defenderState.CauseDamage(damageCaused);
-		            }
-		            else
-		                damageCaused = 0;
+            //// Defense doesn't scale based on distance
+            var defendAction = defender.CurrentDefendAction();
+            var defendDiscount = 0;
+            if (defendAction != null && defendAction.TargetOrganismId == attackerState.Id)
+                defendDiscount = MathUtils.RandomBetween(0, defenderState.Species.MaximumDefendDamagePerUnitRadius * defenderState.Radius);
+         
+            if (damageCaused > defendDiscount)
+            {
+                damageCaused = damageCaused - defendDiscount;
+                defenderState.CauseDamage(damageCaused);
+            }
+            else
+                damageCaused = 0;
 
-		            killed = !defenderState.IsAlive();
-		            defender.Send({ signal: Signals.Attacked, AttackerId: this.Id });
-		        }
-		    }
+            killed = !defenderState.IsAlive();
+            defender.Send({ signal: Signals.Attacked, AttackerId: this.Id });
 		}
 
 		// Tell the attacker what happened

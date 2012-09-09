@@ -20,7 +20,7 @@ var BodyNerve = function(organism, mindUrl, mindCode) {
 				}
 				catch (e)
 				{
-					this.Organism.Log("EXCEPTION: " + e.Message);
+					this.Organism.Log("EXCEPTION: " + e.message);
 				}
 				break;
 

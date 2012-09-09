@@ -1,5 +1,10 @@
 // 1. Set the species attributes
 var species = new Species();
+species.Name = "Herbie";
+species.Skin = AnimalSkin.inchworm; // ant, beetle, inchworm, scorpion or spider
+species.MatureSize = 26; // between 24 and 48
+
+// Sum should equal to 1.
 species.PercentOfMaximumEnergyPerUnitRadius = 0;
 species.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0;
 species.PercentOfMaximumAttackDamagePerUnitRadius = 0;
@@ -7,9 +12,6 @@ species.PercentOfMaximumDefendDamagePerUnitRadius = 0;
 species.PercentOfMaximumEyeSightRadius = 0.5;
 species.PercentOfMaximumSpeed = 0;
 species.PercentOfMaximumInvisibleOdds = 0.5;
-species.MatureSize = 26;
-species.Name = "Herbie";
-species.Skin = AnimalSkin.inchworm; // ant, beetle, inchworm, scorpion or spider
 
 // 2. Write the behaviour
 var me = new AnimalMind(species);
@@ -88,15 +90,29 @@ me.ScanForTargetPlant = function()
 		this.WriteTrace("I can't see anyone, am I blind?");	
 	else
 		this.WriteTrace("I can see " + this.State.SeenOrganisms.length + " organism(s)");	
+
+
+	var minDistance = 9999;
+	var closestPlant = null;
+
 	for (var i = 0; i < this.State.SeenOrganisms.length; i++)
 	{
 		var target = this.State.SeenOrganisms[i];
 		if (target.IsPlant()){
-			this.WriteTrace("Found a plant!");	
-			this.TargetPlant = target;
-			this.BeginMoving(new MovementVector(this.TargetPlant.Position, 2));
-			return true;
+			var distanceToPlant = this.State.Position.DistanceWith(target.Position);
+			if (distanceToPlant < minDistance)
+			{
+				minDistance = distanceToPlant;
+				closestPlant = target;
+			}
 		}
+	}
+
+	if (closestPlant != null)
+	{
+		this.TargetPlant = closestPlant;
+		this.BeginMoving(new MovementVector(this.TargetPlant.Position, 2));
+		return true;
 	}
 
     // Tell the caller we couldn't find a target

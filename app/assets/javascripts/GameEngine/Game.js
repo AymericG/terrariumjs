@@ -32,8 +32,8 @@ var Game = function (canvas, width, height) {
 					callback(organism);
 				}
 				catch (e){
-					if (e.Message)
-						organism.Log("EXCEPTION: " + e.Message);
+					if (e.message)
+						organism.Log("EXCEPTION: " + e.message);
 					else
 						organism.Log("EXCEPTION: " + e);
 					organism.State.Kill(PopulationChangeReason.Error);
