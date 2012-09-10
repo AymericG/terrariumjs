@@ -37,9 +37,17 @@ body{
     margin: auto;
 }
 
+.fixed
+{
+    width: 1140px; 
+    margin: 0 auto; 
+}
+
+.header-wrap{
+    background-color: #000;
+}
 header{
     padding: 10px;
-    background-color: #000;
     color: #B69A71;
     overflow: hidden;
 }
@@ -97,9 +105,11 @@ header span{
     float:right;
     width:150px;
     margin-top:8px;
+    margin-right: 145px;
 }
 
 footer{
+    display: none;
     margin: 10px 0;
     padding: 10px;
     background-color: #000;

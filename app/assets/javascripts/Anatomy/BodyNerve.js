@@ -25,11 +25,6 @@ var BodyNerve = function(organism, mindUrl, mindCode) {
 				break;
 
 			case "Error":
-				//var errorMessage = "";
-				//for (var property in messageObject.error)
-				//{
-				//	errorMessage += " " + property + ": " + messageObject.error[property];
-				//}
 				this.Organism.Log(messageObject.error);
 				this.Organism.State.Kill(PopulationChangeReason.Error);
 				break; 
@@ -66,8 +61,6 @@ var BodyNerve = function(organism, mindUrl, mindCode) {
        			
 				break;
 			default:
-				//messageObject.progress = 0;
-				//organism.events.unshift(messageObject);
 				break;
 		}
 	};

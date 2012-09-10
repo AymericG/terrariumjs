@@ -108,9 +108,7 @@ var World = ClassWithEvents.extend({
             }
     },
     FindOrganismsInCells: function(minGridX, maxGridX, minGridY, maxGridY)
-    {
-        //console.log(minGridX + " " + maxGridX + " " + minGridY + " " + maxGridY);        
-        
+    {  
         var lastFound = null;
 
         // Since organisms are represented at multiple places in the grid, make
@@ -151,11 +149,8 @@ var World = ClassWithEvents.extend({
         var	newLocation = new Point(MathUtils.RandomBetween(cellRadius, this.GridWidth - 1 - cellRadius),
                                     MathUtils.RandomBetween(cellRadius, this.GridHeight - 1 - cellRadius));
         var retry = 20;
-        //console.log("maxX:" + (this.GridWidth - 1 - cellRadius) + " maxY: " + (this.GridHeight - 1 - cellRadius));
-        //console.log(newLocation.ToString() + " cellRadius: " + cellRadius);
         while (retry > 0 && this.FindOrganismsInCells(newLocation.X - cellRadius, newLocation.X + cellRadius, newLocation.Y - cellRadius, newLocation.Y + cellRadius).length != 0)
         {
-        	//console.log("Retrying to find an empty spot.");
             newLocation = new Point(MathUtils.RandomBetween(cellRadius, this.GridWidth - 1 - cellRadius),
                                     MathUtils.RandomBetween(cellRadius, this.GridHeight - 1 - cellRadius));
             retry--;
