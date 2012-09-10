@@ -14,6 +14,8 @@ species.PercentOfMaximumSpeed = 0;
 species.PercentOfMaximumInvisibleOdds = 0.5;
 
 // 2. Write the behaviour
+// For more information about what functions you can use
+// Check out the SDK files: https://github.com/AymericG/terrariumjs/tree/master/app/assets/javascripts/SDK
 var me = new AnimalMind(species);
 
 me.OnIdle = function() {
