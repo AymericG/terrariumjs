@@ -57,6 +57,7 @@ var Organism = ClassWithEvents.extend({
 	IsEating: function(){
 		return this.InProgressActions.EatAction != null;
 	},
+	Log: function(message){ $(window).trigger("log", [this.Id, message]); },
 	Move: function(){
 
 		if (!this.State.IsAlive() || !this.IsMoving())
@@ -64,131 +65,17 @@ var Organism = ClassWithEvents.extend({
 
 		try
 		{
-			var p1 = this.State.Position;
-			var p2 = this.CurrentMoveToAction().MoveTo.Destination;
 
-		    if (p1 == p2)
-		        return;
+			var validWayPoint = this.World.FindValidWayPoint(this.Id, this.State.CellRadius(), this.State.Position, this.CurrentMoveToAction().MoveTo.Destination);
+			if (validWayPoint != null)
+			    this.DoMove(validWayPoint);
 
-			var wentThroughLoopOnce = false;
-			var maxValidDestination = p1;
-
-		    var x0 = p1.X;
-		    var y0 = p1.Y;
-		    var x1 = p2.X;
-		    var y1 = p2.Y;
-		    var dy = y1 - y0;
-		    var dx = x1 - x0;
-		    var stepx = 0;
-		    var stepy = 0;
-		    var timeslice = 0;
-
-		    if (dy < 0)
-		    {
-		        dy = -dy;
-		        stepy = -1;
-		    }
-		    else
-		        stepy = 1;
-
-		    if (dx < 0)
-		    {
-		        dx = -dx;
-		        stepx = -1;
-		    }
-		    else
-		        stepx = 1;
-
-		    dy <<= 1;
-		    dx <<= 1;
-
-		    // start the first segment at the initial point at time 0
-		    var gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
-		    var gridY = y0 >> EngineSettings.GridWidthPowerOfTwo;
-
-
-		    if (dx > dy)
-		    {
-		        // Determine how many points we'll plot and estimate time by that
-		        if ((x1 - x0) != 0)
-		            timeslice = Math.round(this.TimeWindow/((x1 - x0)*stepx));
-
-		        var fraction = dy - (dx >> 1); // same as 2*dy - dx
-		        while (x0 != x1)
-		        {
-		            if (fraction >= 0)
-		            {
-		                y0 += stepy;
-		                fraction -= dx; // same as fraction -= 2*dx
-		            }
-		            x0 += stepx;
-		            fraction += dy; // same as fraction -= 2*dy
-
-		            // See if we've crossed into a new grid square
-		            previousGridX = gridX;
-		            previousGridY = gridY;
-
-		            gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
-		            gridY = y0 >> EngineSettings.GridHeightPowerOfTwo;
-
-		            if (gridX != previousGridX || gridY != previousGridY)
-		            {
-		            	wentThroughLoopOnce = true;
-		            	// Move
-		            	if (this.World.WouldOnlyOverlapSelf(this.Id, gridX, gridY, this.State.CellRadius()))
-		            		maxValidDestination = new Point(x0, y0); // Valid destination.
-		            	else
-		            	{
-							this.DoMove(maxValidDestination);
-		            		return;
-		            	}
-		            }
-		        }
-		    }
-		    else
-		    {
-		        if ((y1 - y0) != 0)
-		            timeslice = Math.round(this.TimeWindow / ((y1 - y0)*stepy));
-
-		        var fraction = dx - (dy >> 1);
-		        while (y0 != y1)
-		        {
-		            if (fraction >= 0)
-		            {
-		                x0 += stepx;
-		                fraction -= dy;
-		            }
-		            y0 += stepy;
-		            fraction += dx;
-
-		            previousGridX = gridX;
-		            previousGridY = gridY;
-
-		            // See if we've crossed into a new grid square
-		            gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
-		            gridY = y0 >> EngineSettings.GridHeightPowerOfTwo;
-
-		            if (gridX != previousGridX || gridY != previousGridY)
-		            {
-		            	wentThroughLoopOnce = true;
-		            	if (this.World.WouldOnlyOverlapSelf(this.Id, gridX, gridY, this.State.CellRadius()))
-		            		maxValidDestination = new Point(x0, y0); // Valid destination
-		            	else
-		            	{
-		            		this.DoMove(maxValidDestination);
-							return;
-		            	}
-		            }
-		        }
-		    }
-		    this.DoMove(wentThroughLoopOnce ? maxValidDestination : p2);
 		}
 		catch (e)
 		{
 			this.Log("EXCEPTION IN MOVE(): " + e.message);
 		}
 	},
-	Log: function(message){ $(window).trigger("log", [this.Id, message]); },
 	DoMove: function(destination)
 	{
 		if (destination == null)

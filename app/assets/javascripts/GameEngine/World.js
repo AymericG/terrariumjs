@@ -1,5 +1,5 @@
 var World = ClassWithEvents.extend({
-	init: function(width, height)
+	init: function(width, height, teleporter)
 	{
         this._super();
 		this.WorldWidth = width;
@@ -12,14 +12,15 @@ var World = ClassWithEvents.extend({
 		this.GridWidth = this.WorldWidth >> EngineSettings.GridWidthPowerOfTwo;
 
 		this._cellOrganisms = this.Matrix(this.GridWidth, this.GridHeight);
-        this.Teleporter = new Teleporter(this, new Rectangle(225, 225, 48, 48), null);
+        this.Teleporter = teleporter;
             
         // This member is here just so we don't create the visibility matrix for every call
         // to FindOrganismsInView.
         this._invisible = this.Matrix((EngineSettings.MaximumEyesightRadius + EngineSettings.BaseEyesightRadius + EngineSettings.MaxGridRadius)*2 + 1, (EngineSettings.MaximumEyesightRadius + EngineSettings.BaseEyesightRadius + EngineSettings.MaxGridRadius)*2 + 1);
         var self = this;
 	},
-	Matrix: function(width, height){
+    TimeWindow: 10000,
+    Matrix: function(width, height){
 		var matrix = new Array(width);
 		for (var i = 0; i < width; i++)
 		    matrix[i] = new Array(height);
@@ -442,5 +443,120 @@ var World = ClassWithEvents.extend({
         }
 
         return true;
+    },
+    FindValidWayPoint: function(organismId, cellRadius, from, to)
+    {
+        var p1 = from;
+        var p2 = to;
+
+        if (p1 == p2)
+            return null;
+
+        var wentThroughLoopOnce = false;
+        var maxValidDestination = p1;
+
+        var x0 = p1.X;
+        var y0 = p1.Y;
+        var x1 = p2.X;
+        var y1 = p2.Y;
+        var dy = y1 - y0;
+        var dx = x1 - x0;
+        var stepx = 0;
+        var stepy = 0;
+        var timeslice = 0;
+
+        if (dy < 0)
+        {
+            dy = -dy;
+            stepy = -1;
+        }
+        else
+            stepy = 1;
+
+        if (dx < 0)
+        {
+            dx = -dx;
+            stepx = -1;
+        }
+        else
+            stepx = 1;
+
+        dy <<= 1;
+        dx <<= 1;
+
+        // start the first segment at the initial point at time 0
+        var gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
+        var gridY = y0 >> EngineSettings.GridWidthPowerOfTwo;
+
+
+        if (dx > dy)
+        {
+            // Determine how many points we'll plot and estimate time by that
+            if ((x1 - x0) != 0)
+                timeslice = Math.round(this.TimeWindow/((x1 - x0)*stepx));
+
+            var fraction = dy - (dx >> 1); // same as 2*dy - dx
+            while (x0 != x1)
+            {
+                if (fraction >= 0)
+                {
+                    y0 += stepy;
+                    fraction -= dx; // same as fraction -= 2*dx
+                }
+                x0 += stepx;
+                fraction += dy; // same as fraction -= 2*dy
+
+                // See if we've crossed into a new grid square
+                previousGridX = gridX;
+                previousGridY = gridY;
+
+                gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
+                gridY = y0 >> EngineSettings.GridHeightPowerOfTwo;
+
+                if (gridX != previousGridX || gridY != previousGridY)
+                {
+                    wentThroughLoopOnce = true;
+                    // Move
+                    if (this.WouldOnlyOverlapSelf(organismId, gridX, gridY, cellRadius))
+                        maxValidDestination = new Point(x0, y0); // Valid destination.
+                    else
+                        return maxValidDestination;
+                }
+            }
+        }
+        else
+        {
+            if ((y1 - y0) != 0)
+                timeslice = Math.round(this.TimeWindow / ((y1 - y0)*stepy));
+
+            var fraction = dx - (dy >> 1);
+            while (y0 != y1)
+            {
+                if (fraction >= 0)
+                {
+                    x0 += stepx;
+                    fraction -= dy;
+                }
+                y0 += stepy;
+                fraction += dx;
+
+                previousGridX = gridX;
+                previousGridY = gridY;
+
+                // See if we've crossed into a new grid square
+                gridX = x0 >> EngineSettings.GridWidthPowerOfTwo;
+                gridY = y0 >> EngineSettings.GridHeightPowerOfTwo;
+
+                if (gridX != previousGridX || gridY != previousGridY)
+                {
+                    wentThroughLoopOnce = true;
+                    if (this.WouldOnlyOverlapSelf(organismId, gridX, gridY, cellRadius))
+                        maxValidDestination = new Point(x0, y0); // Valid destination
+                    else
+                        return maxValidDestination;
+                }
+            }
+        }
+        return wentThroughLoopOnce ? maxValidDestination : p2;
     }
 });
