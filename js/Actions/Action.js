@@ -1,4 +1,0 @@
-var Action = Class.extend({
-
-});
-
