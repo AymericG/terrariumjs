@@ -3,7 +3,7 @@ var EngineSettings = {
     ///   into the MatureSize attribute.  No creature may grow to
     ///   be larger than this constant.
 	MaxMatureSize: 48,
-	MaxOrganismCount: 50,
+	MaxOrganismCount: 30,
 	RequiredEnergyPerUnitOfRadiusSpeedDistance: 0.005,
 	TickInterval: 150,
 	TicksToIncubate: 10,
