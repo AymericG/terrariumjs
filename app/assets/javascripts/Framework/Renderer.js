@@ -84,7 +84,7 @@ var Renderer = Class.extend({
 	DrawGrid: function(){
 		var self = this;
 		var ctx = self.BackgroundLayer.ctx;
-				
+
 		for (var i = 1; i < self.World.GridWidth; i++)
 			this.DrawLine(ctx, 'DarkGreen', i * EngineSettings.GridCellWidth, 0, i * EngineSettings.GridCellWidth, self.World.WorldHeight);
 		for (var i = 1; i < self.World.GridHeight; i++)
@@ -105,7 +105,6 @@ var Renderer = Class.extend({
 	DrawLine: function(ctx, strokeStyle, x, y, x2, y2)
 	{
 		var previousStyle = ctx.strokeStyle;
-
 	    ctx.strokeStyle = strokeStyle;
 		ctx.beginPath();
 	    ctx.moveTo(x, y);
@@ -124,7 +123,6 @@ var Renderer = Class.extend({
 		var organismSprite = this.Sprites[organism.Id];
 		if (organism.State.Radius >= 17 && organismSprite.w != 48)
 		{
-			//console.log("switch");
 			organismSprite.remove();
 			organismSprite = this.AddOrganism(organism);
 		}
@@ -139,10 +137,6 @@ var Renderer = Class.extend({
 		var radiusW = EngineSettings.GridCellWidth * organism.State.CellRadius();
 		var radiusH = EngineSettings.GridCellHeight * organism.State.CellRadius();
 
-		// Draw cell boundary box
-		/*ctx.strokeStyle = "Blue";
-		ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2+EngineSettings.GridCellWidth, radiusH*2+EngineSettings.GridCellHeight);
-		*/
 		// Draw name
 		ctx.strokeStyle = "Black";
 		ctx.strokeText(organism.State.Species.Name + " #" + organism.Id, positionX, positionY + organismSprite.h + 15);
@@ -178,11 +172,9 @@ var Renderer = Class.extend({
 			var displayAction = organism.DisplayAction();
 			if (organismSprite.LastDisplayAction != displayAction || organismSprite.LastDirection != organism.Direction)
 			{
-				//console.log(organismSprite.LastDisplayAction + " " + displayAction);
 				delete this.Cycles[organism.Id];
 				var loop = displayAction != DisplayAction.Die && displayAction != DisplayAction.Nothing;
-				if (typeof(this.Animations[displayAction]) == 'undefined')
-					console.log("undefined animation: " + displayAction);
+
 				this.Cycles[organism.Id] = this.Scene.Cycle(this.Animations[displayAction][organism.Direction][organismSprite.w]);
 				this.Cycles[organism.Id].repeat = loop;
 				this.Cycles[organism.Id].addSprite(organismSprite);
