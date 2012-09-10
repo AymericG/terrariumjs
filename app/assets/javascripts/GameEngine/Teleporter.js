@@ -6,6 +6,19 @@ var Teleporter = Class.extend({
         this.Vector = vector;
         this.TeleportWait = 0;
         this.Speed = 2;
+        var self = this;
+
+        $(window).peerbind("teleport", {
+            peer:  function(e) { 
+                var interGalacticMessage = JSON.parse(e.peerData);
+                self.World.AddOrganism(interGalacticMessage.url, interGalacticMessage.code, interGalacticMessage.generation);
+                console.log("A new animal has been teleported into your terrarium!");
+            },
+            local: function(e) { 
+                // Nothing.
+            }
+        });
+
 	},
 	AddTeleportTick: function(){
 		this.TeleportWait++;
@@ -92,6 +105,7 @@ var Teleporter = Class.extend({
 	    	this.ResetTeleportWait();
 	    	var interGalacticMessage = JSON.stringify({ url: organism.MindUrl, code: organism.MindCode, generation: organism.State.Generation });
 	    	$(window).peertrigger("teleport", interGalacticMessage);
+            console.log(organism.State.Species.Name + " #" + organism.Id + " has been teleported to another terrarium.");
 	    	organism.Trigger("Disappear", organism);
 	    }
 

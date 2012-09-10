@@ -1,22 +1,25 @@
+// 1. Set the species attributes
 var species = new Species();
-species.MatureSize = 30;
-species.PercentOfMaximumEnergyPerUnitRadius = 0;
-species.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0;
-species.PercentOfMaximumAttackDamagePerUnitRadius = 0.52;
-species.PercentOfMaximumDefendDamagePerUnitRadius = 0;
-species.PercentOfMaximumEyeSightRadius = 0.2;
-species.PercentOfMaximumSpeed = 0.28;
-species.PercentOfMaximumInvisibleOdds = 0;
 species.Name = "Carnie";
 species.IsCarnivore = true;
 species.Skin = AnimalSkin.scorpion; // ant, beetle, inchworm, scorpion or spider
+species.MatureSize = 30;
 
+// Sum should equal to 1.
+species.PercentOfMaximumEnergyPerUnitRadius = 0.7;
+species.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0;
+species.PercentOfMaximumAttackDamagePerUnitRadius = 0;
+species.PercentOfMaximumDefendDamagePerUnitRadius = 0;
+species.PercentOfMaximumEyeSightRadius = 0.3;
+species.PercentOfMaximumSpeed = 0;
+species.PercentOfMaximumInvisibleOdds = 0;
+
+// 2. Write the behaviour
 var me = new AnimalMind(species);
 
 // Sample Carnivore
 // Strategy: This animal stands still until it sees something tasty and then
 // bites it.  If any dead animals are within range it eats them.
-
 me.OnIdle = function() {
 
 	if (this.TargetAnimal != null) 

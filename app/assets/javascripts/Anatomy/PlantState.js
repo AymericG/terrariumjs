@@ -15,13 +15,6 @@ var PlantState = OrganismState.extend({
 	CurrentMaxFoodChunks: function(){
     	return this.Radius * EngineSettings.PlantFoodChunksPerUnitOfRadius;
     },
-    /*MaxEnergy: function(){
-        return this.CurrentMaxFoodChunks();
-    },
-    StoredEnergy: function(){
-        return this.FoodChunks;
-    },
-*/
     IncreaseRadiusTo: function(newRadius){
         var newHeight = newRadius * this.HeightToRadiusRatio;
         var additionalRadius = newRadius - this.Radius;
@@ -62,7 +55,7 @@ var PlantState = OrganismState.extend({
         }
         if (foodChunkDelta != 0)
             this.Log("Gaining " + foodChunkDelta + " food chunks");
-        //console.log("[P] Healing: " + foodChunkDelta * EngineSettings.PlantRequiredEnergyPerUnitOfHealing);
+
         this.BurnEnergy(foodChunkDelta * EngineSettings.PlantRequiredEnergyPerUnitOfHealing);
 	},
     ///  This is incomplete, this should be a characteristic that enables
