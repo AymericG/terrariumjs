@@ -427,13 +427,13 @@ var World = ClassWithEvents.extend({
         var maxGridY = gridY + cellRadius;
 
         // If it would be out of bounds, return false.
-        if (minGridX < 0 || maxGridX > this.GridWidth - 1 ||
-            minGridY < 0 || maxGridY > this.GridHeight - 1)
+        if (minGridX < 0 || maxGridX > this.GridWidth /*- 1*/ ||
+            minGridY < 0 || maxGridY > this.GridHeight /*- 1*/)
             return false;
 
-        for (var x = minGridX; x <= maxGridX; x++)
+        for (var x = minGridX; x </*=*/ maxGridX; x++)
         {
-            for (var y = minGridY; y <= maxGridY; y++)
+            for (var y = minGridY; y </*=*/ maxGridY; y++)
             {
                 if (this._cellOrganisms[x][y] == null) 
                     continue;
@@ -449,7 +449,7 @@ var World = ClassWithEvents.extend({
         var p1 = from;
         var p2 = to;
 
-        if (p1 == p2)
+        if (p1.EqualsTo(p2))
             return null;
 
         var wentThroughLoopOnce = false;
@@ -465,21 +465,22 @@ var World = ClassWithEvents.extend({
         var stepy = 0;
         var timeslice = 0;
 
+
         if (dy < 0)
         {
             dy = -dy;
-            stepy = -1;
+            stepy = -8;
         }
         else
-            stepy = 1;
+            stepy = 8;
 
         if (dx < 0)
         {
             dx = -dx;
-            stepx = -1;
+            stepx = -8;
         }
         else
-            stepx = 1;
+            stepx = 8;
 
         dy <<= 1;
         dx <<= 1;

@@ -25,7 +25,6 @@ var AnimalState = OrganismState.extend({
         var additionalRadius = newRadius - this.Radius;
         this._super(newRadius);
         var foodChunks = additionalRadius * EngineSettings.FoodChunksPerUnitOfRadius;
-        this.Log("Gaining " + foodChunks + " food chunks");
         this.FoodChunks += foodChunks;
     },
 	CurrentMaxFoodChunks: function(){

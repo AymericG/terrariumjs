@@ -65,11 +65,8 @@ var Organism = ClassWithEvents.extend({
 
 		try
 		{
-
 			var validWayPoint = this.World.FindValidWayPoint(this.Id, this.State.CellRadius(), this.State.Position, this.CurrentMoveToAction().MoveTo.Destination);
-			if (validWayPoint != null)
-			    this.DoMove(validWayPoint);
-
+			this.DoMove(validWayPoint);
 		}
 		catch (e)
 		{
@@ -84,13 +81,10 @@ var Organism = ClassWithEvents.extend({
 			this.Send({signal: Signals.MoveCompleted, ReasonForStop: ReasonForStop.Blocked });
 			return;
 		}
-		//if (destination.EqualsTo(this.State.Position))
-		//	return;
-		
-		this.World.FillCells(this.State, true);
-		// We reached the end.
+
 		var vector = this.State.Position.Substract(destination);
 		var fullVector = this.State.Position.Substract(this.CurrentMoveToAction().MoveTo.Destination);
+
 		if (fullVector.Magnitude() <= this.CurrentMoveToAction().MoveTo.Speed || (vector.X == 0 && vector.Y == 0))
         {
 			this.InProgressActions.MoveToAction = null;
@@ -99,26 +93,17 @@ var Organism = ClassWithEvents.extend({
 		}
 
 		var moveVector = destination.Substract(this.State.Position);
+		var unitVector = fullVector.GetUnitVector();
+		var speedVector = unitVector.Scale(this.CurrentMoveToAction().MoveTo.Speed);
 		
-		var unitVector = vector.GetUnitVector();
-//		if (unitVector.EqualsTo(vector))
-//			this.State.Position = destination; // Rounding issue. Just go there.		
-//		else
-//		{
-			var speedVector = unitVector.Scale(this.CurrentMoveToAction().MoveTo.Speed);
-
-			if (speedVector.X*speedVector.X >= vector.X*vector.X && speedVector.Y*speedVector.Y >= vector.Y*vector.Y)
-				speedVector = vector;
-			
-			this.Direction = this.DirectionFromVector(vector);
-			var destinationWithSpeed = this.State.Position.Add(speedVector); 
-			var destinationReached = destinationWithSpeed.EqualsTo(destination);
-
-		    this.State.Position = destinationWithSpeed;
-			this.State.BurnEnergy(this.State.EnergyRequiredToMove(moveVector.Magnitude(), this.CurrentMoveToAction().MoveTo.Speed));
-//		}
+		if (speedVector.X*speedVector.X >= vector.X*vector.X && speedVector.Y*speedVector.Y >= vector.Y*vector.Y)
+			speedVector = vector;
+		
+		this.Direction = this.DirectionFromVector(vector);
+		this.World.FillCells(this.State, true);
+	    this.State.Position = this.State.Position.Add(speedVector);
 		this.World.FillCells(this.State, false);
-
+		this.State.BurnEnergy(this.State.EnergyRequiredToMove(moveVector.Magnitude(), this.CurrentMoveToAction().MoveTo.Speed));
 		if (!this.State.IsAlive())
 			return;
 
@@ -127,13 +112,6 @@ var Organism = ClassWithEvents.extend({
 	       // Destination reached
 			this.InProgressActions.MoveToAction = null;
 	        this.Send({signal: Signals.MoveCompleted, ReasonForStop: ReasonForStop.DestinationReached });
-	    }
-	    else if (destinationReached)
-	    {
-	        // If where they landed wasn't where they wanted to go, then they got blocked.  Stop movement and notify them
-			this.InProgressActions.MoveToAction = null;
-	        this.Send({signal: Signals.MoveCompleted, ReasonForStop: ReasonForStop.Blocked });
-
 	    }
 	},
 	DirectionFromVector: function(vector)
@@ -173,7 +151,6 @@ var Organism = ClassWithEvents.extend({
 		{
 			if (this.State.EnergyState() >= EnergyState.Normal)
 			{
-				//console.log("Consuming energy to reproduce");
 				// Only incubate if the organism isn't hungry	    	
 				this.State.BurnEnergy(this.State.Radius * EngineSettings.AnimalIncubationEnergyPerUnitOfRadius);
 			    this.State.AddIncubationTick();
@@ -323,7 +300,7 @@ var Organism = ClassWithEvents.extend({
 	        newEnergy = EngineSettings.EnergyPerPlantFoodChunk * foodChunkCount;
 	    else
 	        newEnergy = EngineSettings.EnergyPerAnimalFoodChunk * foodChunkCount;
-	    this.Log("Recovering energy (" + newEnergy + ")");
+	    //this.Log("Recovering energy (" + newEnergy + ")");
 	    attackerState.StoredEnergy(attackerState.StoredEnergy() + newEnergy);
 	},
 	GetEnergyFromLight: function(){

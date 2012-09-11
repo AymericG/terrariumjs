@@ -1,7 +1,9 @@
 var Game = function (canvas, width, height) {
 	var self = this;
 	this.Logger = new Logger();
-	this.World = new World(width, height, new Teleporter(this, new Rectangle(225, 225, 48, 48), null));
+	var teleporter = new Teleporter(this, new Rectangle(225, 225, 48, 48), null);
+	this.World = new World(width, height, teleporter);
+	teleporter.World = this.World;
 	this.Renderer = new Renderer(canvas, width, height, this.World);
 	this.Started = false;
 

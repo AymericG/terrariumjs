@@ -4,8 +4,8 @@ describe("World", function() {
 
   function FillCells(world, organism, position, cellRadius)
   {
-      for (var i = position-cellRadius; i < position+cellRadius; i++)
-        for (var j = position-cellRadius; j < position+cellRadius; j++)
+      for (var i = position.X-cellRadius; i < position.X+cellRadius; i++)
+        for (var j = position.Y-cellRadius; j < position.Y+cellRadius; j++)
           world._cellOrganisms[i][j] = organism;
   }
 
@@ -40,13 +40,13 @@ describe("World", function() {
 
     it("when going to a bigger enemy on a straight line, it should be blocked", function() {
 
-      /*var enemy = { Id: 1 };
+      var enemy = { Id: 1 };
       FillCells(world, enemy, new Point(5, 2), 2);
       FillCells(world, me, new Point(1, 2), 1);
 
-      var destination = world.FindValidWayPoint(me.Id, 1, new Point(2*8, 2*8), new Point(4*8, 5*8));
+      var destination = world.FindValidWayPoint(me.Id, 1, new Point(1*8, 2*8), new Point(4*8, 5*8));
       expect(destination.X).toBe(2*8);
-      expect(destination.Y).toBe(3*8);*/
+      expect(destination.Y).toBe(3*8);
     });
 
   });
