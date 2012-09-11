@@ -158,8 +158,12 @@ var World = ClassWithEvents.extend({
 
 		if (this.OrganismCount >= EngineSettings.MaxOrganismCount)
 		{
-			console.log("Maximum number of organisms per terrarium reached.");
-			return;
+            for (var organismId in this.Organisms)
+            {   
+                // kill the eldest
+                this.Organisms[organismId].Trigger("Disappear", this.Organisms[organismId]);
+                break;
+            }
 		}
 		var organismId = this.OrganismIndex;
 
