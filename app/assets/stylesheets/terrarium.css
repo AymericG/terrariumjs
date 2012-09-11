@@ -109,7 +109,7 @@ header span{
 }
 
 footer{
-    display: none;
+    /*display: none;*/
     margin: 10px 0;
     padding: 10px;
     background-color: #000;
