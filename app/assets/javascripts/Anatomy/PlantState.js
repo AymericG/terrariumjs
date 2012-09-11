@@ -11,6 +11,9 @@ var PlantState = OrganismState.extend({
         return stateObject;
     },
     HeightToRadiusRatio: 1,
+    PercentInjured: function(){
+        return 1 - (this.FoodChunks/this.CurrentMaxFoodChunks());
+    },
 
 	CurrentMaxFoodChunks: function(){
     	return this.Radius * EngineSettings.PlantFoodChunksPerUnitOfRadius;

@@ -5,12 +5,12 @@ species.IsCarnivore = true;
 species.Skin = AnimalSkin.scorpion; // ant, beetle, inchworm, scorpion or spider
 species.MatureSize = 30;
 
-// Sum should equal to 1.
-species.PercentOfMaximumEnergyPerUnitRadius = 0.7;
+// Sum should equal to 100.
+species.PercentOfMaximumEnergyPerUnitRadius = 70;
 species.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0;
 species.PercentOfMaximumAttackDamagePerUnitRadius = 0;
 species.PercentOfMaximumDefendDamagePerUnitRadius = 0;
-species.PercentOfMaximumEyeSightRadius = 0.3;
+species.PercentOfMaximumEyeSightRadius = 30;
 species.PercentOfMaximumSpeed = 0;
 species.PercentOfMaximumInvisibleOdds = 0;
 
@@ -124,7 +124,7 @@ me.OnEatCompleted = function (){
 
 };
 
-me.OnMoveCompleted = function (){
+me.OnMoveCompleted = function (reason, blockerId){
 
 };
 

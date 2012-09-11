@@ -7,7 +7,7 @@ var AnimalMind = OrganismMind.extend({
 	// Override me!
 	OnAttacked: function(attackerId){}, 
 	OnAttackCompleted: function(){}, 
-	OnMoveCompleted: function(){},
+	OnMoveCompleted: function(reason, blockedId){},
 	OnEatCompleted: function(){},
 
 	ProcessSignal: function(messageObject)
@@ -15,7 +15,7 @@ var AnimalMind = OrganismMind.extend({
 		switch (messageObject.signal)
 		{
 			case Signals.MoveCompleted:
-				this.OnMoveCompleted();
+				this.OnMoveCompleted(messageObject.ReasonForStop, messageObject.BlockerId);
 				break;	
 			case Signals.EatCompleted:
 				this.OnEatCompleted();
@@ -26,7 +26,6 @@ var AnimalMind = OrganismMind.extend({
 				this.OnAttackCompleted();
 			default:
 				this._super(messageObject);
-
 		}
 	},
 	
@@ -90,12 +89,7 @@ var AnimalMind = OrganismMind.extend({
 		return this.State.EnergyState() <= EnergyState.Normal;
 	},
 	WithinEatingRange: function(targetOrganism){
-		var result = this.State.IsAdjacentOrOverlapping(targetOrganism);
-		//this.WriteTrace("WithinEatingRange:");
-		//this.WriteTrace(this.State.GridX() + " " + this.State.GridY() + this.State.CellRadius());
-		//this.WriteTrace(targetOrganism.GridX() + " " + targetOrganism.GridY() + targetOrganism.CellRadius());
-		//this.WriteTrace("result -> " + result);
-		return result;
+		return this.State.IsAdjacentOrOverlapping(targetOrganism);
     },
 	BeginEating: function(targetOrganism)
 	{

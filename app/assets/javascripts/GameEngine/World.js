@@ -306,52 +306,28 @@ var World = ClassWithEvents.extend({
                         // These actually calculate -1 * sign not just the sign function
                         var signI;
                         if (i < 0)
-                        {
                             signI = 1;
-                        }
                         else if (i > 0)
-                        {
                             signI = -1;
-                        }
                         else
-                        {
                             signI = 0;
-                        }
-
+    
                         var signJ;
                         if (j < 0)
-                        {
                             signJ = 1;
-                        }
                         else if (j > 0)
-                        {
                             signJ = -1;
-                        }
                         else
-                        {
                             signJ = 0;
-                        }
-
-                        var absI;
+    
+                        var absI = i;
                         if (i < 0)
-                        {
                             absI = -i;
-                        }
-                        else
-                        {
-                            absI = i;
-                        }
-
-                        var absJ;
+    
+                        var absJ = j;
                         if (j < 0)
-                        {
                             absJ = -j;
-                        }
-                        else
-                        {
-                            absJ = j;
-                        }
-
+    
                         // Check first point which is the diagonal direction from [x,y] to [originX,originY]
                         var p1X;
                         var p1Y;
@@ -429,7 +405,7 @@ var World = ClassWithEvents.extend({
         // If it would be out of bounds, return false.
         if (minGridX < 0 || maxGridX > this.GridWidth /*- 1*/ ||
             minGridY < 0 || maxGridY > this.GridHeight /*- 1*/)
-            return false;
+            return { Result: false };
 
         for (var x = minGridX; x </*=*/ maxGridX; x++)
         {
@@ -438,11 +414,11 @@ var World = ClassWithEvents.extend({
                 if (this._cellOrganisms[x][y] == null) 
                     continue;
                 if (this._cellOrganisms[x][y].Id != organismId)
-                    return false;
+                    return { Result: false, BlockerId: this._cellOrganisms[x][y].Id };
             }
         }
 
-        return true;
+        return { Result: true };
     },
     FindValidWayPoint: function(organismId, cellRadius, from, to)
     {
@@ -450,7 +426,7 @@ var World = ClassWithEvents.extend({
         var p2 = to;
 
         if (p1.EqualsTo(p2))
-            return null;
+            return { Destination: null };
 
         var wentThroughLoopOnce = false;
         var maxValidDestination = p1;
@@ -518,10 +494,11 @@ var World = ClassWithEvents.extend({
                 {
                     wentThroughLoopOnce = true;
                     // Move
-                    if (this.WouldOnlyOverlapSelf(organismId, gridX, gridY, cellRadius))
+                    var overlapResult = this.WouldOnlyOverlapSelf(organismId, gridX, gridY, cellRadius);
+                    if (overlapResult.Result)
                         maxValidDestination = new Point(x0, y0); // Valid destination.
                     else
-                        return maxValidDestination;
+                        return { Destination: maxValidDestination, BlockedId: overlapResult.BlockerId };
                 }
             }
         }
@@ -551,13 +528,15 @@ var World = ClassWithEvents.extend({
                 if (gridX != previousGridX || gridY != previousGridY)
                 {
                     wentThroughLoopOnce = true;
-                    if (this.WouldOnlyOverlapSelf(organismId, gridX, gridY, cellRadius))
+                    var overlapResult = this.WouldOnlyOverlapSelf(organismId, gridX, gridY, cellRadius);
+                    if (overlapResult.Result)
                         maxValidDestination = new Point(x0, y0); // Valid destination
                     else
-                        return maxValidDestination;
+                        return { Destination: maxValidDestination, BlockedId: overlapResult.BlockerId };
                 }
             }
         }
-        return wentThroughLoopOnce ? maxValidDestination : p2;
+        maxValidDestination = wentThroughLoopOnce ? maxValidDestination : p2;
+        return { Destination: maxValidDestination };
     }
 });

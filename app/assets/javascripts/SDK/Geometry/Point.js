@@ -70,5 +70,19 @@ var Point = Class.extend({
       ys = ys * ys;
      
       return Math.sqrt(xs + ys);
+    },
+    ///   Rotates a vector about the origin by an angle given in Radians
+    ///   radians.
+    ///   A point (x,y) can be rotated around the origin (0,0) by running it through the following equations 
+    ///   to get the new point (x',y'):
+    ///   x' = cos(theta)*x - sin(theta)*y 
+    ///   y' = sin(theta)*x + cos(theta)*y
+    ///   where theta is the angle by which to rotate the point.
+    Rotate: function(radians)
+    {
+        var newVector = new Point(Math.cos(radians)*this.X - Math.sin(radians)*this.Y,
+                                   Math.sin(radians)*this.X + Math.cos(radians)*this.Y);
+        return newVector;
     }
+
 });

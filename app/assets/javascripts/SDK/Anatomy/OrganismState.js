@@ -37,6 +37,7 @@ var OrganismState = Class.extend({
 				state.SeenOrganisms.push(this.SeenOrganisms[i].Serializable(false));
 		return state;
 	},
+	PercentInjured: function(){},
 	Refresh: function(data)
 	{
 

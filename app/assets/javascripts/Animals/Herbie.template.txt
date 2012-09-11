@@ -4,14 +4,14 @@ species.Name = "Herbie";
 species.Skin = AnimalSkin.inchworm; // ant, beetle, inchworm, scorpion or spider
 species.MatureSize = 26; // between 24 and 48
 
-// Sum should equal to 1.
+// Sum should equal to 100.
 species.PercentOfMaximumEnergyPerUnitRadius = 0;
 species.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0;
 species.PercentOfMaximumAttackDamagePerUnitRadius = 0;
 species.PercentOfMaximumDefendDamagePerUnitRadius = 0;
-species.PercentOfMaximumEyeSightRadius = 0.5;
+species.PercentOfMaximumEyeSightRadius = 50;
 species.PercentOfMaximumSpeed = 0;
-species.PercentOfMaximumInvisibleOdds = 0.5;
+species.PercentOfMaximumInvisibleOdds = 50;
 
 // 2. Write the behaviour
 // For more information about what functions you can use
@@ -127,7 +127,7 @@ me.OnEatCompleted = function (){
 
 };
 
-me.OnMoveCompleted = function (){
+me.OnMoveCompleted = function (reason, blockerId){
 
 };
 

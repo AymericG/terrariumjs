@@ -15,7 +15,9 @@ var AnimalState = OrganismState.extend({
 		stateObject.RightAntenna = this.RightAntenna;
 		return stateObject;
 	},
-
+	PercentInjured: function(){
+    	return this.Damage / (EngineSettings.DamageToKillPerUnitOfRadius* this.Radius);
+	},
 	AddRotTick: function()
 	{
     	this.RotTicks++;

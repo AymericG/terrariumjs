@@ -73,12 +73,13 @@ var Organism = ClassWithEvents.extend({
 			this.Log("EXCEPTION IN MOVE(): " + e.message);
 		}
 	},
-	DoMove: function(destination)
+	DoMove: function(wayPoint)
 	{
+		var destination = wayPoint.Destination;
 		if (destination == null)
 		{
 			this.InProgressActions.MoveToAction = null;
-			this.Send({signal: Signals.MoveCompleted, ReasonForStop: ReasonForStop.Blocked });
+			this.Send({signal: Signals.MoveCompleted, ReasonForStop: ReasonForStop.DestinationReached });
 			return;
 		}
 
@@ -112,6 +113,14 @@ var Organism = ClassWithEvents.extend({
 	       // Destination reached
 			this.InProgressActions.MoveToAction = null;
 	        this.Send({signal: Signals.MoveCompleted, ReasonForStop: ReasonForStop.DestinationReached });
+	    } else
+	    {
+	    	if (wayPoint.BlockerId)
+	    	{
+		       // Destination reached
+				this.InProgressActions.MoveToAction = null;
+		        this.Send({signal: Signals.MoveCompleted, ReasonForStop: ReasonForStop.Blocked, BlockerId: wayPoint.BlockerId });	    		
+	    	}
 	    }
 	},
 	DirectionFromVector: function(vector)
@@ -195,11 +204,15 @@ var Organism = ClassWithEvents.extend({
 	},
 
 	Grow: function(){
-		if (this.State.CanGrow() && this.World.WouldOnlyOverlapSelf(this.Id, this.State.GridX(), this.State.GridY(), this.State.CalculateCellRadius(this.State.Radius + 1)))
+		if (this.State.CanGrow())
 	    {
-	    	this.World.FillCells(this.State, true);
-	    	this.State.Grow();
-			this.World.FillCells(this.State, false);
+	    	if (this.World.WouldOnlyOverlapSelf(this.Id, this.State.GridX(), this.State.GridY(), this.State.CalculateCellRadius(this.State.Radius + 1)).Result)
+	    	{
+	    		// TODO: If we are blocked by something we should try to grow sideways 
+		    	this.World.FillCells(this.State, true);
+		    	this.State.Grow();
+				this.World.FillCells(this.State, false);
+			}
 		}
 	},
 
