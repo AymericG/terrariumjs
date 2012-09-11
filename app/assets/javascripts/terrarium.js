@@ -17,9 +17,6 @@ $(document).ready(function() {
 		}
 	});
 
-	var code = $.cookie('code');
-	if (code != null) $("#code").val(code);
-
 	var saveCode = function(){ 
 		$.cookie('code', editor.getValue());
 	};
@@ -29,7 +26,12 @@ $(document).ready(function() {
 		matchBrackets: true,
 		onChange: saveCode
 	});
-	$.get("/assets/Animals/Herbie.template.txt", function(result){ editor.setValue(result); });
+	
+	var code = $.cookie('code');
+	if (code != null) 
+		editor.setValue(code);
+	else
+		$.get("/assets/Animals/Herbie.template.txt", function(result){ editor.setValue(result); });
 
 	var $canvas = $("#canvas");
 	var width = 520;
