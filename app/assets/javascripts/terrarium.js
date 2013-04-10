@@ -48,7 +48,7 @@ $(document).ready(function() {
 	// Adding a few plants
 	var plantCounter = 0;
 	window.addPlant = function(){ 
-		$.get("/assets/Animals/Plant.js", function(result){ 
+		$.get("/assets/Animals/Plant.txt", function(result){ 
 			game.AddOrganism(organismMindCodeLoaderPath, result);
 			plantCounter++;
 			if (plantCounter >= 10)
@@ -73,7 +73,7 @@ $(document).ready(function() {
 	{
 		$(".editor").each(function(){
 			var editor = this;
-			var file = this.id.replace("editor-", "") + ".js";
+			var file = this.id.replace("editor-", "") + ".txt";
 			$.get(path + file, function(result){ 
 				editors[editor.id].setValue(result); 
 			});
