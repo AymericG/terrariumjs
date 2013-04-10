@@ -9,10 +9,10 @@ var Renderer = Class.extend({
     		this.Animations[animation] = this.InitializeAnimation(animation);
 
 		this.Ticker = this.Scene.Ticker(function(ticker){
-
+/*
 			if (self.Input.mousedown)
 	        	self.SelectOrganism(self.Input.mouse.position.x, self.Input.mouse.position.y);
-
+*/
 			self.DrawGrid();
 
 			for (var organismId in self.World.Organisms)
@@ -30,7 +30,7 @@ var Renderer = Class.extend({
 		this.Sprites = {};
 		this.Cycles = {};
 		this.InitializeTeleporterAnimation();
-		this.Input  = this.Scene.Input();
+		//this.Input  = this.Scene.Input();
 		this.SelectedOrganismId = null;
     },
     SelectOrganism: function(x, y){

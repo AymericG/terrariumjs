@@ -13,7 +13,7 @@
 //= require libs/codemirror
 //= require libs/codemirror.javascript
 //= require libs/sprite
-//= require libs/jquery.min
+//= require libs/jquery-1.9.1
 //= require libs/jquery.cookie
 //= require SDK/libs/Class
 //= require_directory ./SDK/Actions

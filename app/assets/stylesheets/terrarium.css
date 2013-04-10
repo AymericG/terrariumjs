@@ -7,8 +7,12 @@ body{
     font-size: 16px;
 }
 
-.CodeMirror{
-    background-color: #fff;
+
+.right-panel
+{
+    width: 555px;
+    float:right;
+    margin-left: -570px;
 }
 
 .game-window-wrap
@@ -16,6 +20,8 @@ body{
     float: left; 
     margin: 10px;
 }
+
+textarea {  }
 
 .game-window
 {
@@ -28,8 +34,21 @@ body{
 .game-controls
 {
     margin: 10px;
-	float:left; 
-	width: 50%;
+    padding-right: 555px;
+}
+
+#code{
+    width: 100%;
+}
+
+.CodeMirror{
+    background-color: #fff;
+    height: auto;
+}
+
+.CodeMirror-scroll{
+    overflow-x: auto; 
+    overflow-y: hidden;
 }
 
 #canvas{
@@ -37,10 +56,8 @@ body{
     margin: auto;
 }
 
-.fixed
-{
-    width: 1140px; 
-    margin: 0 auto; 
+.main-container{
+    padding:20px;
 }
 
 .header-wrap{
@@ -89,18 +106,27 @@ header span{
     margin-bottom: 15px;
 }
 
+.step-wrap header{
+    background-color: #000;
+    cursor: pointer;
+}
+
 .step-wrap h2{
-    margin:0px 0 5px 0;
+    margin:0px;
     font-size: 16px;
     font-weight: normal;
 }
 
 .step{
-    float:left;
-    font-size: 36px;
-    margin-right: 10px;
+    display:none;
+    background-color: #35291F;
+    padding: 20px;
 }
 
+.step-wrap.open .step
+{
+    display: block;
+}
 .social{
     float:right;
     width:150px;

@@ -13,6 +13,7 @@ var RandomProperty = function(object){
 species.Skin = PlantSkin[RandomProperty(PlantSkin)];
 
 var organism = new OrganismMind(species);
+
 organism.OnIdle = function(){
 	if (this.CanReproduce())
 		this.BeginReproduction(null);

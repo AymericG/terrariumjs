@@ -17,21 +17,25 @@ $(document).ready(function() {
 		}
 	});
 
-	var saveCode = function(){ 
-		$.cookie('code', editor.getValue());
+	var saveCode = function(editor){ 
+		$.cookie(editor.originalId, editor.getValue());
 	};
+	var editors = {};
+	$(".editor").each(function(){
 
-	var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-		lineNumbers: true,
-		matchBrackets: true,
-		onChange: saveCode
+		var editor = CodeMirror.fromTextArea(document.getElementById(this.id), {
+			lineNumbers: true,
+			matchBrackets: true,
+			onChange: function() { return saveCode(editor); }
+		});
+		editor.originalId = this.id;
+
+		var code = $.cookie(this.id);
+		if (code != null) 
+			editor.setValue(code);
+
+		editors[this.id] = editor;
 	});
-	
-	var code = $.cookie('code');
-	if (code != null) 
-		editor.setValue(code);
-	else
-		$.get("/assets/Animals/Herbie.template.txt", function(result){ editor.setValue(result); });
 
 	var $canvas = $("#canvas");
 	var width = 520;
@@ -44,7 +48,7 @@ $(document).ready(function() {
 	// Adding a few plants
 	var plantCounter = 0;
 	window.addPlant = function(){ 
-		$.get("/assets/Animals/Plant.template.txt", function(result){ 
+		$.get("/assets/Animals/Plant.js", function(result){ 
 			game.AddOrganism(organismMindCodeLoaderPath, result);
 			plantCounter++;
 			if (plantCounter >= 10)
@@ -56,15 +60,36 @@ $(document).ready(function() {
 	
 	
 	$("#load-code").click(function(){
-		game.AddOrganism(organismMindCodeLoaderPath, editor.getValue());
+
+		var code = "";
+		for (var editor in editors)
+		{
+			code += editors[editor].getValue();
+		}
+		game.AddOrganism(organismMindCodeLoaderPath, code);
 	});
 
+	var loadCode = function(path)
+	{
+		$(".editor").each(function(){
+			var editor = this;
+			var file = this.id.replace("editor-", "") + ".js";
+			$.get(path + file, function(result){ 
+				editors[editor.id].setValue(result); 
+			});
+		});
+	};
+
 	$("#load-herbie").click(function(){
-		$.get("/assets/Animals/Herbie.template.txt", function(result){ editor.setValue(result); });
+		loadCode("/assets/Animals/Herbie/");
+		$(".step-wrap header")[1].click();
 	});
 	$("#load-carnie").click(function(){
-		$.get("/assets/Animals/Carnie.template.txt", function(result){ editor.setValue(result); });
+		loadCode("/assets/Animals/Carnie/");
+		$(".step-wrap header")[1].click();
 	});
+
+
 
 	$("#load-plant").click(addPlant);
 
@@ -94,4 +119,12 @@ $(document).ready(function() {
 
 	$(window).peertrigger("who-is-here");
 	$(window).peertrigger("i-am-here");
+
+	$(".step-wrap header").click(function(){
+		$(".step").hide();
+		$(this).next().show();
+		$(".editor").each(function(){
+			editors[this.id].refresh();
+		});
+	});
 });
