@@ -4,7 +4,7 @@
                 <div class="game-window">
                     <div id="canvas"></div>
                 </div>
-                <div class="stats">Terrariums connected: <span id="terrarium-count"></span></div>
+                <div class="stats">Connected terrariums: <span id="terrarium-count"></span></div>
             </div>
 
             <div id="channel-name">
@@ -31,6 +31,7 @@
                     <p>An herbivore can eat plants, carnivores can eat all animals but not the plants.</p><p>Every action, like attacking, defending or reproducing consumes energy. An animal can recover energy by eating food. If the energy bar reaches zero, the animal dies.</p>
                     <input id="load-herbie" type="button" value="Load a Herbivore skeleton" />
                     <input id="load-carnie" type="button" value="Load a Carnivore skeleton" />
+                    <input id="load-aggro" type="button" value="Load an advanced Herbivore" />
                 </div>
             </div>
             <div class="step-wrap">
@@ -59,27 +60,36 @@
             </div>
             <div class="step-wrap">
                 <header>
-                    <h2>OnEatCompleted</h2>
-                </header>
-                <div class="step">
-                    <textarea class="editor" id="editor-OnEatCompleted"></textarea>
-                </div>
-            </div>
-            <div class="step-wrap">
-                <header>
                     <h2>OnMoveCompleted</h2>
                 </header>
                 <div class="step">
                     <textarea class="editor" id="editor-OnMoveCompleted"></textarea>
                 </div>
             </div>
-
             <div class="step-wrap">
                 <header>
                     <h2>OnAttacked</h2>
                 </header>
                 <div class="step">
                     <textarea class="editor" id="editor-OnAttacked"></textarea>
+                </div>
+            </div>
+
+            <div class="step-wrap">
+                <header>
+                    <h2>OnEatCompleted</h2>
+                </header>
+                <div class="step">
+                    <textarea class="editor" id="editor-OnEatCompleted"></textarea>
+                </div>
+            </div>
+
+            <div class="step-wrap">
+                <header>
+                    <h2>OnReproduceCompleted</h2>
+                </header>
+                <div class="step">
+                    <textarea class="editor" id="editor-OnReproduceCompleted"></textarea>
                 </div>
             </div>
             <div class="step-wrap">

@@ -8,7 +8,7 @@ species.Skin = AnimalSkin.scorpion; // options: ant, beetle, inchworm, scorpion 
 
 // How big can your creature grow? 
 // The bigger the more powerful it is, but the slower it is to reproduce.
-species.MatureSize = 30;
+species.MatureSize = 48; // between 24 and 48
 
 // Sum should equal to 100.
 species.PercentOfMaximumEnergyPerUnitRadius = 70;

@@ -1,0 +1,15 @@
+me.food = null;
+me.challenger = null;
+me.dist_warning = 60000; // todo
+me.limit_eating = 0.92;
+me.better_go_there = 20; // todo
+me.random_speed = 5;
+me.nb_childs = 0;
+me.limit_child_attack = 1;
+me.hold_on = false;
+me.blocking = null;
+me.randoming = false;
+me.limit_injured_attack = 0.5;
+me.limit_injured_defend = 0.9;
+me.contourning = false;
+me.LastDestination = null;

@@ -3,6 +3,8 @@ var Renderer = Class.extend({
 		var self = this;
 		this.Scene = sjs.Scene({parent: parent, w: width, h: height});
 
+		this.ShowOrganismSquares = false;
+		this.ShowGrid = false;
 
 		this.Animations = {};
 		for (var animation in AnimationIndexes)
@@ -85,22 +87,28 @@ var Renderer = Class.extend({
 		var self = this;
 		var ctx = self.BackgroundLayer.ctx;
 
-		for (var i = 1; i < self.World.GridWidth; i++)
-			this.DrawLine(ctx, 'DarkGreen', i * EngineSettings.GridCellWidth, 0, i * EngineSettings.GridCellWidth, self.World.WorldHeight);
-		for (var i = 1; i < self.World.GridHeight; i++)
-			this.DrawLine(ctx, 'DarkGreen', 0, i * EngineSettings.GridCellHeight, self.World.WorldWidth, i * EngineSettings.GridCellHeight);
-
-		for (var i = 0; i < self.World.GridWidth; i++)
-			for (var j = 0; j < self.World.GridHeight; j++)
+		if (this.ShowGrid)
+		{
+			for (var i = 1; i < self.World.GridWidth; i++)
+				this.DrawLine(ctx, 'DarkGreen', i * EngineSettings.GridCellWidth, 0, i * EngineSettings.GridCellWidth, self.World.WorldHeight);
+			for (var i = 1; i < self.World.GridHeight; i++)
+				this.DrawLine(ctx, 'DarkGreen', 0, i * EngineSettings.GridCellHeight, self.World.WorldWidth, i * EngineSettings.GridCellHeight);
+		}
+		if (this.ShowOrganismSquares)
+		{
+			for (var i = 0; i < self.World.GridWidth; i++)
 			{
-				var organism = self.World._cellOrganisms[i][j];
-				if (organism != null)
+				for (var j = 0; j < self.World.GridHeight; j++)
 				{
-					ctx.fillStyle = 'DarkGreen';
-					ctx.fillRect(i * EngineSettings.GridCellWidth, j * EngineSettings.GridCellHeight, EngineSettings.GridCellWidth, EngineSettings.GridCellHeight);
+					var organism = self.World._cellOrganisms[i][j];
+					if (organism != null)
+					{
+						ctx.fillStyle = 'DarkGreen';
+						ctx.fillRect(i * EngineSettings.GridCellWidth, j * EngineSettings.GridCellHeight, EngineSettings.GridCellWidth, EngineSettings.GridCellHeight);
+					}
 				}
 			}
-		
+		}	
 	},
 	DrawLine: function(ctx, strokeStyle, x, y, x2, y2)
 	{
@@ -148,7 +156,6 @@ var Renderer = Class.extend({
 		ctx.fillStyle = "red";
 		ctx.fillRect(positionX + energy, positionY + organismSprite.h + 1, organismSprite.w - energy, 5);
 
-		// 
 		if (this.SelectedOrganismId == organism.Id)
 		{
 			ctx.strokeStyle = "Red";

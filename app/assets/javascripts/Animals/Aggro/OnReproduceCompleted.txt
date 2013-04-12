@@ -1,0 +1,4 @@
+me.OnReproduceCompleted = function()
+{
+  this.nb_childs++;
+};

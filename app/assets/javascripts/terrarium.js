@@ -38,7 +38,7 @@ $(document).ready(function() {
 	});
 
 	var $canvas = $("#canvas");
-	var width = 520;
+	var width = 720;
 	var height = 440;
 	$canvas.css("width", width + "px");
 	$canvas.css("height", height + "px");
@@ -89,6 +89,10 @@ $(document).ready(function() {
 		$(".step-wrap header")[1].click();
 	});
 
+	$("#load-aggro").click(function(){
+		loadCode("/assets/Animals/Aggro/");
+		$(".step-wrap header")[1].click();
+	});
 
 
 	$("#load-plant").click(addPlant);

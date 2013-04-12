@@ -1,0 +1,21 @@
+// WORK IN PROGRESS
+// Was ported from .NET
+// Code is really dirty...
+
+// 1. Set the species attributes
+var species = new Species();
+species.Name = "aggro43";
+species.Skin = AnimalSkin.ant; // ant, beetle, inchworm, scorpion or spider
+species.MatureSize = 25; // between 24 and 48
+species.IsCarnivore = false;
+
+// Sum should equal to 100.
+species.PercentOfMaximumEnergyPerUnitRadius = 8;
+species.PercentOfMaximumEatingSpeedPerUnitOfRadius = 0;
+species.PercentOfMaximumAttackDamagePerUnitRadius = 20;
+species.PercentOfMaximumDefendDamagePerUnitRadius = 8;
+species.PercentOfMaximumEyeSightRadius = 40;
+species.PercentOfMaximumSpeed = 24;
+species.PercentOfMaximumInvisibleOdds = 0;
+
+var me = new AnimalMind(species);

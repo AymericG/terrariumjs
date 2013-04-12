@@ -10,9 +10,9 @@ body{
 
 .right-panel
 {
-    width: 555px;
+    width: 755px;
     float:right;
-    margin-left: -570px;
+    margin-left: -770px;
 }
 
 .game-window-wrap
@@ -26,7 +26,7 @@ textarea {  }
 .game-window
 {
 	border: 5px solid #35291F;
-	width: 520px;
+	width: 720px;
 	height: 440px;
 	overflow: auto;
 }
@@ -34,7 +34,7 @@ textarea {  }
 .game-controls
 {
     margin: 10px;
-    padding-right: 555px;
+    padding-right: 755px;
 }
 
 #code{
