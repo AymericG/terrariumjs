@@ -1,6 +1,0 @@
-== Welcome to terrarium.js!
-
-terrarium.js is a javascript port of the famous .NET Terrarium programming game created by Microsoft.
-
-
-

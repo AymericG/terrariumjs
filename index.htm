@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<title>Terrarium.js</title>
+        <link rel="stylesheet" href="stylesheets/codemirror.css">
+        <link rel="stylesheet" href="stylesheets/terrarium.css">
+        <script>
+            var organismMindCodeLoaderPath = "javascripts/OrganismMindCodeLoader.js";
+        </script>
+        <link rel="shortcut icon" href="/favicon.ico" />
+    </head>
+    <body>
+        <a href="https://github.com/AymericG/terrariumjs"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+        <div class="header-wrap">
+            <header class="fixed">
+                <h1>Terrarium.js</h1>
+                <span>Javascript programming game (port of Terrarium.NET)</span>
+            </header>
+        </div>
+        <div class="main-container"><!-- pure laziness. could implement adaptive design -->
+        
+        <section class="right-panel">
+
+            <div class="game-window-wrap">
+                <div class="game-window">
+                    <div id="canvas"></div>
+                </div>
+                <div class="stats">Connected terrariums: <span id="terrarium-count"></span></div>
+            </div>
+
+            <div id="channel-name">
+                Listening to channel <strong>General</strong>:
+            </div>
+            <ul id="logs">
+                <li><i>No message yet.</i></li>
+            </ul>
+
+        </section>
+
+        
+        <aside class="game-controls">
+            <div class="step-wrap open">
+                <header>
+                    <h2>What type of animal do you want to write?</h2>
+                </header>
+                <div class="step">
+                    <p>Load some sample animal to guide your first steps in Terrarium.js.</p>
+                    <p>An herbivore can eat plants, carnivores can eat all animals but not the plants.</p><p>Every action, like attacking, defending or reproducing consumes energy. An animal can recover energy by eating food. If the energy bar reaches zero, the animal dies.</p>
+                    <input id="load-herbie" type="button" value="Load a Herbivore skeleton" />
+                    <input id="load-carnie" type="button" value="Load a Carnivore skeleton" />
+                    <input id="load-aggro" type="button" value="Load an advanced Herbivore" />
+                </div>
+            </div>
+            <div class="step-wrap">
+                <header>
+                    <h2>Species</h2>
+                </header>
+                <div class="step">
+                    <textarea class="editor" id="editor-species"></textarea>
+                </div>
+            </div>
+            <div class="step-wrap">
+                <header>
+                    <h2>Common code</h2>
+                </header>
+                <div class="step">
+                    <textarea class="editor" id="editor-Common"></textarea>
+                </div>
+            </div>
+            <div class="step-wrap">
+                <header>
+                    <h2>OnIdle</h2>
+                </header>
+                <div class="step">
+                    <textarea class="editor" id="editor-OnIdle"></textarea>
+                </div>
+            </div>
+            <div class="step-wrap">
+                <header>
+                    <h2>OnMoveCompleted</h2>
+                </header>
+                <div class="step">
+                    <textarea class="editor" id="editor-OnMoveCompleted"></textarea>
+                </div>
+            </div>
+            <div class="step-wrap">
+                <header>
+                    <h2>OnAttacked</h2>
+                </header>
+                <div class="step">
+                    <textarea class="editor" id="editor-OnAttacked"></textarea>
+                </div>
+            </div>
+
+            <div class="step-wrap">
+                <header>
+                    <h2>OnEatCompleted</h2>
+                </header>
+                <div class="step">
+                    <textarea class="editor" id="editor-OnEatCompleted"></textarea>
+                </div>
+            </div>
+
+            <div class="step-wrap">
+                <header>
+                    <h2>OnReproduceCompleted</h2>
+                </header>
+                <div class="step">
+                    <textarea class="editor" id="editor-OnReproduceCompleted"></textarea>
+                </div>
+            </div>
+            <div class="step-wrap">
+                <header><h2>Submit your creation!</h2></header>
+                <div class="step">                
+                	<input id="load-code" type="button" value="Introduce animal" />
+                    <input id="load-plant" type="button" value="Add a plant" />
+                </div>
+            </div>
+<!--        	<input id="run" type="button" value="Start game" /> -->
+        </aside>
+
+
+        </div>
+        <script type="text/javascript" src="javascripts/libs/codemirror.js"></script>
+        <script type="text/javascript" src="javascripts/libs/codemirror.javascript.js"></script>
+        <script type="text/javascript" src="javascripts/libs/sprite.js"></script>
+        <script type="text/javascript" src="javascripts/libs/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="javascripts/libs/jquery.cookie.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/libs/Class.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Actions/Action.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Actions/AttackAction.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Actions/DefendAction.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Actions/EatAction.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Actions/MoveToAction.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Actions/PendingActions.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Actions/ReproduceAction.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Enums.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Exceptions.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/EngineSettings.js"></script>
+        <script type="text/javascript" src="javascripts/Framework/ClassWithEvents.js"></script>
+        <script type="text/javascript" src="javascripts/Framework/Logger.js"></script>
+        <script type="text/javascript" src="javascripts/Framework/Renderer.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Anatomy/Species.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Anatomy/MindNerve.js"></script>
+        <script type="text/javascript" src="javascripts/Anatomy/BodyNerve.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Anatomy/OrganismState.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Anatomy/AnimalState.js"></script>
+        <script type="text/javascript" src="javascripts/Anatomy/PlantState.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Anatomy/OrganismMind.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Anatomy/AnimalMind.js"></script>
+        <script type="text/javascript" src="javascripts/Anatomy/Organism.js"></script>
+        <script type="text/javascript" src="javascripts/GameEngine/Game.js"></script>
+        <script type="text/javascript" src="javascripts/GameEngine/Teleporter.js"></script>
+        <script type="text/javascript" src="javascripts/GameEngine/World.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Geometry/MathUtils.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Geometry/MovementVector.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Geometry/Point.js"></script>
+        <script type="text/javascript" src="javascripts/SDK/Geometry/Rectangle.js"></script>
+        <script type="text/javascript" src="javascripts/terrarium.js"></script>
+
+        <script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-1519789-21']);
+  _gaq.push(['_setDomainName', 'wiselabs.net']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+    </body>
+</html>

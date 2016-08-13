@@ -1,0 +1,156 @@
+body{
+    background-color: #333C1A;
+    color: #B69A71;
+    padding: 0px;
+    margin: 0px;
+    font-family: Arial;
+    font-size: 16px;
+}
+
+
+.right-panel
+{
+    width: 755px;
+    float:right;
+    margin-left: -770px;
+}
+
+.game-window-wrap
+{
+    float: left; 
+    margin: 10px;
+}
+
+textarea {  }
+
+.game-window
+{
+	border: 5px solid #35291F;
+	width: 720px;
+	height: 440px;
+	overflow: auto;
+}
+
+.game-controls
+{
+    margin: 10px;
+    padding-right: 755px;
+}
+
+#code{
+    width: 100%;
+}
+
+.CodeMirror{
+    background-color: #fff;
+    height: auto;
+}
+
+.CodeMirror-scroll{
+    overflow-x: auto; 
+    overflow-y: hidden;
+}
+
+#canvas{
+	background: #ddd url('../images/background.jpg') no-repeat;
+    margin: auto;
+}
+
+.main-container{
+    padding:20px;
+}
+
+.header-wrap{
+    background-color: #000;
+}
+header{
+    padding: 10px;
+    color: #B69A71;
+    overflow: hidden;
+}
+
+header h1{
+    font-weight: bold;
+    font-size: 2em;
+    float: left;
+    line-height: 30px;
+    padding: 0px;
+    margin: 0px 20px 0 0;
+}
+
+header span{
+    line-height: 30px;
+    float: left;
+}
+
+#channel-name{
+    clear: both;
+    margin:10px;
+    
+}
+
+#logs{
+    margin:10px;
+    list-style-type: none;
+    padding:0px;
+}
+
+#logs li{
+    background-color: #35291F;
+    font-size: 11px;
+    padding: 5px;
+    margin-bottom: 2px;
+}
+
+.step-wrap{
+    margin-bottom: 15px;
+}
+
+.step-wrap header{
+    background-color: #000;
+    cursor: pointer;
+}
+
+.step-wrap h2{
+    margin:0px;
+    font-size: 16px;
+    font-weight: normal;
+}
+
+.step{
+    display:none;
+    background-color: #35291F;
+    padding: 20px;
+}
+
+.step-wrap.open .step
+{
+    display: block;
+}
+.social{
+    float:right;
+    width:150px;
+    margin-top:8px;
+    margin-right: 145px;
+}
+
+footer{
+    /*display: none;*/
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #000;
+    text-align:center;
+}
+
+footer a{
+    color: #EEDB74;
+}
+
+.stats
+{
+    font-size: 12px;    
+}
+
+.stats span{
+    font-weight: bold;
+}
