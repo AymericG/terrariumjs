@@ -16,7 +16,7 @@ var AnimalState = OrganismState.extend({
 		return stateObject;
 	},
 	PercentInjured: function(){
-    	return this.Damage / (EngineSettings.DamageToKillPerUnitOfRadius* this.Radius);
+    	return this.Damage / (EngineSettings.DamageToKillPerUnitOfRadius * this.Radius);
 	},
 	AddRotTick: function()
 	{
@@ -35,8 +35,7 @@ var AnimalState = OrganismState.extend({
 
     CauseDamage: function(incrementalDamage)
     {
-    	this.Log("Took damage: " + incrementalDamage);
-        if (incrementalDamage < 0)
+    	if (incrementalDamage < 0)
             throw new GameEngineException("Damage must be positive.");
 
         if (this.Damage + incrementalDamage >= EngineSettings.DamageToKillPerUnitOfRadius * this.Radius)
@@ -47,6 +46,7 @@ var AnimalState = OrganismState.extend({
         }
 
         this.Damage = this.Damage + incrementalDamage;
+		this.Log("Took damage: " + incrementalDamage + " PercentInjured: " + this.PercentInjured());        
     },
 	EnergyRequiredToMove: function(distance, speed){
 		return distance * this.Radius * speed * EngineSettings.RequiredEnergyPerUnitOfRadiusSpeedDistance;

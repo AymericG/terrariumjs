@@ -3,7 +3,7 @@ var EngineSettings = {
     //   into the MatureSize attribute.  No creature may grow to
     //   be larger than this constant.
 	MaxMatureSize: 48,
-	MaxOrganismCount: 30,
+	MaxOrganismCount: 50,
 	RequiredEnergyPerUnitOfRadiusSpeedDistance: 0.005,
 	TickInterval: 150,
 	TicksToIncubate: 10,
@@ -23,11 +23,6 @@ var EngineSettings = {
     //   this maximum camouflage MaxAvailableCharacteristicPoints
     //   must be applied to the CamouflagePointsAttribute.
     InvisibleOddsMaximum: 90,
-    //   Represents the maximum distance a creature can see if they place
-    //   MaxAvailableCharacteristicPoints into the EyesightPointsAttribute.
-    //   This distance is in Terrarium Cells, so you have to multiply
-    //   by 8 to get the actual distance in Terrarium Units (pixels).
-    MaximumEyesightRadius: 10,
 
     //   Represents the base achievable speed granted to a creature
     //   that places 0 points into the MaximumSpeedAttribute.
@@ -35,11 +30,6 @@ var EngineSettings = {
     //   Represents the maximum achievable speed granted to a creature
     //   that places MaxAvailableCharacteristicPoints into the MaximumSpeedAttribute.
     SpeedMaximum: 100,
-    //   Represents the base distance a creature can see if they place
-    //   0 points into the EyesightPointsAttribute.
-    //   This distance is in Terrarium Cells, so you have to multiply
-    //   by 8 to get the actual distance in Terrarium Units (pixels).
-    BaseEyesightRadius: 5,
 
     //   Attack and Defense modifier applied to Carnivores.  This
     //   gives Carnivores an advantage in both attacking and defending

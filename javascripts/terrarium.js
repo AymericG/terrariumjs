@@ -20,26 +20,23 @@ $(document).ready(function() {
 	var saveCode = function(editor){ 
 		$.cookie(editor.originalId, editor.getValue());
 	};
-	var editors = {};
-	$(".editor").each(function(){
 
-		var editor = CodeMirror.fromTextArea(document.getElementById(this.id), {
-			lineNumbers: true,
-			matchBrackets: true,
-			onChange: function() { return saveCode(editor); }
-		});
-		editor.originalId = this.id;
-
-		var code = $.cookie(this.id);
-		if (code != null) 
-			editor.setValue(code);
-
-		editors[this.id] = editor;
+	var editorId = "editor";
+	var editor = CodeMirror.fromTextArea(document.getElementById(editorId), {
+		lineNumbers: true,
+		matchBrackets: true,
+		onChange: function() { return saveCode(editor); }
 	});
+	editor.originalId = editorId;
+
+	var code = $.cookie(editorId);
+	if (code != null) {
+		editor.setValue(code);
+	}
 
 	var $canvas = $("#canvas");
-	var width = 720;
-	var height = 440;
+	var width = 1024;
+	var height = 1024;
 	$canvas.css("width", width + "px");
 	$canvas.css("height", height + "px");
 	var game = new Game($canvas[0], width, height);
@@ -57,41 +54,57 @@ $(document).ready(function() {
 		});
 	};
 	window.addPlant(); 
+
+	$("#load-herbie").click(function(){
+		$.get("javascripts/Animals/Herbie.txt", function(result){ 
+			game.AddOrganism(organismMindCodeLoaderPath, result);
+		});
+	});
+
+	$("#load-carnie").click(function(){
+		$.get("javascripts/Animals/Carnie.txt", function(result){ 
+			game.AddOrganism(organismMindCodeLoaderPath, result);
+		});
+	});
 	
 	
 	$("#load-code").click(function(){
-
-		var code = "";
-		for (var editor in editors)
-		{
-			code += editors[editor].getValue();
-		}
+		var code = editor.getValue();
 		game.AddOrganism(organismMindCodeLoaderPath, code);
+	});
+
+	$("#toggle-grid").click(function(){
+		game.Renderer.ShowGrid = !game.Renderer.ShowGrid;
+	});
+
+	$("#toggle-squares").click(function(){
+		game.Renderer.ShowOrganismSquares = !game.Renderer.ShowOrganismSquares;
+	});
+
+	$(".tab-nav li").click(function(){
+		$(".tab-nav li").removeClass("selected");
+		$(".tab").removeClass("visible");
+		var idSelector = $(this).attr("data-target");
+		$(idSelector).addClass("visible");
+		$(this).addClass("selected");
 	});
 
 	var loadCode = function(path)
 	{
-		$(".editor").each(function(){
-			var editor = this;
-			var file = this.id.replace("editor-", "") + ".txt";
-			$.get(path + file, function(result){ 
-				editors[editor.id].setValue(result); 
-			});
+		$.get(path, function(result){ 
+			editor.setValue(result); 
 		});
 	};
 
 	$("#load-herbie").click(function(){
-		loadCode("javascripts/Animals/Herbie/");
-		$(".step-wrap header")[1].click();
+		loadCode("javascripts/Animals/Herbie.txt");
 	});
 	$("#load-carnie").click(function(){
-		loadCode("javascripts/Animals/Carnie/");
-		$(".step-wrap header")[1].click();
+		loadCode("javascripts/Animals/Carnie.txt");
 	});
 
 	$("#load-aggro").click(function(){
-		loadCode("javascripts/Animals/Aggro/");
-		$(".step-wrap header")[1].click();
+		loadCode("javascripts/Animals/Aggro.txt");
 	});
 
 
@@ -103,8 +116,6 @@ $(document).ready(function() {
 	$(".step-wrap header").click(function(){
 		$(".step").hide();
 		$(this).next().show();
-		$(".editor").each(function(){
-			editors[this.id].refresh();
-		});
+		editor.refresh();
 	});
 });

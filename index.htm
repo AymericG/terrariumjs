@@ -19,12 +19,28 @@
         </div>
         <div class="main-container"><!-- pure laziness. could implement adaptive design -->
         
-        <section class="right-panel">
+
+        <ul class="tab-nav">
+            <li data-target="#terrarium" class="selected">Terrarium</li>
+            <li data-target="#code-editor">Code editor</li>
+            <li data-target="#documentation">Documentation</li>
+        </ul>
+
+        <section id="terrarium" class="visible tab">
 
             <div class="game-window-wrap">
                 <div class="game-window">
                     <div id="canvas"></div>
                 </div>
+                <p>
+                    <input id="load-code" type="button" value="Add your animal" />
+                    <input id="load-plant" type="button" value="Add a plant" />
+                    <button id="load-herbie">Add a simple herbivore</button>
+                    <button id="load-carnie">Add a simple carnivore</button>
+                    <button id="toggle-grid">Toggle grid</button>
+                    <button id="toggle-squares">Toggle organism squares</button>
+                    
+                </p>
                 <div class="stats">Connected terrariums: <span id="terrarium-count"></span></div>
             </div>
 
@@ -38,86 +54,54 @@
         </section>
 
         
-        <aside class="game-controls">
+        <aside id="code-editor" class="tab game-controls">
             <div class="step-wrap open">
                 <header>
                     <h2>What type of animal do you want to write?</h2>
                 </header>
                 <div class="step">
-                    <p>Load some sample animal to guide your first steps in Terrarium.js.</p>
-                    <p>An herbivore can eat plants, carnivores can eat all animals but not the plants.</p><p>Every action, like attacking, defending or reproducing consumes energy. An animal can recover energy by eating food. If the energy bar reaches zero, the animal dies.</p>
                     <input id="load-herbie" type="button" value="Load a Herbivore skeleton" />
                     <input id="load-carnie" type="button" value="Load a Carnivore skeleton" />
                     <input id="load-aggro" type="button" value="Load an advanced Herbivore" />
+                    <p><textarea id="editor"></textarea></p>
                 </div>
             </div>
-            <div class="step-wrap">
-                <header>
-                    <h2>Species</h2>
-                </header>
-                <div class="step">
-                    <textarea class="editor" id="editor-species"></textarea>
-                </div>
-            </div>
-            <div class="step-wrap">
-                <header>
-                    <h2>Common code</h2>
-                </header>
-                <div class="step">
-                    <textarea class="editor" id="editor-Common"></textarea>
-                </div>
-            </div>
-            <div class="step-wrap">
-                <header>
-                    <h2>OnIdle</h2>
-                </header>
-                <div class="step">
-                    <textarea class="editor" id="editor-OnIdle"></textarea>
-                </div>
-            </div>
-            <div class="step-wrap">
-                <header>
-                    <h2>OnMoveCompleted</h2>
-                </header>
-                <div class="step">
-                    <textarea class="editor" id="editor-OnMoveCompleted"></textarea>
-                </div>
-            </div>
-            <div class="step-wrap">
-                <header>
-                    <h2>OnAttacked</h2>
-                </header>
-                <div class="step">
-                    <textarea class="editor" id="editor-OnAttacked"></textarea>
-                </div>
-            </div>
-
-            <div class="step-wrap">
-                <header>
-                    <h2>OnEatCompleted</h2>
-                </header>
-                <div class="step">
-                    <textarea class="editor" id="editor-OnEatCompleted"></textarea>
-                </div>
-            </div>
-
-            <div class="step-wrap">
-                <header>
-                    <h2>OnReproduceCompleted</h2>
-                </header>
-                <div class="step">
-                    <textarea class="editor" id="editor-OnReproduceCompleted"></textarea>
-                </div>
-            </div>
-            <div class="step-wrap">
-                <header><h2>Submit your creation!</h2></header>
-                <div class="step">                
-                	<input id="load-code" type="button" value="Introduce animal" />
-                    <input id="load-plant" type="button" value="Add a plant" />
-                </div>
-            </div>
-<!--        	<input id="run" type="button" value="Start game" /> -->
         </aside>
+
+        <div id="documentation" class="tab">
+            <h1>Documentation</h1>
+            <p>Welcome to Terrarium.js</p>
+            <p>In your terrarium, plants, herbivores and carnivores co-exist.</p>
+            <p>Herbivores can eat plants and carnivores can eat anything but plants.</p>
+            <h2>Actions</h2>
+            <p>An animal can see around it, move, attack, defend, eat and reproduce. The animal can do multiple types of action in the same turn: it can eat while moving and attacking for example.</p>
+            <h3>Seeing</h3>
+            <p>An animal can see more or less far based on its PercentOfMaximumEyeSightRadius value.</p>
+            <p>Seeing allows it to find preys and predators.</p>
+            <h3>Eating</h3>
+            <p>You cannot eat a living animal unless it is a plan.</p>
+            <h3>Attacking</h3>
+            <p>An animal can only attack other animals that are within one cell from them.</p>
+            <p>The damage they cause is based on their radius: the bigger the stronger.</p>
+            <h3>Defending</h3>
+            <p>An animal can only defend against one attacker. Defending allows you to reduce the damage caused by an attacker.</p>
+            <h3>Reproduction</h3>
+            <p>In order for an animal to reproduce, it needs to reach mature size, have enough energy and gone through the reproduction wait time (An animal can't just feed and reproduce in loop).</p>
+            <h2>Energy</h2>
+            <p>Most actions (attacking, moving, defending or reproducing) consume energy.<br/>
+               Energy goes down as time passes too.<br/>
+               If the energy level reaches zero, the animal dies.</p>
+            <p>
+               To recover energy, an animal has to eat.</p>
+            <h2>Communication between animals</h2>
+            <p>Animals can communicate using their two antennas. Each antenna can have 10 different positions.</p> 
+            <h2>Debugging</h2>
+            <p>In order to debug your animal's artificial intelligence, you can use your normal internet browser dev tools. Additionally, you can use WriteTrace to show messages:
+                <blockquote>
+                    this.WriteTrace("I can see an enemy");
+                </blockquote> 
+            </p>
+        </div>
 
 
         </div>

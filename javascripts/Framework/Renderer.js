@@ -3,7 +3,7 @@ var Renderer = Class.extend({
 		var self = this;
 		this.Scene = sjs.Scene({parent: parent, w: width, h: height});
 
-		this.ShowOrganismSquares = false;
+		this.ShowOrganismSquares = true;
 		this.ShowGrid = false;
 
 		this.Animations = {};
@@ -11,10 +11,10 @@ var Renderer = Class.extend({
     		this.Animations[animation] = this.InitializeAnimation(animation);
 
 		this.Ticker = this.Scene.Ticker(function(ticker){
-/*
+
 			if (self.Input.mousedown)
 	        	self.SelectOrganism(self.Input.mouse.position.x, self.Input.mouse.position.y);
-*/
+
 			self.DrawGrid();
 
 			for (var organismId in self.World.Organisms)
@@ -32,7 +32,7 @@ var Renderer = Class.extend({
 		this.Sprites = {};
 		this.Cycles = {};
 		this.InitializeTeleporterAnimation();
-		//this.Input  = this.Scene.Input();
+		this.Input  = this.Scene.Input();
 		this.SelectedOrganismId = null;
     },
     SelectOrganism: function(x, y){
@@ -90,10 +90,11 @@ var Renderer = Class.extend({
 		if (this.ShowGrid)
 		{
 			for (var i = 1; i < self.World.GridWidth; i++)
-				this.DrawLine(ctx, 'DarkGreen', i * EngineSettings.GridCellWidth, 0, i * EngineSettings.GridCellWidth, self.World.WorldHeight);
+				this.DrawLine(ctx, '#999', i * EngineSettings.GridCellWidth, 0, i * EngineSettings.GridCellWidth, self.World.WorldHeight);
 			for (var i = 1; i < self.World.GridHeight; i++)
-				this.DrawLine(ctx, 'DarkGreen', 0, i * EngineSettings.GridCellHeight, self.World.WorldWidth, i * EngineSettings.GridCellHeight);
+				this.DrawLine(ctx, '#999', 0, i * EngineSettings.GridCellHeight, self.World.WorldWidth, i * EngineSettings.GridCellHeight);
 		}
+
 		if (this.ShowOrganismSquares)
 		{
 			for (var i = 0; i < self.World.GridWidth; i++)
@@ -103,7 +104,7 @@ var Renderer = Class.extend({
 					var organism = self.World._cellOrganisms[i][j];
 					if (organism != null)
 					{
-						ctx.fillStyle = 'DarkGreen';
+						ctx.fillStyle = '#35291F';
 						ctx.fillRect(i * EngineSettings.GridCellWidth, j * EngineSettings.GridCellHeight, EngineSettings.GridCellWidth, EngineSettings.GridCellHeight);
 					}
 				}
@@ -114,6 +115,7 @@ var Renderer = Class.extend({
 	{
 		var previousStyle = ctx.strokeStyle;
 	    ctx.strokeStyle = strokeStyle;
+		ctx.lineWidth = 1;
 		ctx.beginPath();
 	    ctx.moveTo(x, y);
 	    ctx.lineTo(x2, y2);
@@ -128,6 +130,7 @@ var Renderer = Class.extend({
 	},
 	DrawOrganism: function(organism){
 		var ctx = this.Layer.ctx;
+		
 		var organismSprite = this.Sprites[organism.Id];
 		if (organism.State.Radius >= 17 && organismSprite.w != 48)
 		{
@@ -148,9 +151,9 @@ var Renderer = Class.extend({
 		// Draw name
 		ctx.strokeStyle = "Black";
 		ctx.strokeText(organism.State.Species.Name + " #" + organism.Id, positionX, positionY + organismSprite.h + 15);
-	
-		// Draw energy left
-		var energy = organism.State.StoredEnergy() * organismSprite.w / organism.State.MaxEnergy();
+		
+		// Show energy left
+		var energy = organismSprite.w * Math.min(1 - organism.State.PercentInjured(), organism.State.StoredEnergy()/ organism.State.MaxEnergy());
 		ctx.fillStyle = "green";
 		ctx.fillRect(positionX, positionY + organismSprite.h + 1, energy, 5);
 		ctx.fillStyle = "red";
@@ -162,7 +165,17 @@ var Renderer = Class.extend({
 			ctx.strokeRect((organism.State.GridX()-organism.State.CellRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.CellRadius()) * EngineSettings.GridCellHeight, radiusW*2/*+EngineSettings.GridCellWidth*/, radiusH*2/*+EngineSettings.GridCellHeight*/);
 
 			ctx.strokeStyle = "White";
-			ctx.strokeRect((organism.State.GridX()-organism.State.Species.EyeSightRadius()) * EngineSettings.GridCellWidth, (organism.State.GridY()-organism.State.Species.EyeSightRadius()) * EngineSettings.GridCellHeight, (organism.State.Species.EyeSightRadius() * EngineSettings.GridCellWidth)*2/*+EngineSettings.GridCellWidth*/, (organism.State.Species.EyeSightRadius() * EngineSettings.GridCellHeight)*2/*+EngineSettings.GridCellHeight*/);
+			var topLeftEyeSightX = (organism.State.GridX()-organism.State.Species.EyeSightRadius()) * EngineSettings.GridCellWidth;
+			var eyeSightWidth = (organism.State.Species.EyeSightRadius() * EngineSettings.GridCellWidth)*2;
+			var topRightEyeSightX = topLeftEyeSightX + eyeSightWidth;
+			var topEyeSightY = (organism.State.GridY()-organism.State.Species.EyeSightRadius()) * EngineSettings.GridCellHeight;
+			ctx.strokeRect(topLeftEyeSightX, topEyeSightY, eyeSightWidth/*+EngineSettings.GridCellWidth*/, (organism.State.Species.EyeSightRadius() * EngineSettings.GridCellHeight)*2/*+EngineSettings.GridCellHeight*/);
+
+			ctx.strokeStyle = "Black";
+			ctx.strokeText("PercentInjured: " + (organism.State.PercentInjured() * 100), topRightEyeSightX + 10, topEyeSightY + 10);
+			ctx.strokeText("FoodChunks: " + organism.State.FoodChunks, topRightEyeSightX + 10, topEyeSightY + 20);
+			ctx.strokeText("GrowthWait: " + organism.State.GrowthWait, topRightEyeSightX + 10, topEyeSightY + 30);
+			
 		}
 
 		ctx.fillStyle = "black";

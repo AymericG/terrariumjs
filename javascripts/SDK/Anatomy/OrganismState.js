@@ -143,8 +143,9 @@ var OrganismState = Class.extend({
 
 		if (this.StoredEnergy() - energyValue <= 0)
 		    this.Kill(PopulationChangeReason.Starved);
-		else
+		else{
 		    this.StoredEnergy(this.StoredEnergy() - energyValue);
+		}
 	},
 
 	IsMature: function(){

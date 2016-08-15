@@ -104,7 +104,9 @@ var Organism = ClassWithEvents.extend({
 		this.World.FillCells(this.State, true);
 	    this.State.Position = this.State.Position.Add(speedVector);
 		this.World.FillCells(this.State, false);
-		this.State.BurnEnergy(this.State.EnergyRequiredToMove(moveVector.Magnitude(), this.CurrentMoveToAction().MoveTo.Speed));
+		var energyBurnt = this.State.EnergyRequiredToMove(speedVector.Magnitude(), this.CurrentMoveToAction().MoveTo.Speed);
+		this.State.Log("Burning " + energyBurnt + " magnitude: " + speedVector.Magnitude() + ", speed: " + this.CurrentMoveToAction().MoveTo.Speed);
+		this.State.BurnEnergy(energyBurnt);
 		if (!this.State.IsAlive())
 			return;
 
@@ -302,7 +304,7 @@ var Organism = ClassWithEvents.extend({
 	    }
 	    else
 	    {
-	    	defenderState.Log("Losing " + foodChunkCount + " food chunks");
+	    	//defenderState.Log("Losing " + foodChunkCount + " food chunks");
 	        // Shrink the meat or plant
 	        defenderState.FoodChunks = defenderState.FoodChunks - foodChunkCount;
 	    }

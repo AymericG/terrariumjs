@@ -27,3 +27,4 @@ organism.MoveToRandomPoint = function(){
 
 	this.BeginMoving(new MovementVector(new Point(x, y), 2));
 };
+
